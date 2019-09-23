@@ -93,12 +93,12 @@ Let's highlight key points here:
   ```
 
   To pass external values inside layout, we use
-  ```
+  ```typescript
     engine.inputs.registerInput(name: string, type: Engine.type, source: rxjs.Observable)
   ```
 
   To receive button press event from layout, register button:
-  ```
+  ```typescript
     this.engine.registerButton(name: string, handler: () => Promise);
 ```
   Please note that button will be disabled until handler's promise finishes or fails. Button look is defined in layout description
@@ -107,7 +107,7 @@ Let's highlight key points here:
   ```style={self.state.style}``` in render code
 
   Once preparations are done, we can create and use ```Layout``` component like so
-  ```js
+  ```jsx
     render() {
         return <Layout engine={this.engine} content={content}/>
     }
