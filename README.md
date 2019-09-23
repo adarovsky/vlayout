@@ -116,7 +116,7 @@ Let's highlight key points here:
   
   # Layout description
   
-  Layout description has 4 declarations. Let us show it by example. For full description, refer ![syntax](doc/syntax.md)
+  Layout description has 4 declarations. Let us show it by example. For full description, refer ![syntax](doc/syntax.md?raw=true)
   ```
 bindings {
     myButton: button
