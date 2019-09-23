@@ -1,11 +1,15 @@
 {
   "name": "@adarovsky/vlayout",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A port of simple reactive layout engine running in browsers",
   "main": "lib/index.js",
   "types": "lib",
   "scripts": {
     "build": "tsc -p . && cp src/vlayout.css lib/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:adarovsky/vlayout.git"
   },
   "keywords": [],
   "author": "Alex Darovsky (Vyu Labs, Inc.)",
