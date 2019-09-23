@@ -590,16 +590,11 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     }
 
     private parseContainerContents(container: Container): boolean {
-        let paddings = false,
-            center = false,
-            size = false,
-            contentPadding = false,
-            aspect = false;
-        while ((!paddings && (paddings = this.parseViewPaddings(container))) ||
-            (!center && (center = this.parseViewCenter(container))) ||
-            (!size && (size = this.parseViewSize(container))) ||
-            (!aspect && (aspect = this.parseViewProperty(container, 'aspect', 'aspect'))) ||
-            (!contentPadding && (contentPadding = this.parseButtonContentPadding(container)))) {}
+        while (this.parseViewPaddings(container) ||
+            this.parseViewCenter(container) ||
+            this.parseViewSize(container) ||
+            this.parseViewProperty(container, 'aspect', 'aspect') ||
+            this.parseButtonContentPadding(container)) {}
 
         const name = this.matchIdentifier();
         if (name) {
@@ -643,16 +638,12 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     }
 
     private parseViewContents(view: View): boolean {
-        let paddings = false,
-            center = false,
-            size = false,
-            contentPadding = false,
-            aspect = false;
-        while ((!paddings && (paddings = this.parseViewPaddings(view))) ||
-        (!center && (center = this.parseViewCenter(view))) ||
-        (!size && (size = this.parseViewSize(view))) ||
-        (!aspect && (aspect = this.parseViewProperty(view, 'aspect', 'aspect'))) ||
-        (!contentPadding && (contentPadding = this.parseButtonContentPadding(view)))) {}
+
+        while (this.parseViewPaddings(view) ||
+        this.parseViewCenter(view) ||
+        this.parseViewSize(view) ||
+        this.parseViewProperty(view, 'aspect', 'aspect') ||
+        this.parseButtonContentPadding(view)) {}
 
         const name = this.matchIdentifier();
         if (name) {
