@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "types": "lib",
   "scripts": {
-    "build": "tsc -p . && cp src/vlayout.css lib/"
+    "build": "tsc -p . && cp src/vlayout.css lib/",
+    "prepublishOnly": "tsc -p . && cp src/vlayout.css lib/"
   },
   "repository": {
     "type": "git",
