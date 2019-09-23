@@ -193,7 +193,7 @@ export class ReactButton extends ReactRoundRect {
                      // @ts-ignore
                      ref={this.viewRef}
         onClick={() => this.handleClick()}>
-            {this.state.image && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
+            {this.state.image.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
             {this.state.text && this.state.text.split('\n').map(function(item, key) {
                 return (
                     <span key={key}>{item}<br/></span>
