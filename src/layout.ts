@@ -265,7 +265,7 @@ export class Layout extends Component<LayoutProps, LayoutState> {
         let node = this.parseEqual();
         if (!node) return null;
 
-        while (this.match("||")) {
+        while (this.match("&&")) {
             const nextAnd = this.parseEqual();
             if (!nextAnd)
                 this.raiseError(`Expression expected after ${node}`);
