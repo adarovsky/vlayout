@@ -1,0 +1,1672 @@
+<!DOCTYPE FSM>
+<FSM>
+    <statemachine>
+        <name>VLScannerFSM</name>
+        <comment></comment>
+        <initialstate>Whitespace</initialstate>
+        <event>
+            <name>Eof</name>
+            <comment></comment>
+        </event>
+        <event>
+            <name>Symbol</name>
+            <comment></comment>
+        </event>
+        <input>
+            <name>isAnd</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isBackslash</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isCompoundSymbolStart</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isDigit</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isDot</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isEq</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isHash</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isLetter</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isMatchingQuote</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isMore</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isNewline</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isOr</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isQuote</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isSimpleEscape</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isSlash</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isSymbol</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isValidColorChar</name>
+            <comment></comment>
+        </input>
+        <input>
+            <name>isWhitespace</name>
+            <comment></comment>
+        </input>
+        <output>
+            <name>addColor</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>addIdentifier</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>addNumber</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>addString</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>addSymbol</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>appendSimpleEscape</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>appendSymbol</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>produceToken</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>pushBack</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>reportUnexpectedEof</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>reportUnexpectedSymbol</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>resetToken</name>
+            <comment></comment>
+        </output>
+        <output>
+            <name>storeOpenQuote</name>
+            <comment></comment>
+        </output>
+        <state>
+            <name>And</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>compound and</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isAnd</condition>
+                    <destination>AvoidTriple</destination>
+                    <transite_destination>AvoidTriple</transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>single</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; !isAnd</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>end</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>End</destination>
+                    <transite_destination>End</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>AvoidTriple</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>done</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; !isAnd &amp;&amp; !isOr</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>wrong</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions>
+                        <action type="output">reportUnexpectedSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>eof</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>End</destination>
+                    <transite_destination>End</transite_destination>
+                    <transitionactions/>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>Color</name>
+            <comment></comment>
+            <incomeactions>
+                <action type="output">addColor</action>
+            </incomeactions>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>valid</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; (!isLetter &amp;&amp; !isDigit)</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>c</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isValidColorChar</condition>
+                    <destination></destination>
+                    <transite_destination></transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>wrong color</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions>
+                        <action type="output">reportUnexpectedSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>end</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions>
+                        <action type="output">reportUnexpectedEof</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>Comment</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>done</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isNewline</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions/>
+                </transition>
+                <transition type="simple">
+                    <name>end</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>End</destination>
+                    <transite_destination>End</transite_destination>
+                    <transitionactions/>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>CompoundEq</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>done</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; (isEq || isMore)</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>single</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>End</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions/>
+        </state>
+        <state>
+            <name>Error</name>
+            <comment></comment>
+            <incomeactions>
+                <action type="output">resetToken</action>
+            </incomeactions>
+            <outcomeactions/>
+            <transitions/>
+        </state>
+        <state>
+            <name>Float</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>digit</name>
+                    <comment></comment>
+                    <condition>isDigit</condition>
+                    <destination></destination>
+                    <transite_destination></transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>done</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; (isWhitespace || isSymbol || isQuote)</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>error</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions>
+                        <action type="output">reportUnexpectedSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>eof</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>End</destination>
+                    <transite_destination>End</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>Identifier</name>
+            <comment></comment>
+            <incomeactions>
+                <action type="output">addIdentifier</action>
+                <action type="output">appendSymbol</action>
+            </incomeactions>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>fill</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; (isLetter || isDigit)</condition>
+                    <destination></destination>
+                    <transite_destination></transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>finished</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>eof</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>End</destination>
+                    <transite_destination>End</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>MayBeComment</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>comment</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isSlash</condition>
+                    <destination>Comment</destination>
+                    <transite_destination>Comment</transite_destination>
+                    <transitionactions>
+                        <action type="output">resetToken</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>div</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>Number</name>
+            <comment></comment>
+            <incomeactions>
+                <action type="output">addNumber</action>
+                <action type="output">appendSymbol</action>
+            </incomeactions>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>digit</name>
+                    <comment></comment>
+                    <condition>isDigit</condition>
+                    <destination></destination>
+                    <transite_destination></transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>dot</name>
+                    <comment></comment>
+                    <condition>isDot</condition>
+                    <destination>Float</destination>
+                    <transite_destination>Float</transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>done</name>
+                    <comment></comment>
+                    <condition>isWhitespace || isQuote || isSymbol</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>unexpected</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions/>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>Or</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>single</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; !isOr</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                        <action type="output">pushBack</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>compound</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isOr</condition>
+                    <destination>AvoidTriple</destination>
+                    <transite_destination>AvoidTriple</transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>eof</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>End</destination>
+                    <transite_destination>End</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>String</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>escape</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isBackslash</condition>
+                    <destination>StringEscape</destination>
+                    <transite_destination>StringEscape</transite_destination>
+                    <transitionactions/>
+                </transition>
+                <transition type="simple">
+                    <name>Symbol</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; (!isQuote || !isMatchingQuote)</condition>
+                    <destination></destination>
+                    <transite_destination></transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>end</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isQuote &amp;&amp; isMatchingQuote</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>eof</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions>
+                        <action type="output">reportUnexpectedEof</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>StringEscape</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>simple</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isSimpleEscape</condition>
+                    <destination>String</destination>
+                    <transite_destination>String</transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSimpleEscape</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>eof</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions>
+                        <action type="output">reportUnexpectedEof</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>quote</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isQuote</condition>
+                    <destination>String</destination>
+                    <transite_destination>String</transite_destination>
+                    <transitionactions>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+            </transitions>
+        </state>
+        <state>
+            <name>UnicodeEscape</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions/>
+        </state>
+        <state>
+            <name>Whitespace</name>
+            <comment></comment>
+            <incomeactions/>
+            <outcomeactions/>
+            <transitions>
+                <transition type="simple">
+                    <name>comment</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isSlash</condition>
+                    <destination>MayBeComment</destination>
+                    <transite_destination>MayBeComment</transite_destination>
+                    <transitionactions>
+                        <action type="output">addSymbol</action>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>skip</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isWhitespace</condition>
+                    <destination></destination>
+                    <transite_destination></transite_destination>
+                    <transitionactions/>
+                </transition>
+                <transition type="simple">
+                    <name>color</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isHash</condition>
+                    <destination>Color</destination>
+                    <transite_destination>Color</transite_destination>
+                    <transitionactions/>
+                </transition>
+                <transition type="simple">
+                    <name>ident</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isLetter</condition>
+                    <destination>Identifier</destination>
+                    <transite_destination>Identifier</transite_destination>
+                    <transitionactions/>
+                </transition>
+                <transition type="simple">
+                    <name>quote</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isQuote</condition>
+                    <destination>String</destination>
+                    <transite_destination>String</transite_destination>
+                    <transitionactions>
+                        <action type="output">storeOpenQuote</action>
+                        <action type="output">addString</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>number</name>
+                    <comment></comment>
+                    <condition>isDigit</condition>
+                    <destination>Number</destination>
+                    <transite_destination>Number</transite_destination>
+                    <transitionactions/>
+                </transition>
+                <transition type="simple">
+                    <name>eq</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isCompoundSymbolStart</condition>
+                    <destination>CompoundEq</destination>
+                    <transite_destination>CompoundEq</transite_destination>
+                    <transitionactions>
+                        <action type="output">addSymbol</action>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>and</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isAnd</condition>
+                    <destination>And</destination>
+                    <transite_destination>And</transite_destination>
+                    <transitionactions>
+                        <action type="output">addSymbol</action>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>or</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isOr</condition>
+                    <destination>Or</destination>
+                    <transite_destination>Or</transite_destination>
+                    <transitionactions>
+                        <action type="output">addSymbol</action>
+                        <action type="output">appendSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>symbol</name>
+                    <comment></comment>
+                    <condition>Symbol &amp;&amp; isSymbol</condition>
+                    <destination>Whitespace</destination>
+                    <transite_destination>Whitespace</transite_destination>
+                    <transitionactions>
+                        <action type="output">addSymbol</action>
+                        <action type="output">appendSymbol</action>
+                        <action type="output">produceToken</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>unexpected</name>
+                    <comment></comment>
+                    <condition>Symbol</condition>
+                    <destination>Error</destination>
+                    <transite_destination>Error</transite_destination>
+                    <transitionactions>
+                        <action type="output">reportUnexpectedSymbol</action>
+                    </transitionactions>
+                </transition>
+                <transition type="simple">
+                    <name>eof</name>
+                    <comment></comment>
+                    <condition>Eof</condition>
+                    <destination>End</destination>
+                    <transite_destination>End</transite_destination>
+                    <transitionactions/>
+                </transition>
+            </transitions>
+        </state>
+    </statemachine>
+    <graphics>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">And</qstring>
+                <QPoint name="position">
+                    <int>-667</int>
+                    <int>-209</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">AvoidTriple</qstring>
+                <QPoint name="position">
+                    <int>-656</int>
+                    <int>-103</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Color</qstring>
+                <QPoint name="position">
+                    <int>-370</int>
+                    <int>-301</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Comment</qstring>
+                <QPoint name="position">
+                    <int>-631</int>
+                    <int>137</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">CompoundEq</qstring>
+                <QPoint name="position">
+                    <int>-543</int>
+                    <int>-233</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">End</qstring>
+                <QPoint name="position">
+                    <int>31</int>
+                    <int>280</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Error</qstring>
+                <QPoint name="position">
+                    <int>-131</int>
+                    <int>255</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Float</qstring>
+                <QPoint name="position">
+                    <int>30</int>
+                    <int>133</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Identifier</qstring>
+                <QPoint name="position">
+                    <int>-212</int>
+                    <int>-202</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">MayBeComment</qstring>
+                <QPoint name="position">
+                    <int>-796</int>
+                    <int>56</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Number</qstring>
+                <QPoint name="position">
+                    <int>-251</int>
+                    <int>148</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Or</qstring>
+                <QPoint name="position">
+                    <int>-785</int>
+                    <int>-85</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">String</qstring>
+                <QPoint name="position">
+                    <int>-192</int>
+                    <int>-33</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">StringEscape</qstring>
+                <QPoint name="position">
+                    <int>-24</int>
+                    <int>-44</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">UnicodeEscape</qstring>
+                <QPoint name="position">
+                    <int>200</int>
+                    <int>-41</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GStateSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GStateSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <QPoint name="position">
+                    <int>-432</int>
+                    <int>-19</int>
+                </QPoint>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">And</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">And</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-512</int>
+                        <int>-143</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">And</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-206</int>
+                        <int>-4</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">AvoidTriple</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-503</int>
+                        <int>-113</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">AvoidTriple</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">AvoidTriple</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-443</int>
+                        <int>-132</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-158</int>
+                        <int>43</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Color</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-340</int>
+                        <int>-196</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Color</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-299</int>
+                        <int>-304</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-314</int>
+                        <int>-266</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Color</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Color</qstring>
+                <int name="transition">3</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Comment</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-457</int>
+                        <int>112</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Comment</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-265</int>
+                        <int>320</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">CompoundEq</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-420</int>
+                        <int>-141</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">CompoundEq</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-461</int>
+                        <int>-126</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Float</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>114</int>
+                        <int>132</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>92</int>
+                        <int>182</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Float</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Float</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Float</qstring>
+                <int name="transition">3</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Identifier</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-159</int>
+                        <int>-268</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-217</int>
+                        <int>-268</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Identifier</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-277</int>
+                        <int>-94</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Identifier</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>106</int>
+                        <int>-129</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>153</int>
+                        <int>113</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">MayBeComment</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-701</int>
+                        <int>101</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">MayBeComment</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-549</int>
+                        <int>43</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Number</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-279</int>
+                        <int>205</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-227</int>
+                        <int>221</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Number</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-80</int>
+                        <int>173</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Number</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-282</int>
+                        <int>42</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Number</qstring>
+                <int name="transition">3</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Or</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Or</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Or</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-537</int>
+                        <int>103</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">String</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-95</int>
+                        <int>-69</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">String</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-149</int>
+                        <int>-115</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-206</int>
+                        <int>-112</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">String</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-273</int>
+                        <int>0</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">String</qstring>
+                <int name="transition">3</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">StringEscape</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-88</int>
+                        <int>-26</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">StringEscape</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points"/>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">StringEscape</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-85</int>
+                        <int>15</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">0</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-618</int>
+                        <int>3</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">1</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-435</int>
+                        <int>53</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-477</int>
+                        <int>21</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">2</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-397</int>
+                        <int>-239</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">3</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-324</int>
+                        <int>-132</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">4</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-282</int>
+                        <int>-63</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">5</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-353</int>
+                        <int>69</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">6</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-406</int>
+                        <int>-193</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">7</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-488</int>
+                        <int>-183</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">8</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-657</int>
+                        <int>-9</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">9</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-495</int>
+                        <int>-75</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-512</int>
+                        <int>-26</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">10</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-369</int>
+                        <int>218</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+        <class classname="GTransitionSaver">
+            <meta classname="GSaver">
+                <data classname="GSaver"/>
+            </meta>
+            <data classname="GTransitionSaver">
+                <qstring name="stateName">Whitespace</qstring>
+                <int name="transition">11</int>
+                <qvaluelist name="points">
+                    <QPoint>
+                        <int>-428</int>
+                        <int>159</int>
+                    </QPoint>
+                    <QPoint>
+                        <int>-232</int>
+                        <int>302</int>
+                    </QPoint>
+                </qvaluelist>
+            </data>
+        </class>
+    </graphics>
+</FSM>
