@@ -18,6 +18,7 @@ import {View} from "./view";
 import _ from "lodash";
 import {ReactView, ReactViewState} from "./react_views";
 import {Button} from "./primitives";
+import {Observable} from "rxjs";
 
 export class Engine {
     readonly inputs = new Inputs(this);
@@ -108,8 +109,16 @@ export class Engine {
         this.views[key] = new ViewReference(createComponent);
     }
 
+    registerInput(name: string, type: TypeDefinition, sink: Observable<any>): void {
+        this.inputs.registerInput(name, type, sink);
+    }
+
     registerButton(key: string, onClick: () => Promise<void>) {
         this.views[key] = new Button(onClick);
+    }
+
+    registerEnum(name: string, values: Dictionary<any>): void {
+        this.types.registerEnum(new EnumDefinition(this, name, values));
     }
 
     viewForKey(key: string): View {

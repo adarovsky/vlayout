@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1ac523b7-c367-4e44-8563-d16ccb3f6bc0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/syntax.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine.ts" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +77,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1569220426404</updated>
-      <workItem from="1569220427621" duration="5462000" />
+      <workItem from="1569220427621" duration="9057000" />
     </task>
     <task id="LOCAL-00001" summary="v. 1.0.0">
       <created>1569220619793</created>
@@ -99,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569225097034</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added trais auto-build">
+      <created>1569226318953</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1569226318953</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -120,6 +128,7 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="v. 1.0.0" />
     <MESSAGE value="updateed sscreenshot" />
-    <option name="LAST_COMMIT_MESSAGE" value="updateed sscreenshot" />
+    <MESSAGE value="Added trais auto-build" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added trais auto-build" />
   </component>
 </project>
