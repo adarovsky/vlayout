@@ -1,6 +1,6 @@
-import {ReactContainer} from "./react_views";
+import {ReactContainer, ReactViewProps, ReactViewState} from "./react_views";
 import {ViewProperty} from "./view";
-import React from "react";
+import React, {CSSProperties, ReactPropTypes} from "react";
 import {combineLatest} from "rxjs";
 import {takeWhile} from "rxjs/operators";
 import {resizeObserver} from "./resize_sensor";
@@ -138,6 +138,13 @@ export class ReactStackLayout extends ReactContainer {
 }
 
 export class ReactLayer extends ReactContainer {
+    state: ReactViewState = {
+        style: {
+            width: '100%',
+            height: '100%'
+        }
+    };
+
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('z_order'));
     }
@@ -147,13 +154,6 @@ export class ReactLayer extends ReactContainer {
         let index = props.findIndex(x => x.name === 'z_order');
         if (index >= 0)
             r.zIndex = value[index];
-        r.width = '100%';
-        r.height = '100%';
-        return r;
-    }
-
-    style(): React.CSSProperties {
-        const r = super.style();
         r.width = '100%';
         r.height = '100%';
         return r;
