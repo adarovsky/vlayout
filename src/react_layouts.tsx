@@ -104,8 +104,11 @@ export class ReactStackLayout extends ReactContainer {
                             maxWidth < sizes[i].width)
                             maxWidth = sizes[i].width;
                     }
-                    console.log(`updating stack width to ${maxWidth}`);
-                    self.style.width = maxWidth + 'px';
+
+                    if (maxWidth > 0) {
+                        console.log(`updating stack width to ${maxWidth}`);
+                        self.style.width = maxWidth + 'px';
+                    }
                 }
 
                 if (!this.state.style.height) {
@@ -116,8 +119,11 @@ export class ReactStackLayout extends ReactContainer {
                             maxHeight < sizes[i].height)
                             maxHeight = sizes[i].height;
                     }
-                    console.log(`updating stack height to ${maxHeight}`);
-                    self.style.height = maxHeight + 'px';
+
+                    if (maxHeight > 0) {
+                        console.log(`updating stack height to ${maxHeight}`);
+                        self.style.height = maxHeight + 'px';
+                    }
                 }
                 console.log(`update complete: ${self.style.width}`);
             }
@@ -141,6 +147,15 @@ export class ReactLayer extends ReactContainer {
         let index = props.findIndex(x => x.name === 'z_order');
         if (index >= 0)
             r.zIndex = value[index];
+        r.width = '100%';
+        r.height = '100%';
+        return r;
+    }
+
+    style(): React.CSSProperties {
+        const r = super.style();
+        r.width = '100%';
+        r.height = '100%';
         return r;
     }
 }

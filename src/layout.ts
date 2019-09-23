@@ -589,15 +589,31 @@ export class Layout extends Component<LayoutProps, LayoutState> {
         return null;
     }
 
-    private parseContainerContents(container: Container): boolean {
-        while (this.parseViewPaddings(container) ||
-            this.parseViewCenter(container) ||
-            this.parseViewSize(container) ||
-            this.parseViewProperty(container, 'aspect', 'aspect') ||
-            this.parseButtonContentPadding(container)) {}
+    private parsePredefinedProperty(name: LexIdentifier, view: View): boolean {
+        switch (name.content) {
+            case 'padding':
+            case 'contentPadding':
+                this.parseViewProperties(view, name.content, 'left', 'right', 'top', 'bottom');
+                return true;
+            case 'size':
+            case 'fixedSize':
+                this.parseViewProperties(view, name.content, 'width', 'height');
+                return true;
+            case 'center':
+                this.parseViewProperties(view, name.content, 'x', 'y');
+                return true;
+            case 'aspect':
+                this.parseViewProperty(view, name.content, name.content);
+                return true;
+            default:
+                return false;
+        }
+    }
 
+    private parseContainerContents(container: Container): boolean {
         const name = this.matchIdentifier();
         if (name) {
+            if (this.parsePredefinedProperty(name, container)) return true;
             if (this.match('{')) {
                 const view = this.viewForKey(name.content);
                 if (!view) {
@@ -638,15 +654,10 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     }
 
     private parseViewContents(view: View): boolean {
-
-        while (this.parseViewPaddings(view) ||
-        this.parseViewCenter(view) ||
-        this.parseViewSize(view) ||
-        this.parseViewProperty(view, 'aspect', 'aspect') ||
-        this.parseButtonContentPadding(view)) {}
-
         const name = this.matchIdentifier();
         if (name) {
+            if (this.parsePredefinedProperty(name, view)) return true;
+
             this.matchOrFail(':');
             const exp = this.parseExpression();
             if (!exp) {
@@ -667,83 +678,18 @@ export class Layout extends Component<LayoutProps, LayoutState> {
         return false;
     }
 
-    private parseViewPaddings(view: View): boolean {
-        if (this.match('padding')) {
-            this.matchOrFail('{');
-            let matched = true;
-            while (matched) {
-                matched = false;
-
-                for (let t of ['left', 'right', 'top', 'bottom']) {
-                    if (this.parseViewProperty(view, t, 'padding.' + t)) {
-                        matched = true;
-                    }
+    private parseViewProperties(view: View, prefix: string, ...names: string[]): void {
+        this.matchOrFail('{');
+        let matched = true;
+        while (matched) {
+            matched = false;
+            for (let t of names) {
+                if (this.parseViewProperty(view, t, prefix + '.' + t)) {
+                    matched = true;
                 }
             }
-            this.matchOrFail('}');
-
-            return true;
         }
-
-        return false;
-    }
-
-    private parseViewCenter(view: View): boolean {
-        if (this.match('center')) {
-            this.matchOrFail('{');
-            let matched = true;
-            while (matched) {
-                matched = false;
-
-                for (let t of ['x', 'y']) {
-                    if (this.parseViewProperty(view, t, 'center.' + t)) {
-                        matched = true;
-                    }
-                }
-            }
-            this.matchOrFail('}');
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private parseViewSize(view: View): boolean {
-        if (this.match('size')) {
-            this.matchOrFail('{');
-            let matched = true;
-            while (matched) {
-                matched = false;
-
-                for (let t of ['width', 'height']) {
-                    if (this.parseViewProperty(view, t, 'size.' + t)) {
-                        matched = true;
-                    }
-                }
-            }
-            this.matchOrFail('}');
-
-            return true;
-        }
-        if (this.match('fixedSize')) {
-            this.matchOrFail('{');
-            let matched = true;
-            while (matched) {
-                matched = false;
-
-                for (let t of ['width', 'height']) {
-                    if (this.parseViewProperty(view, t, 'fixedSize.' + t)) {
-                        matched = true;
-                    }
-                }
-            }
-            this.matchOrFail('}');
-
-            return true;
-        }
-
-        return false;
+        this.matchOrFail('}');
     }
 
     private parseViewProperty(view: View, name: string, key: string): boolean {
@@ -756,34 +702,16 @@ export class Layout extends Component<LayoutProps, LayoutState> {
             if (!prop) {
                 this.raiseError(`property  ${name} is not found in view ${view}`);
             }
+
+            if (prop.value) {
+                this.raiseError(`property  ${name} in view ${view} already has value ${prop.value}`);
+            }
             prop.value = exp!;
             prop.line = _propName.line;
             prop.column = _propName.column;
 
             return true;
         }
-        return false;
-    }
-
-    private parseButtonContentPadding(view: View): boolean {
-        if (this.match('contentPadding')) {
-            this.matchOrFail('{');
-
-            let matched = true;
-            while (matched) {
-                matched = false;
-
-                for(let t of ['left', 'right', 'top', 'bottom']) {
-                    if (this.parseViewProperty(view, t, 'contentPadding.' + t)) {
-                        matched = true;
-                    }
-                }
-            }
-
-            this.matchOrFail('}');
-            return true;
-        }
-
         return false;
     }
 

@@ -68,6 +68,11 @@ export class ReactView<S extends ReactViewState> extends Component<ReactViewProp
         }
     }
 
+
+    style(): React.CSSProperties {
+        return this.state.style;
+    }
+
     styleProperties(): ViewProperty[] {
         let props = this.props.parentView.activeProperties.filter(p =>
             p.name.startsWith('padding') ||
@@ -210,7 +215,7 @@ export class ReactView<S extends ReactViewState> extends Component<ReactViewProp
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
-        return (<div style={this.state.style} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}/>);
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}/>);
     }
 
 }
@@ -225,7 +230,7 @@ export class ReactContainer extends ReactView<ReactViewState> {
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
-        return (<div style={this.state.style} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}>
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}>
             {(this.props.parentView as Container).views.map( v => v.target )}
         </div>);
     }
