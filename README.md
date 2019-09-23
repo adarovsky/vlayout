@@ -1,4 +1,4 @@
-# vlayout
+# vlayout [![Build Status](https://travis-ci.org/adarovsky/vlayout.svg?branch=master)](https://travis-ci.org/adarovsky/vlayout)
 A port of simple reactive layout engine running in browsers.
 
 Give it a layout description, wire external views, button click handlers and
