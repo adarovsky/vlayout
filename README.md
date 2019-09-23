@@ -158,8 +158,9 @@ layout {
           }
       }
    }
-}```
-  it results with an image like so: ![screenshot](doc/screenshot1.png)
+}
+```
+  it results with an image like so: ![screenshot](doc/screenshot1.png?raw=true)
 
   Try to experiment with changing propery values. These are all expressions, not constants! For example, you can change
   button corner radius like so
