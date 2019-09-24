@@ -5,7 +5,13 @@ import _ from "lodash";
 import React, {createElement} from "react";
 import {ReactContainer} from "./react_views";
 import uuid from "uuid";
-import {ReactHorizontalLayout, ReactLayer, ReactStackLayout, ReactVerticalLayout} from "./react_layouts";
+import {
+    ReactHorizontalLayout,
+    ReactLayer,
+    ReactStackLayout,
+    ReactTopLayout,
+    ReactVerticalLayout
+} from "./react_layouts";
 import {LexNumber} from "./lexer";
 import {take} from "rxjs/operators";
 
@@ -215,7 +221,7 @@ export class LayoutView extends Container {
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactStackLayout, {parentView: this, key: this.key});
+        return createElement(ReactTopLayout, {parentView: this, key: this.key});
     }
 }
 

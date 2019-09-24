@@ -24,7 +24,8 @@ export class Engine {
     readonly inputs = new Inputs(this);
     readonly types = new Types(this);
     readonly functions: FunctionImplementationI[];
-    private readonly views: Dictionary<View> = {};
+    private readonly referencedViews: Dictionary<ViewReference> = {};
+    private readonly buttons: Dictionary<() => Promise<void>> = {};
 
     constructor() {
         this.functions = [
@@ -106,7 +107,7 @@ export class Engine {
     }
 
     registerView(key: string, createComponent: <P extends ReactViewState>(parent: ViewReference) => React.ReactElement<ReactView<P>, React.JSXElementConstructor<P>>) {
-        this.views[key] = new ViewReference(createComponent);
+        this.referencedViews[key] = new ViewReference(createComponent);
     }
 
     registerInput(name: string, type: TypeDefinition, sink: Observable<any>): void {
@@ -114,14 +115,19 @@ export class Engine {
     }
 
     registerButton(key: string, onClick: () => Promise<void>) {
-        this.views[key] = new Button(onClick);
+        this.buttons[key] = onClick;
     }
 
     registerEnum(name: string, values: Dictionary<any>): void {
         this.types.registerEnum(new EnumDefinition(this, name, values));
     }
 
-    viewForKey(key: string): View {
-        return this.views[key];
+    viewForKey(key: string): View|null {
+        if (this.buttons[key])
+            return new Button(this.buttons[key]);
+        else if (this.referencedViews[key])
+            return new ViewReference(this.referencedViews[key].createComponent);
+        else
+            return null;
     }
 }

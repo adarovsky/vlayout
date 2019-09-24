@@ -1,27 +1,21 @@
-import {ReactContainer, ReactViewState} from "./react_views";
+import {ReactContainer, ReactContainerState, ReactViewState} from "./react_views";
 import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
-import {combineLatest} from "rxjs";
+import {combineLatest, Subscription} from "rxjs";
 import {takeWhile} from "rxjs/operators";
 import {resizeObserver} from "./resize_sensor";
 import _ from "lodash";
 
 class ReactLinearLayout extends ReactContainer {
-    state: { spacing: number; style: CSSProperties, childrenVisible: boolean[] } = {
-        style: {},
+    state = {
         spacing: 0,
+        style: {},
         childrenVisible: []
     };
 
     componentDidMount(): void {
         super.componentDidMount();
         this.wire('spacing', 'spacing', _.identity);
-
-        const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink)
-
-        this.subscription.add(combineLatest(props).subscribe( value => {
-            this.setState(s => _.extend(s, {childrenVisible: value}));
-        }));
     }
 
     protected spacerStyle(): CSSProperties {
@@ -53,8 +47,9 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
         const r = super.styleValue(props, value);
         r.flexDirection = 'row';
         r.justifyContent = 'stretch';
+        r.display = 'flex';
 
-        let index = props.findIndex(p => p.name === 'alignment');
+        const index = props.findIndex(p => p.name === 'alignment');
         if (index >= 0) {
             switch (value[index]) {
                 case 'center':
@@ -77,11 +72,6 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
             }
         }
 
-        index = props.findIndex( p => p.name === 'alpha');
-        if (index >= 0) {
-            r.display = value[index] > 0 ? 'flex' : 'none';
-        }
-
         return r;
     }
 
@@ -99,8 +89,9 @@ export class ReactVerticalLayout extends ReactLinearLayout {
         const r = super.styleValue(props, value);
         r.flexDirection = 'column';
         r.justifyContent = 'stretch';
+        r.display = 'flex';
 
-        let index = props.findIndex(p => p.name === 'alignment');
+        const index = props.findIndex(p => p.name === 'alignment');
         if (index >= 0) {
             switch (value[index]) {
                 case 'center':
@@ -123,11 +114,6 @@ export class ReactVerticalLayout extends ReactLinearLayout {
             }
         }
 
-        index = props.findIndex( p => p.name === 'alpha');
-        if (index >= 0) {
-            r.display = value[index] > 0 ? 'flex' : 'none';
-        }
-
         return r;
     }
 
@@ -137,9 +123,14 @@ export class ReactVerticalLayout extends ReactLinearLayout {
 }
 
 export class ReactStackLayout extends ReactContainer {
-    componentDidMount(): void {
-        super.componentDidMount();
+    protected subviewSubscription: Subscription = new Subscription();
 
+    componentWillUnmount(): void {
+        super.componentWillUnmount();
+        this.subviewSubscription.unsubscribe();
+    }
+
+    protected updateSubviewPositions(): void {
         let self = this.viewRef.current as HTMLElement;
         let container: HTMLElement[] = [self];
         let child = self.firstElementChild;
@@ -148,41 +139,42 @@ export class ReactStackLayout extends ReactContainer {
             child = child.nextElementSibling;
         }
 
-        this.subscription.add(combineLatest(container.map(c => resizeObserver(c)))
+        this.subviewSubscription.unsubscribe();
+        this.subviewSubscription = combineLatest(container.map(c => resizeObserver(c)))
             .pipe(takeWhile(() => !this.state.style.width || !this.state.style.height))
             .subscribe(sizes => {
-                if (!this.state.style.width) {
-                    let maxWidth = 0;
-                    for (let i = 1; i < sizes.length; ++i) {
-                        if (container[i].style.width !== null &&
-                            !container[i].style.width!.endsWith('%') &&
-                            maxWidth < sizes[i].width)
-                            maxWidth = sizes[i].width;
+                    if (!this.state.style.width) {
+                        let maxWidth = 0;
+                        for (let i = 1; i < sizes.length; ++i) {
+                            if (container[i].style.width !== null &&
+                                !container[i].style.width!.endsWith('%') &&
+                                maxWidth < sizes[i].width)
+                                maxWidth = sizes[i].width;
+                        }
+
+                        if (maxWidth > 0) {
+                            console.log(`updating stack width to ${maxWidth}`);
+                            self.style.width = maxWidth + 'px';
+                        }
                     }
 
-                    if (maxWidth > 0) {
-                        console.log(`updating stack width to ${maxWidth}`);
-                        self.style.width = maxWidth + 'px';
+                    if (!this.state.style.height) {
+                        let maxHeight = 0;
+                        for (let i = 1; i < sizes.length; ++i) {
+                            if (container[i].style.height !== null &&
+                                !container[i].style.height!.endsWith('%') &&
+                                maxHeight < sizes[i].height)
+                                maxHeight = sizes[i].height;
+                        }
+
+                        if (maxHeight > 0) {
+                            console.log(`updating stack height to ${maxHeight}`);
+                            self.style.height = maxHeight + 'px';
+                        }
                     }
+                    console.log(`update complete: ${self.style.width}`);
                 }
-
-                if (!this.state.style.height) {
-                    let maxHeight = 0;
-                    for (let i = 1; i < sizes.length; ++i) {
-                        if (container[i].style.height !== null &&
-                            !container[i].style.height!.endsWith('%') &&
-                            maxHeight < sizes[i].height)
-                            maxHeight = sizes[i].height;
-                    }
-
-                    if (maxHeight > 0) {
-                        console.log(`updating stack height to ${maxHeight}`);
-                        self.style.height = maxHeight + 'px';
-                    }
-                }
-                console.log(`update complete: ${self.style.width}`);
-            }
-        ));
+            );
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -193,7 +185,8 @@ export class ReactStackLayout extends ReactContainer {
 }
 
 export class ReactLayer extends ReactContainer {
-    state: ReactViewState = {
+    state: ReactContainerState = {
+        childrenVisible: [],
         style: {
             width: '100%',
             height: '100%'
@@ -212,5 +205,10 @@ export class ReactLayer extends ReactContainer {
         r.width = '100%';
         r.height = '100%';
         return r;
+    }
+}
+
+export class ReactTopLayout extends ReactStackLayout {
+    protected updateSubviewPositions(): void {
     }
 }

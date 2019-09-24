@@ -192,9 +192,6 @@ export class ReactView<S extends ReactViewState> extends Component<ReactViewProp
                     if (val < 1 && val > 0) {
                         r.opacity = val;
                     }
-                    else if (val === 0) {
-                        r.display = 'none';
-                    }
                     break;
             }
 
@@ -220,7 +217,30 @@ export class ReactView<S extends ReactViewState> extends Component<ReactViewProp
 
 }
 
-export class ReactContainer extends ReactView<ReactViewState> {
+export interface ReactContainerState {
+    style: CSSProperties;
+    childrenVisible: boolean[];
+}
+
+export class ReactContainer extends ReactView<ReactContainerState> {
+    state: ReactContainerState = {
+        style: {},
+        childrenVisible: []
+    };
+
+    componentDidMount(): void {
+        super.componentDidMount();
+
+        const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink)
+
+        this.subscription.add(combineLatest(props).subscribe( value => {
+            this.setState(s => _.extend(s, {childrenVisible: value}));
+            this.updateSubviewPositions();
+        }));
+    }
+
+    protected updateSubviewPositions(): void {
+    }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
@@ -231,7 +251,9 @@ export class ReactContainer extends ReactView<ReactViewState> {
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
         return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}>
-            {(this.props.parentView as Container).views.map( v => v.target )}
+            {(this.props.parentView as Container).views
+                .filter((v, index) => this.state.childrenVisible[index])
+                .map( v => v.target )}
         </div>);
     }
 }

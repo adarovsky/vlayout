@@ -88,6 +88,7 @@ export class ReactButton extends ReactRoundRect {
         const r = super.styleValue(props, value);
         let imagePosition = 'leftToText';
 
+        r.display = 'flex';
         r.cursor = 'pointer';
         _.forEach(value, (val, index) => {
             switch (props[index].name) {

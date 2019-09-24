@@ -1,5 +1,5 @@
 import {Observable} from "rxjs";
-import {distinctUntilChanged, shareReplay} from "rxjs/operators";
+import {distinctUntilChanged, refCount, share, shareReplay} from "rxjs/operators";
 import _ from "lodash";
 
 const observers: [Element, Observable<ElementSize>][] = [];
@@ -103,7 +103,7 @@ export function resizeObserver(element: Element): Observable<ElementSize> {
             const index = observers.findIndex( o => o[0] === element);
             if (index >= 0) observers.splice(index, 1);
         }
-    }).pipe(distinctUntilChanged(_.isEqual), shareReplay(1));
+    }).pipe(distinctUntilChanged(_.isEqual), shareReplay({bufferSize: 1, refCount: true}));
 
     observers.push([element, observer]);
     return observer;
