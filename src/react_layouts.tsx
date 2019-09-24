@@ -1,12 +1,50 @@
-import {ReactContainer, ReactViewProps, ReactViewState} from "./react_views";
-import {ViewProperty} from "./view";
-import React, {CSSProperties, ReactPropTypes} from "react";
+import {ReactContainer, ReactViewState} from "./react_views";
+import {Container, ViewProperty} from "./view";
+import React, {CSSProperties} from "react";
 import {combineLatest} from "rxjs";
 import {takeWhile} from "rxjs/operators";
 import {resizeObserver} from "./resize_sensor";
+import _ from "lodash";
 
-export class ReactHorizontalLayout extends ReactContainer {
+class ReactLinearLayout extends ReactContainer {
+    state: { spacing: number; style: CSSProperties, childrenVisible: boolean[] } = {
+        style: {},
+        spacing: 0,
+        childrenVisible: []
+    };
 
+    componentDidMount(): void {
+        super.componentDidMount();
+        this.wire('spacing', 'spacing', _.identity);
+
+        const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink)
+
+        this.subscription.add(combineLatest(props).subscribe( value => {
+            this.setState(s => _.extend(s, {childrenVisible: value}));
+        }));
+    }
+
+    protected spacerStyle(): CSSProperties {
+        return {width: this.state.spacing + 'px'}
+    }
+
+    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+        // @ts-ignore
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}>
+            {(this.props.parentView as Container).views
+                .filter((v, index) => this.state.childrenVisible[index])
+                .flatMap( (v, index) => {
+                    const result = [v.target];
+                    if (index > 0 && this.state.spacing)
+                        result.unshift(<div style={this.spacerStyle()}/>);
+                    return result;
+                })}
+        </div>);
+    }
+
+}
+
+export class ReactHorizontalLayout extends ReactLinearLayout {
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));
     }
@@ -46,13 +84,16 @@ export class ReactHorizontalLayout extends ReactContainer {
 
         return r;
     }
+
+    protected spacerStyle(): CSSProperties {
+        return {width: this.state.spacing + 'px'}
+    }
 }
 
-export class ReactVerticalLayout extends ReactContainer {
+export class ReactVerticalLayout extends ReactLinearLayout {
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));
     }
-
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
@@ -88,6 +129,10 @@ export class ReactVerticalLayout extends ReactContainer {
         }
 
         return r;
+    }
+
+    protected spacerStyle(): CSSProperties {
+        return {height: this.state.spacing + 'px'}
     }
 }
 
