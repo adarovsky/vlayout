@@ -36,7 +36,7 @@ class ReactLinearLayout extends ReactContainer {
                 .flatMap( (v, index) => {
                     const result = [v.target];
                     if (index > 0 && this.state.spacing)
-                        result.unshift(<div style={this.spacerStyle()}/>);
+                        result.unshift(<div style={this.spacerStyle()} key={index}/>);
                     return result;
                 })}
         </div>);
