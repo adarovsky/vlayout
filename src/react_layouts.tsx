@@ -13,11 +13,10 @@ export class ReactHorizontalLayout extends ReactContainer {
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        r.display = 'flex';
         r.flexDirection = 'row';
         r.justifyContent = 'stretch';
 
-        const index = props.findIndex(p => p.name === 'alignment');
+        let index = props.findIndex(p => p.name === 'alignment');
         if (index >= 0) {
             switch (value[index]) {
                 case 'center':
@@ -39,6 +38,12 @@ export class ReactHorizontalLayout extends ReactContainer {
                     break;
             }
         }
+
+        index = props.findIndex( p => p.name === 'alpha');
+        if (index >= 0) {
+            r.display = value[index] > 0 ? 'flex' : 'none';
+        }
+
         return r;
     }
 }
@@ -51,11 +56,10 @@ export class ReactVerticalLayout extends ReactContainer {
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        r.display = 'flex';
         r.flexDirection = 'column';
         r.justifyContent = 'stretch';
 
-        const index = props.findIndex(p => p.name === 'alignment');
+        let index = props.findIndex(p => p.name === 'alignment');
         if (index >= 0) {
             switch (value[index]) {
                 case 'center':
@@ -77,6 +81,12 @@ export class ReactVerticalLayout extends ReactContainer {
                     break;
             }
         }
+
+        index = props.findIndex( p => p.name === 'alpha');
+        if (index >= 0) {
+            r.display = value[index] > 0 ? 'flex' : 'none';
+        }
+
         return r;
     }
 }

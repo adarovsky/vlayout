@@ -125,10 +125,13 @@ export class ReactButton extends ReactRoundRect {
                 case 'imagePosition':
                     imagePosition = val;
                     break;
+                case 'alpha':
+                    r.display = val > 0 ? 'flex' : 'none';
+                    break;
             }
         });
 
-        r.display = 'flex';
+
         r.alignItems = 'center';
         r.textDecoration = 'none';
 

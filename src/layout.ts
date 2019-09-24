@@ -703,9 +703,9 @@ export class Layout extends Component<LayoutProps, LayoutState> {
                 this.raiseError(`property  ${name} is not found in view ${view}`);
             }
 
-            if (prop.value) {
-                this.raiseError(`property  ${name} in view ${view} already has value ${prop.value}`);
-            }
+            // if (prop.value) {
+            //     this.raiseError(`property  ${name} in view ${view} already has value ${prop.value}`);
+            // }
             prop.value = exp!;
             prop.line = _propName.line;
             prop.column = _propName.column;
