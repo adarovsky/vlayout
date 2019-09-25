@@ -21,6 +21,7 @@
     "rxjs": ">=6.5.3"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.138",
     "uuid": ">=3.3.3"
   },
   "devDependencies": {
@@ -28,14 +29,11 @@
     "react": "^16.9.0",
     "typescript": "3.6.3",
     "@types/jest": "24.0.18",
-    "@types/lodash": "^4.14.138",
     "@types/node": "12.7.5",
     "@types/react-dom": "16.9.0",
     "@types/uuid": "^3.4.5",
     "react-dom": "^16.9.0",
-    "react-scripts": "^3.1.1",
     "rxjs": "^6.5.3",
-    "rxjs-tslint": "^0.1.7",
     "uuid": "^3.3.3"
   }
 }

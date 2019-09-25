@@ -1,0 +1,41 @@
+bindings {
+    myButton: button
+}
+
+inputs {
+    counter: Number
+}
+
+layout {
+   layer {
+      id: "background"
+      z_order: 1
+
+      roundRect {
+          center { x: 0.5 y: 0.5 }
+          size { width: 0.8 }
+          aspect: counter % 2 == 1 ? 16/9 : 16/10
+          backgroundColor: #cccccc
+      }
+   }
+
+   layer {
+      id: "label"
+      z_order: 2
+
+      vertical {
+          alignment: .center
+          center { x: 0.5 y: 0.5 }
+          label {
+              text: String(counter)
+          }
+          myButton {
+              backgroundColor: #dddddd
+              strokeColor: #aaaaaa
+              strokeWidth: 4
+              text: "Click me"
+              cornerRadius: 0.5
+          }
+      }
+   }
+}

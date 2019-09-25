@@ -603,7 +603,7 @@ export class Layout extends Component<LayoutProps, LayoutState> {
                 this.parseViewProperties(view, name.content, 'x', 'y');
                 return true;
             case 'aspect':
-                this.parseViewProperty(view, name.content, name.content);
+                this.parsePropertyContents(view, name.content, name.content, name);
                 return true;
             default:
                 return false;
@@ -694,25 +694,29 @@ export class Layout extends Component<LayoutProps, LayoutState> {
 
     private parseViewProperty(view: View, name: string, key: string): boolean {
         if (this.match(name)) {
-            const _propName = this._lastMatched!;
-            this.matchOrFail(':');
-            const exp = this.parseExpression();
-            const prop = view.property(key);
-
-            if (!prop) {
-                this.raiseError(`property  ${name} is not found in view ${view}`);
-            }
-
-            if (prop.value) {
-                this.raiseError(`property  ${name} in view ${view} already has value ${prop.value}`);
-            }
-            prop.value = exp!;
-            prop.line = _propName.line;
-            prop.column = _propName.column;
+            const propName = this._lastMatched!;
+            this.parsePropertyContents(view, name, key, propName);
 
             return true;
         }
         return false;
+    }
+
+    private parsePropertyContents(view: View, name: string, key: string, propName: LexToken) {
+        this.matchOrFail(':');
+        const exp = this.parseExpression();
+        const prop = view.property(key);
+
+        if (!prop) {
+            this.raiseError(`property  ${name} is not found in view ${view}`);
+        }
+
+        if (prop.value) {
+            this.raiseError(`property  ${name} in view ${view} already has value ${prop.value}`);
+        }
+        prop.value = exp!;
+        prop.line = propName.line;
+        prop.column = propName.column;
     }
 
     private viewForKey(key: string): View|null {
