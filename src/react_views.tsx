@@ -199,10 +199,10 @@ export class ReactView<S extends ReactViewState> extends Component<ReactViewProp
                 const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
                 r.zIndex = index + 1;
 
-                if (!r.width)
-                    r.width = '100%';
-                if (!r.height)
-                    r.height = '100%';
+                // if (!r.width)
+                    r.minWidth = '100%';
+                // if (!r.height)
+                    r.minHeight = '100%';
             }
 
         });
@@ -234,8 +234,12 @@ export class ReactContainer extends ReactView<ReactContainerState> {
 
         this.subscription.add(combineLatest(props).subscribe( value => {
             this.setState(s => _.extend(s, {childrenVisible: value}));
-            this.updateSubviewPositions();
+            // this.updateSubviewPositions();
         }));
+    }
+
+    componentDidUpdate(prevProps: Readonly<ReactViewProps>, prevState: Readonly<ReactContainerState>, snapshot?: any): void {
+        this.updateSubviewPositions();
     }
 
     protected updateSubviewPositions(): void {

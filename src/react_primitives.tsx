@@ -73,6 +73,11 @@ export class ReactLabel extends ReactView<ReactLabelState> {
                     break;
             }
         });
+
+        if (!r.width) {
+            r.whiteSpace = 'nowrap';
+        }
+
         return r;
     }
 

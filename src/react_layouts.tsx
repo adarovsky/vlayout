@@ -141,8 +141,9 @@ export class ReactStackLayout extends ReactContainer {
 
         this.subviewSubscription.unsubscribe();
         this.subviewSubscription = combineLatest(container.map(c => resizeObserver(c)))
-            .pipe(takeWhile(() => !this.state.style.width || !this.state.style.height))
+            // .pipe(takeWhile(() => !this.state.style.width || !this.state.style.height))
             .subscribe(sizes => {
+                console.log("sizes:", sizes);
                     if (!this.state.style.width) {
                         let maxWidth = 0;
                         for (let i = 1; i < sizes.length; ++i) {

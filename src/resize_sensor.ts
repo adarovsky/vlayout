@@ -71,6 +71,7 @@ export function resizeObserver(element: Element): Observable<ElementSize> {
 
         let currentWidth = size.width;
         let currentHeight = size.height;
+        subscriber.next({width: currentWidth, height: currentHeight});
 
         let onScroll = function () {
             let size = element.getBoundingClientRect();
