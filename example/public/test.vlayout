@@ -13,8 +13,8 @@ layout {
 
       roundRect {
           center { x: 0.5 y: 0.5 }
-          size { width: 0.8 }
-          aspect: counter % 2 == 1 ? 16/9 : 16/10
+          size { width: 0.8 height: counter % 2 == 1 ? nil : 0.3 }
+          aspect: counter % 2 == 1 ? 16/9 : nil
           backgroundColor: #cccccc
       }
    }

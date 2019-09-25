@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import {Engine, Layout} from '@adarovsky/vlayout';
-import {EMPTY, interval} from "rxjs";
+import {EMPTY, interval, of} from "rxjs";
 import {delay, pluck, scan, startWith} from "rxjs/operators";
 
 class App extends Component {
@@ -17,7 +17,7 @@ class App extends Component {
     super(props);
 
     this.engine = new Engine();
-    this.engine.inputs.registerInput("counter", this.engine.numberType(), interval(1000).pipe(
+    this.engine.inputs.registerInput("counter", this.engine.numberType(), interval(5000).pipe(
         startWith(0),
         scan((acc, one) => {
           const [cur, delta] = acc;
@@ -29,6 +29,7 @@ class App extends Component {
         }, [1, -1]),
         pluck(0)
     ));
+    //   this.engine.inputs.registerInput("counter", this.engine.numberType(), of(3));
     // this.engine.registerView('myView', x => <SampleView parentView={x} key={'123'}/>);
     this.engine.registerButton('myButton', async () => {
       console.log('clicked');

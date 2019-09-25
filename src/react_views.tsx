@@ -33,16 +33,15 @@ export class ReactView<S extends ReactViewState> extends Component<ReactViewProp
         const p = this.props.parentView.property('aspect');
         if (p.value) {
             let self = this.viewRef.current as HTMLElement;
-            this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(x=> {
+            this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(([size, aspect])=> {
                 if (this.state.style.width && !this.state.style.height) {
-                    self.style.height = `${x[0].width / x[1]}px`;
+                    self.style.height = aspect !== null ? `${size.width / aspect}px` : null;
                 }
                 else if (!this.state.style.width && this.state.style.height) {
-                    self.style.width = `${x[0].height * x[1]}px`;
+                    self.style.width = aspect !== null ? `${size.height * aspect}px` : null;
                 }
             }));
         }
-
     }
 
     componentWillUnmount(): void {
