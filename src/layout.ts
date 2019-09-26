@@ -843,6 +843,6 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        return this.state.layout ? this.state.layout.target : undefined;
+        return this.state.layout ? this.state.layout.target : null;
     }
 }
