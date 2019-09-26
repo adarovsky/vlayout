@@ -260,3 +260,12 @@ export class ReactContainer extends ReactView<ReactContainerState> {
         </div>);
     }
 }
+
+export class ReactViewReference<S extends ReactViewState> extends ReactView<S> {
+
+    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
+        const r = super.styleValue(props, value);
+        r.pointerEvents = 'auto';
+        return r;
+    }
+}
