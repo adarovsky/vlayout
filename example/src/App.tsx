@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import {Engine, Layout} from '@adarovsky/vlayout';
-import {EMPTY, interval, of} from "rxjs";
+import {EMPTY, interval} from "rxjs";
 import {delay, pluck, scan, startWith} from "rxjs/operators";
 
 class App extends Component {

@@ -27,6 +27,8 @@ export class Engine {
     private readonly referencedViews: Dictionary<ViewReference> = {};
     private readonly buttons: Dictionary<() => Promise<void>> = {};
 
+    readonly valueSnapshot: Dictionary<any> = {};
+
     constructor() {
         this.functions = [
             new LocalizedNumber(this),
@@ -129,5 +131,9 @@ export class Engine {
             return new ViewReference(this.referencedViews[key].createComponent);
         else
             return null;
+    }
+
+    logInputValue(name: string, value: any): void {
+        this.valueSnapshot[name] = value;
     }
 }

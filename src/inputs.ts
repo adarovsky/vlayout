@@ -3,6 +3,7 @@ import {Dictionary, TypeDefinition} from "./types";
 import {Expression} from "./expression";
 import { Observable, ReplaySubject } from "rxjs";
 import {LinkError} from "./errors";
+import {distinctUntilChanged, shareReplay, tap} from "rxjs/operators";
 
 export class Input extends Expression {
     line: number = 0;
@@ -26,9 +27,11 @@ export class Inputs {
 
         const inp = new Input(name);
         inp.typeDefinition = type;
-        const p = new ReplaySubject(1);
-        inp.sink = p;
-        sink.subscribe(p);
+        inp.sink = sink.pipe(
+            distinctUntilChanged(),
+            shareReplay({bufferSize: 1, refCount: true} ),
+            tap( x => this.engine.logInputValue(name, x))
+        );
 
         this.inputs[name] = inp;
     }
