@@ -2,7 +2,7 @@ import React, {CSSProperties} from "react";
 import _ from "lodash";
 import {ViewProperty} from "./view";
 import {ColorContainer, FontContainer, ImageContainer} from "./types";
-import {ReactView, ReactViewState} from "./react_views";
+import {ReactView, ReactViewState, ReactViewProps} from "./react_views";
 import {combineLatest, Observable, of} from "rxjs";
 import {shareReplay} from "rxjs/operators";
 import {ElementSize, resizeObserver} from "./resize_sensor";
@@ -13,7 +13,7 @@ interface ReactLabelState {
     maxLines: number;
 }
 
-export class ReactLabel extends ReactView<ReactLabelState> {
+export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     state: ReactLabelState = {
         style: {},
         text: '',
@@ -96,7 +96,7 @@ export class ReactLabel extends ReactView<ReactLabelState> {
     }
 }
 
-export class ReactImage extends ReactView<{ image: ImageContainer; style: CSSProperties; innerStyle: CSSProperties;}> {
+export class ReactImage extends ReactView<ReactViewProps, { image: ImageContainer; style: CSSProperties; innerStyle: CSSProperties;}> {
     state: { image: ImageContainer; style: {}; innerStyle: CSSProperties;} = {
         style: {},
         image: new ImageContainer(''),
@@ -137,7 +137,7 @@ export class ReactImage extends ReactView<{ image: ImageContainer; style: CSSPro
     }
 }
 
-export class ReactGradient extends ReactView<ReactViewState> {
+export class ReactGradient extends ReactView<ReactViewProps, ReactViewState> {
 
     public styleProperties(): ViewProperty[] {
         const sup = super.styleProperties();
@@ -182,7 +182,7 @@ export class ReactGradient extends ReactView<ReactViewState> {
     }
 }
 
-export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends ReactView<S> {
+export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends ReactView<ReactViewProps, S> {
 
     protected _cornerRadiusWatcher: Observable<[ElementSize, number]>|null = null;
 
@@ -247,7 +247,7 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
     }
 }
 
-export class ReactProgress extends ReactView<{ progressColor: string; style: CSSProperties }> {
+export class ReactProgress extends ReactView<ReactViewProps, { progressColor: string; style: CSSProperties }> {
     state: { progressColor: string; style: CSSProperties } = {
         style: {},
         progressColor: '#ffffff'

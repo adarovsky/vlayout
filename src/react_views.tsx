@@ -15,7 +15,7 @@ export interface ReactViewState {
     style: CSSProperties;
 }
 
-export class ReactView<S extends ReactViewState> extends Component<ReactViewProps, S> {
+export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
     protected readonly  subscription: Subscription = new Subscription();
     protected readonly viewRef = React.createRef();
     componentDidMount(): void {
@@ -50,7 +50,7 @@ export class ReactView<S extends ReactViewState> extends Component<ReactViewProp
         }
     }
 
-    constructor(props: ReactViewProps) {
+    constructor(props: P) {
         super(props);
         // @ts-ignore
         this.state = {style: {}};
@@ -221,7 +221,7 @@ export interface ReactContainerState {
     childrenVisible: boolean[];
 }
 
-export class ReactContainer extends ReactView<ReactContainerState> {
+export class ReactContainer extends ReactView<ReactViewProps, ReactContainerState> {
     state: ReactContainerState = {
         style: {},
         childrenVisible: []
@@ -230,7 +230,7 @@ export class ReactContainer extends ReactView<ReactContainerState> {
     componentDidMount(): void {
         super.componentDidMount();
 
-        const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink)
+        const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink);
 
         this.subscription.add(combineLatest(props).subscribe( value => {
             this.setState(s => _.extend(s, {childrenVisible: value}));
@@ -261,7 +261,7 @@ export class ReactContainer extends ReactView<ReactContainerState> {
     }
 }
 
-export class ReactViewReference<S extends ReactViewState> extends ReactView<S> {
+export class ReactViewReference<P extends ReactViewProps, S extends ReactViewState> extends ReactView<P, S> {
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);

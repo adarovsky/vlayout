@@ -16,7 +16,7 @@ import React from "react";
 import {ViewReference} from "./view_reference";
 import {View} from "./view";
 import _ from "lodash";
-import {ReactView, ReactViewState} from "./react_views";
+import {ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import {Button} from "./primitives";
 import {Observable} from "rxjs";
 
@@ -108,7 +108,7 @@ export class Engine {
         return this.functions.filter(f => f.name === name && f.parameterTypes.length === parametersCount);
     }
 
-    registerView(key: string, createComponent: <P extends ReactViewState>(parent: ViewReference) => React.ReactElement<ReactView<P>, React.JSXElementConstructor<P>>) {
+    registerView(key: string, createComponent: <P extends ReactViewProps, S extends ReactViewState>(parent: ViewReference) => React.ReactElement<ReactView<P, S>, React.JSXElementConstructor<P>>) {
         this.referencedViews[key] = new ViewReference(createComponent);
     }
 
