@@ -4,8 +4,9 @@ import React, {CSSProperties} from "react";
 import _ from "lodash";
 import {ReactRoundRect} from "./react_primitives";
 import {FontContainer, ImageContainer} from "./types";
-import {map} from "rxjs/operators";
+import {finalize, map} from "rxjs/operators";
 import {Button} from "./primitives";
+import {fromPromise} from "rxjs/internal-compatibility";
 
 export class ReactButton extends ReactRoundRect {
     state: { image: ImageContainer; style: CSSProperties; text: string; imageStyle: CSSProperties, running: boolean, enabled: boolean } = {
@@ -169,8 +170,10 @@ export class ReactButton extends ReactRoundRect {
     private handleClick(): void {
         if (this.state.running) return;
         this.setState(s => Object.assign(s, {running: true}));
-        (this.props.parentView as Button).onClick().finally(() =>
-            this.setState(s => Object.assign(s, {running: false})));
+        const promise = (this.props.parentView as Button).onClick();
+        this.subscription.add(fromPromise(promise).pipe(
+            finalize(() => this.setState(s => Object.assign(s, {running: false})))
+        ).subscribe({complete: () => {}}));
     }
 
     private currentStyle(): CSSProperties {

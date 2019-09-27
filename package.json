@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc -p . && cp src/vlayout.css lib/",
     "bump-version": "npm version patch",
-    "prepublishOnly": "tsc -p . && cp src/vlayout.css lib/"
+    "prepublishOnly": "tsc -p . && cp src/vlayout.css lib/",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -26,15 +27,17 @@
     "uuid": ">=3.3.3"
   },
   "devDependencies": {
-    "@types/react": "^16.9.2",
-    "react": "^16.9.0",
-    "typescript": "3.6.3",
-    "@types/jest": "24.0.18",
+    "@types/jest": "^24.0.18",
     "@types/node": "12.7.5",
+    "@types/react": "^16.9.2",
     "@types/react-dom": "16.9.0",
     "@types/uuid": "^3.4.5",
+    "jest": "^24.9.0",
+    "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "rxjs": "^6.5.3",
+    "ts-jest": "^24.1.0",
+    "typescript": "3.6.3",
     "uuid": "^3.3.3"
   }
 }
