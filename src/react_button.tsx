@@ -171,9 +171,10 @@ export class ReactButton extends ReactRoundRect {
         if (this.state.running) return;
         this.setState(s => Object.assign(s, {running: true}));
         const promise = (this.props.parentView as Button).onClick();
-        this.subscription.add(fromPromise(promise).pipe(
-            finalize(() => this.setState(s => Object.assign(s, {running: false})))
-        ).subscribe({complete: () => {}}));
+        this.subscription.add(fromPromise(promise)
+            .subscribe({
+                error: () => this.setState(s => Object.assign(s, {running: false})),
+                complete: () => this.setState(s => Object.assign(s, {running: false})) }));
     }
 
     private currentStyle(): CSSProperties {
