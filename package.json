@@ -7,8 +7,7 @@
   "scripts": {
     "build": "tsc -p . && cp src/vlayout.css lib/",
     "bump-version": "npm version patch",
-    "prepublishOnly": "tsc -p . && cp src/vlayout.css lib/",
-    "test": "jest"
+    "prepublishOnly": "tsc -p . && cp src/vlayout.css lib/"
   },
   "repository": {
     "type": "git",

@@ -45,9 +45,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     componentWillUnmount(): void {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
+        this.subscription.unsubscribe();
     }
 
     constructor(props: P) {

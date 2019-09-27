@@ -221,7 +221,7 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
         }
     }
 
-        styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
+    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         _.forEach(value, (val, index) => {
             switch (props[index].name) {
