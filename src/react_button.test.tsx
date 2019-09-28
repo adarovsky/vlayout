@@ -1,15 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {Layout} from "./layout";
 import {Engine} from "./engine";
-import {Subject} from "rxjs";
-import {render, mount} from "enzyme";
+import {asyncScheduler, scheduled, Subject} from "rxjs";
+import {mount} from "enzyme";
 import sinon from 'sinon';
-import { ReactButton } from './react_button';
-import {Simulate} from "react-dom/test-utils";
-import waiting = Simulate.waiting;
-
-
+import {ReactButton} from './react_button';
 
 let engine: Engine|null = null;
 
@@ -55,8 +50,8 @@ it('button cleans up on unmount', async () => {
 });
 
 it('button cleans up on unmount if click is delayed', async () => {
-    const promise = new Subject<void>();
-    engine!.registerButton("myButton", () => promise.toPromise());
+    let done: (() => void) | null = null;
+    engine!.registerButton("myButton", () => new Promise<void>(x => done = x));
     const spy = sinon.spy(ReactButton.prototype, 'setState');
     const wrapper = mount(<Layout engine={engine!} content={`
      bindings {
@@ -77,11 +72,10 @@ it('button cleans up on unmount if click is delayed', async () => {
     const callCount = spy.callCount;
 
     wrapper.unmount();
-    promise.complete();
+    done!();
 
-    const t = new Subject<void>();
-    setTimeout(() => t.complete(), 1);
-    await t;
+    // wait for async promise then completes
+    await scheduled([], asyncScheduler).toPromise();
     // @ts-ignore
     expect(spy.callCount).toBe(callCount);
 });
