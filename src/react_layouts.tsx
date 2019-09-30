@@ -1,4 +1,4 @@
-import {ReactContainer, ReactContainerState, ReactViewState} from "./react_views";
+import {ReactContainer, ReactContainerState, ReactView, ReactViewState} from "./react_views";
 import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
 import {combineLatest, Subscription} from "rxjs";
@@ -146,12 +146,12 @@ export class ReactStackLayout extends ReactContainer {
                 console.log("sizes:", sizes);
                     if (!this.state.style.width) {
                         let maxWidth = 0;
-                        for (let i = 1; i < sizes.length; ++i) {
-                            if (container[i].style.width !== null &&
-                                !container[i].style.width!.endsWith('%') &&
-                                maxWidth < sizes[i].width)
-                                maxWidth = sizes[i].width;
-                        }
+
+                        React.Children.forEach(this.props.children, child1 => {
+                            if (child1 instanceof ReactView) {
+                                maxWidth = Math.max(maxWidth, child1.intrinsicSize().width);
+                            }
+                        });
 
                         if (maxWidth > 0) {
                             console.log(`updating stack width to ${maxWidth}`);
@@ -161,12 +161,12 @@ export class ReactStackLayout extends ReactContainer {
 
                     if (!this.state.style.height) {
                         let maxHeight = 0;
-                        for (let i = 1; i < sizes.length; ++i) {
-                            if (container[i].style.height !== null &&
-                                !container[i].style.height!.endsWith('%') &&
-                                maxHeight < sizes[i].height)
-                                maxHeight = sizes[i].height;
-                        }
+                        React.Children.forEach(this.props.children, child1 => {
+                            if (child1 instanceof ReactView) {
+                                maxHeight = Math.max(maxHeight, child1.intrinsicSize().height);
+                            }
+                        });
+
 
                         if (maxHeight > 0) {
                             console.log(`updating stack height to ${maxHeight}`);

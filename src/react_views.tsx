@@ -1,14 +1,15 @@
-import React, {Component, CSSProperties} from "react";
+import React, {Component, CSSProperties, ReactNode} from "react";
 import {AbsoluteLayout, Container, LinearLayout, StackLayout, View, ViewProperty} from "./view";
 import {Dictionary} from "./types";
 import {combineLatest, Subscription} from "rxjs";
 import {map} from "rxjs/operators";
 import _ from "lodash";
-import {resizeObserver} from "./resize_sensor";
+import {ElementSize, resizeObserver} from "./resize_sensor";
 
 export interface ReactViewProps {
     parentView: View;
     key?: string;
+    children?: ReactNode;
 }
 
 export interface ReactViewState {
@@ -17,7 +18,7 @@ export interface ReactViewState {
 
 export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
     protected readonly  subscription: Subscription = new Subscription();
-    protected readonly viewRef = React.createRef();
+    readonly viewRef = React.createRef();
     componentDidMount(): void {
         const props = this.styleProperties();
 
@@ -205,6 +206,16 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
         });
         return r;
+    }
+
+    intrinsicSize(): ElementSize {
+        let self = this.viewRef.current as HTMLElement;
+        if (self) {
+            return self.getBoundingClientRect();
+        }
+        else {
+            return {width: 0, height: 0};
+        }
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {

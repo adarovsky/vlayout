@@ -46,7 +46,7 @@ it('button cleans up on unmount', async () => {
     await t;
 
     expect(spy.callCount).toBe(callCount);
-
+    spy.restore();
 });
 
 it('button cleans up on unmount if click is delayed', async () => {
@@ -78,4 +78,5 @@ it('button cleans up on unmount if click is delayed', async () => {
     await scheduled([], asyncScheduler).toPromise();
     // @ts-ignore
     expect(spy.callCount).toBe(callCount);
+    spy.restore();
 });
