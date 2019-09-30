@@ -224,7 +224,7 @@ export class Lexer implements VLScannerFSMDelegate {
     }
 
     isSymbol(x: any): boolean {
-        return /^[{}(),.:?+-=|*/%]$/.test(this._currentChar);
+        return /^[{}(),.:?+-=|*/%<>]$/.test(this._currentChar);
     }
 
     isValidColorChar(x: any): boolean {

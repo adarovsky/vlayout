@@ -309,6 +309,8 @@ export class Layout extends Component<LayoutProps, LayoutState> {
                 return new Less(left!, right!);
             else if (token.content === "<=")
                 return new LessEqual(left!, right!);
+            else if (token.content === ">=")
+                return new MoreEqual(left!, right!);
             else {
                 this.raiseError(`invalid operation ${token.content} after ${left}`);
             }

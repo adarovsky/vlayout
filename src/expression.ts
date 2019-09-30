@@ -76,7 +76,7 @@ export class Nil extends Constant {
 
     link(layout: Layout, hint: TypeDefinition | null): void {
         if  (hint === layout.engine.numberType() ||
-            hint === layout.engine.stringType() ||
+            // hint === layout.engine.stringType() ||
             hint === layout.engine.imageType()) {
             this.typeDefinition = hint;
             this.sink = of(null);
@@ -505,7 +505,7 @@ export class NotEqual extends BinaryExpression {
             const left = this.left.sink;
             const right = this.right.sink;
             this.sink = combineLatest([left, right]).pipe(
-                map (([a, b]) => a !==b),
+                map (([a, b]) => a !== b),
                 distinctUntilChanged())
         }
         else if (this.left.typeDefinition instanceof Set) {
@@ -515,7 +515,7 @@ export class NotEqual extends BinaryExpression {
             const left = this.left.sink as Observable<Array<any>>;
             const right = this.right.sink;
             this.sink = combineLatest([left, right]).pipe(
-                map (([a, b]) => a.find(b) === undefined),
+                map (([a, b]) => a.indexOf(b) === -1),
                 distinctUntilChanged())
         }
         else if (this.right.typeDefinition instanceof Set) {
@@ -525,7 +525,7 @@ export class NotEqual extends BinaryExpression {
             const left = this.left.sink;
             const right = this.right.sink as Observable<Array<any>>;
             this.sink = combineLatest([left, right]).pipe(
-                map (([a, b]) => b.find(a) === undefined),
+                map (([a, b]) => b.indexOf(a) === -1),
                 distinctUntilChanged())
         }
         else {
