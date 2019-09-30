@@ -190,7 +190,8 @@ export class ReactLayer extends ReactContainer {
         childrenVisible: [],
         style: {
             width: '100%',
-            height: '100%'
+            height: '100%',
+            position: 'absolute'
         }
     };
 
@@ -205,6 +206,7 @@ export class ReactLayer extends ReactContainer {
             r.zIndex = value[index];
         r.width = '100%';
         r.height = '100%';
+        r.position = 'absolute';
         return r;
     }
 }

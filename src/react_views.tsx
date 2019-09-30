@@ -5,6 +5,7 @@ import {combineLatest, Subscription} from "rxjs";
 import {map} from "rxjs/operators";
 import _ from "lodash";
 import {ElementSize, resizeObserver} from "./resize_sensor";
+import {Layout} from "./layout";
 
 export interface ReactViewProps {
     parentView: View;
