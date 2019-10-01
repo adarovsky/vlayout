@@ -132,12 +132,17 @@ export class ColorContainer {
     }
 
     static fromHex(color: string): ColorContainer {
-        const offset = color.startsWith('#') ? 1 : 0
-        const red = parseInt(color.slice(0+offset, 2+offset), 16);
-        const green = parseInt(color.slice(2+offset, 4+offset), 16);
-        const blue = parseInt(color.slice(4+offset, 6+offset), 16);
+        const match = color.match(/#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/);
+        if (!match) {
+            throw new Error(`invalid color specification: ${color}`);
+        }
+        else {
+            const red = parseInt(match[1], 16);
+            const green = parseInt(match[2], 16);
+            const blue = parseInt(match[3], 16);
 
-        return new ColorContainer(red, green, blue);
+            return new ColorContainer(red, green, blue);
+        }
     }
 
     toString(): string {
