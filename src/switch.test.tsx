@@ -38,22 +38,22 @@ it('switch expression should deliver value when source changes', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(1);
     test2.next(true);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("1, true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("1, true");
 
     test1.next(2);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("another");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("another");
 
     test2.next(false);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("2, false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("2, false");
 
     test1.next(3);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("another");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("another");
 });

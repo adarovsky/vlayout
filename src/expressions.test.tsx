@@ -35,12 +35,13 @@ it('expression 1 + 2 should give 3', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(1);
     test2.next(2);
-
-    expect(wrapper.find(ReactLabel).text()).toBe("3");
+    
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("3");
 });
 
 it('expression 1 + 2 * 3 should give 7', async () => {
@@ -54,7 +55,7 @@ it('expression 1 + 2 * 3 should give 7', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("7");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("7");
 });
 
 it('expression 10 - 6 / 3 should give 8', async () => {
@@ -68,7 +69,7 @@ it('expression 10 - 6 / 3 should give 8', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("8");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("8");
 });
 
 it('expression (10 - 6) % 3 should give 1', async () => {
@@ -82,7 +83,7 @@ it('expression (10 - 6) % 3 should give 1', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("1");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("1");
 });
 
 it('expression 2 < 3 should give true', async () => {
@@ -96,7 +97,7 @@ it('expression 2 < 3 should give true', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 });
 
 it('expression 2 > 3 should give false', async () => {
@@ -110,7 +111,7 @@ it('expression 2 > 3 should give false', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
 });
 
 it('expression 2 <= 2 should give true', async () => {
@@ -124,7 +125,7 @@ it('expression 2 <= 2 should give true', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 });
 
 it('expression 2 >= 3 should give false',  () => {
@@ -138,7 +139,7 @@ it('expression 2 >= 3 should give false',  () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
 });
 
 it('expression "abc" + "def" should give "abcdef"', async () => {
@@ -161,12 +162,12 @@ it('expression "abc" + "def" should give "abcdef"', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next("abc");
     test2.next("def");
 
-    expect(wrapper.find(ReactLabel).text()).toBe("abcdef");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("abcdef");
 });
 
 it('expression "abc" - "def" should fail', async () => {
@@ -212,12 +213,12 @@ it('expression 5 - 3 should give 2', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(5);
     test2.next(3);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("2");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("2");
 });
 
 it('conditional expression should work', async () => {
@@ -240,17 +241,17 @@ it('conditional expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(5);
     test2.next(3);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("not equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("not equal");
 
     test1.next(5);
     test2.next(5);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("equal");
 });
 
 it('not equal expression should work', async () => {
@@ -273,17 +274,17 @@ it('not equal expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(5);
     test2.next(3);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("not equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("not equal");
 
     test1.next(5);
     test2.next(5);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("equal");
 });
 
 it('boolean and expression should work', async () => {
@@ -306,17 +307,17 @@ it('boolean and expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(true);
     test2.next(false);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
 
     test1.next(true);
     test2.next(true);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 });
 
 it('boolean or expression should work', async () => {
@@ -339,22 +340,22 @@ it('boolean or expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(true);
     test2.next(false);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 
     test1.next(true);
     test2.next(true);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 
     test1.next(false);
     test2.next(false);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
 });
 
 it('compare against set should work', async () => {
@@ -376,19 +377,19 @@ it('compare against set should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(1);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 
     test1.next(2);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 
     test1.next(3);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
 });
 
 it('compare not equal against set should work', async () => {
@@ -410,19 +411,19 @@ it('compare not equal against set should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(1);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
 
     test1.next(2);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
 
     test1.next(3);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
 });
 
 it('should raise error if enum value is not found', async () => {
@@ -514,15 +515,15 @@ it('compare with nil should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
     test1.next(5);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("not nil");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("not nil");
 
     test1.next(null);
 
-    expect(wrapper.find(ReactLabel).text()).toBe("nil");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("nil");
 });
 
 it('nil should not cast to string', async () => {
