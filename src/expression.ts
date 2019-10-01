@@ -51,11 +51,7 @@ export class Constant extends Expression {
         }
         else if (this.lex instanceof LexColor) {
             this.typeDefinition = layout.engine.colorType();
-            const color = this.lex.content;
-            const red = parseInt(color.slice(0, 2), 16);
-            const green = parseInt(color.slice(2, 4), 16);
-            const blue = parseInt(color.slice(4, 6), 16);
-            this.sink = of(new ColorContainer(red, green, blue));
+            this.sink = of(ColorContainer.fromHex(this.lex.content));
         }
         else if (this.lex.content === 'true') {
             this.typeDefinition = layout.engine.boolType();

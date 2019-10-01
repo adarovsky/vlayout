@@ -131,6 +131,15 @@ export class ColorContainer {
                 public readonly alpha: number|null = null) {
     }
 
+    static fromHex(color: string): ColorContainer {
+        const offset = color.startsWith('#') ? 1 : 0
+        const red = parseInt(color.slice(0+offset, 2+offset), 16);
+        const green = parseInt(color.slice(2+offset, 4+offset), 16);
+        const blue = parseInt(color.slice(4+offset, 6+offset), 16);
+
+        return new ColorContainer(red, green, blue);
+    }
+
     toString(): string {
         if (this.alpha !== null) {
             return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`;
