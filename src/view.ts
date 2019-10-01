@@ -3,17 +3,18 @@ import {Dictionary} from "./types";
 import {Layout} from "./layout";
 import _ from "lodash";
 import React, {createElement} from "react";
-import {ReactContainer} from "./react_views";
+import {ReactContainer, ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import uuid from "uuid";
 import {
     ReactHorizontalLayout,
     ReactLayer,
-    ReactStackLayout,
     ReactTopLayout,
     ReactVerticalLayout
 } from "./react_layouts";
 import {LexNumber} from "./lexer";
 import {take} from "rxjs/operators";
+import {ReactStackLayout} from "./react_stack";
+import {ReactAbsoluteLayout} from "./react_absolute";
 
 export class ViewProperty {
     line: number = 0;
@@ -48,6 +49,7 @@ export class View {
     interactive: boolean = false;
     protected properties: Dictionary<ViewProperty> = {};
     readonly key: string;
+    instance: ReactView<ReactViewProps, ReactViewState>|null = null;
 
     constructor() {
         ['left', 'right', 'top', 'bottom'].forEach( t => {
@@ -163,6 +165,10 @@ export class AbsoluteLayout extends Container {
 
     viewType(): string {
         return 'absolute';
+    }
+
+    get target(): React.ReactElement {
+        return createElement(ReactAbsoluteLayout, {parentView: this, key: this.key});
     }
 }
 

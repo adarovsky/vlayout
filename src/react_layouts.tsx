@@ -1,15 +1,14 @@
-import {ReactContainer, ReactContainerState, ReactView, ReactViewState} from "./react_views";
+import {ReactContainer, ReactContainerState} from "./react_views";
 import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
-import {combineLatest, Subscription} from "rxjs";
-import {takeWhile} from "rxjs/operators";
-import {resizeObserver} from "./resize_sensor";
 import _ from "lodash";
+import {ReactStackLayout} from "./react_stack";
+import {combineLatest, Subscription} from "rxjs";
 
 class ReactLinearLayout extends ReactContainer {
     state = {
         spacing: 0,
-        style: {},
+        style: {} as CSSProperties,
         childrenVisible: []
     };
 
@@ -81,6 +80,14 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
 }
 
 export class ReactVerticalLayout extends ReactLinearLayout {
+
+    protected subviewSubscription: Subscription = new Subscription();
+
+    componentWillUnmount(): void {
+        super.componentWillUnmount();
+        this.subviewSubscription.unsubscribe();
+    }
+
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));
     }
@@ -117,71 +124,44 @@ export class ReactVerticalLayout extends ReactLinearLayout {
         return r;
     }
 
-    protected spacerStyle(): CSSProperties {
-        return {height: this.state.spacing + 'px'}
-    }
-}
-
-export class ReactStackLayout extends ReactContainer {
-    protected subviewSubscription: Subscription = new Subscription();
-
-    componentWillUnmount(): void {
-        super.componentWillUnmount();
-        this.subviewSubscription.unsubscribe();
-    }
-
     protected updateSubviewPositions(): void {
-        let self = this.viewRef.current as HTMLElement;
-        let container: HTMLElement[] = [self];
-        let child = self.firstElementChild;
-        while (child) {
-            container.push(child as HTMLElement);
-            child = child.nextElementSibling;
-        }
+
+        const self = this.viewRef.current;
+        if (!self) return;
+
+        const children = (this.props.parentView as Container).views.map(v => v.instance!);
 
         this.subviewSubscription.unsubscribe();
-        this.subviewSubscription = combineLatest(container.map(c => resizeObserver(c)))
-            // .pipe(takeWhile(() => !this.state.style.width || !this.state.style.height))
+        this.subviewSubscription = combineLatest(children.map(c => c.intrinsicSize()))
             .subscribe(sizes => {
-                console.log("sizes:", sizes);
+                    console.log("sizes:", sizes);
                     if (!this.state.style.width) {
                         let maxWidth = 0;
 
-                        React.Children.forEach(this.props.children, child1 => {
-                            if (child1 instanceof ReactView) {
-                                maxWidth = Math.max(maxWidth, child1.intrinsicSize().width);
+                        console.log('updating width from children', children);
+                        sizes.forEach((size, index) => {
+                            const child = children[index];
+                            maxWidth = Math.max(maxWidth, size.width);
+                            let match;
+                            if (typeof child.state.style.left === 'string' && (match = child.state.style.left.match(/(\d+)px/))) {
+                                maxWidth += +match[1];
+                            }
+                            if (typeof child.state.style.right === 'string' && (match = child.state.style.right.match(/(\d+)px/))) {
+                                maxWidth += +match[1];
                             }
                         });
 
                         if (maxWidth > 0) {
-                            console.log(`updating stack width to ${maxWidth}`);
+                            console.log(`updating vertical layout width to ${maxWidth}`);
                             self.style.width = maxWidth + 'px';
                         }
                     }
-
-                    if (!this.state.style.height) {
-                        let maxHeight = 0;
-                        React.Children.forEach(this.props.children, child1 => {
-                            if (child1 instanceof ReactView) {
-                                maxHeight = Math.max(maxHeight, child1.intrinsicSize().height);
-                            }
-                        });
-
-
-                        if (maxHeight > 0) {
-                            console.log(`updating stack height to ${maxHeight}`);
-                            self.style.height = maxHeight + 'px';
-                        }
-                    }
-                    console.log(`update complete: ${self.style.width}`);
                 }
             );
     }
 
-    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
-        const r = super.styleValue(props, value);
-        r.position = 'relative';
-        return r;
+    protected spacerStyle(): CSSProperties {
+        return {height: this.state.spacing + 'px'}
     }
 }
 

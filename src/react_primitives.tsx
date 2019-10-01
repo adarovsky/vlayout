@@ -1,11 +1,12 @@
-import React, {CSSProperties} from "react";
+import React, {CSSProperties, RefObject} from "react";
 import _ from "lodash";
 import {ViewProperty} from "./view";
 import {ColorContainer, FontContainer, ImageContainer} from "./types";
-import {ReactView, ReactViewState, ReactViewProps} from "./react_views";
+import {ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import {combineLatest, Observable, of} from "rxjs";
 import {shareReplay} from "rxjs/operators";
 import {ElementSize, resizeObserver} from "./resize_sensor";
+import deleteProperty = Reflect.deleteProperty;
 
 interface ReactLabelState {
     style: CSSProperties;
@@ -19,6 +20,8 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         text: '',
         maxLines: 0
     };
+
+    readonly shadowRef = React.createRef<HTMLDivElement>();
 
     componentDidMount(): void {
         super.componentDidMount();
@@ -77,18 +80,41 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         return r;
     }
 
+
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        // @ts-ignore
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}>
-            {this.state.text.split('\n').map(function(item, key) {
-                    return (
-                        <span key={key}>
-                            {item}
-                            <br/>
-                            </span>
-                    )
-                })}
-            </div>);
+        const content = this.state.text.split('\n').map(function (item, key) {
+            return <span key={key}>{item}<br/></span>;
+        });
+
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef as RefObject<HTMLDivElement>}>
+            {content}
+            <div style={this.shadowStyle()} className={'vlayout_'+this.props.parentView.viewType()+'_shadow'} ref={this.shadowRef}>
+                {content}
+            </div>
+        </div>);
+    }
+
+    private shadowStyle(): CSSProperties {
+        const r = _.cloneDeep(this.style());
+        for (let t of ['width', 'height', 'top', 'bottom', 'left', 'right']) {
+            deleteProperty(r, t);
+        }
+
+        r.position = 'absolute';
+        r.whiteSpace = 'pre';
+        r.opacity = 0;
+        return r;
+    }
+
+    intrinsicSize(): Observable<ElementSize> {
+        let self = this.shadowRef.current;
+        if (self) {
+            return resizeObserver(self);
+        }
+        else {
+            return of({width: 0, height: 0});
+        }
     }
 }
 
