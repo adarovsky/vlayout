@@ -32,7 +32,7 @@ export class ReactAbsoluteLayout extends ReactContainer {
         this.subviewSubscription = combineLatest(children.map(c => c!.intrinsicSize()))
             .subscribe(sizes => {
                     console.log("sizes:", sizes);
-                    if (!this.state.style.width) {
+                    if (!this.isWidthDefined()) {
                         let maxWidth = 0;
 
                         console.log('updating width from children', children);
@@ -54,7 +54,7 @@ export class ReactAbsoluteLayout extends ReactContainer {
                         }
                     }
 
-                    if (!this.state.style.height) {
+                    if (!this.isHeightDefined()) {
                         let maxHeight = 0;
                         sizes.forEach((size, index) => {
                             const child = children[index];

@@ -8,7 +8,7 @@ import {shareReplay} from "rxjs/operators";
 import {ElementSize, resizeObserver} from "./resize_sensor";
 import deleteProperty = Reflect.deleteProperty;
 
-interface ReactLabelState {
+interface ReactLabelState extends ReactViewState {
     style: CSSProperties;
     text: string;
     maxLines: number;
@@ -17,6 +17,7 @@ interface ReactLabelState {
 export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     state: ReactLabelState = {
         style: {},
+        aspect: null,
         text: '',
         maxLines: 0
     };
@@ -118,9 +119,15 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     }
 }
 
-export class ReactImage extends ReactView<ReactViewProps, { image: ImageContainer; style: CSSProperties; innerStyle: CSSProperties;}> {
-    state: { image: ImageContainer; style: {}; innerStyle: CSSProperties;} = {
+interface ReactImageState extends ReactViewState {
+    image: ImageContainer;
+    innerStyle: CSSProperties;
+}
+
+export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
+    state: ReactImageState = {
         style: {},
+        aspect: null,
         image: new ImageContainer(''),
         innerStyle: { width: '100%', height: '100%' }
     };
@@ -269,8 +276,14 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
     }
 }
 
-export class ReactProgress extends ReactView<ReactViewProps, { progressColor: string; style: CSSProperties }> {
-    state: { progressColor: string; style: CSSProperties } = {
+interface ReactProgressState extends ReactViewState{
+    progressColor: string;
+    style: CSSProperties;
+}
+
+export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState> {
+    state: ReactProgressState = {
+        aspect: null,
         style: {},
         progressColor: '#ffffff'
     };

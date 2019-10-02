@@ -24,7 +24,7 @@ export class ReactStackLayout extends ReactContainer {
         // .pipe(takeWhile(() => !this.state.style.width || !this.state.style.height))
             .subscribe(sizes => {
                     // console.log("sizes:", sizes);
-                    if (!this.state.style.width) {
+                    if (!this.isWidthDefined()) {
                         let maxWidth = 0;
 
                         sizes.forEach(size => maxWidth = Math.max(maxWidth, size.width));
@@ -35,7 +35,7 @@ export class ReactStackLayout extends ReactContainer {
                         }
                     }
 
-                    if (!this.state.style.height) {
+                    if (!this.isHeightDefined()) {
                         let maxHeight = 0;
                         sizes.forEach(size => maxHeight = Math.max(maxHeight, size.height));
 

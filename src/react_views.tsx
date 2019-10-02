@@ -13,6 +13,7 @@ export interface ReactViewProps {
 
 export interface ReactViewState {
     style: CSSProperties;
+    aspect: number|null;
 }
 
 export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
@@ -36,6 +37,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         if (p.value) {
             let self = this.viewRef.current as HTMLElement;
             this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(([size, aspect])=> {
+                this.setState({aspect: aspect});
                 if (this.state.style.width && !this.state.style.height) {
                     self.style.height = aspect !== null ? `${size.width / aspect}px` : null;
                 }
@@ -53,7 +55,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     constructor(props: P) {
         super(props);
         // @ts-ignore
-        this.state = {style: {}};
+        this.state = {style: {}, aspect: null};
     }
 
     wire(name: string, field: string, mapper: (v: any) => any) {
@@ -224,16 +226,25 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}/>);
     }
 
+    protected isWidthDefined(): boolean {
+        return !!this.state.style.width || (!!this.state.style.left && !!this.state.style.right);
+    }
+
+    protected isHeightDefined(): boolean {
+        return !!this.state.style.height ||
+            (!!this.state.style.top && !!this.state.style.bottom) ||
+            (!!this.state.style.width && !!this.state.aspect);
+    }
 }
 
-export interface ReactContainerState {
-    style: CSSProperties;
+export interface ReactContainerState extends ReactViewState{
     childrenVisible: boolean[];
 }
 
 export class ReactContainer extends ReactView<ReactViewProps, ReactContainerState> {
     state: ReactContainerState = {
         style: {},
+        aspect: null,
         childrenVisible: []
     };
 

@@ -8,17 +8,24 @@ import {ReactButton} from './react_button';
 
 let engine: Engine|null = null;
 
-beforeEach(() => {
-    engine = new Engine();
-});
+function wait() {
+    return scheduled([], asyncScheduler).toPromise();
+}
 
-it('button cleans up on unmount', async () => {
-    const subject = new Subject<number>();
-    engine!.registerInput("test", engine!.numberType(), subject);
-    engine!.registerButton("myButton", async () => {});
-    const spy = sinon.spy(ReactButton.prototype, 'setState');
-    subject.next(2);
-    const wrapper = mount(<Layout engine={engine!} content={`
+describe('button', () =>
+{
+    beforeEach(() => {
+        engine = new Engine();
+    });
+
+    it('cleans up on unmount', async () => {
+        const subject = new Subject<number>();
+        engine!.registerInput("test", engine!.numberType(), subject);
+        engine!.registerButton("myButton", async () => {
+        });
+        const spy = sinon.spy(ReactButton.prototype, 'setState');
+        subject.next(2);
+        const wrapper = mount(<Layout engine={engine!} content={`
      bindings {
         myButton: button
      }
@@ -33,27 +40,27 @@ it('button cleans up on unmount', async () => {
              }
          }
      }`}/>);
-    subject.next(3);
+        subject.next(3);
 
-    const callCount = spy.callCount;
+        const callCount = spy.callCount;
 
-    wrapper.unmount();
+        wrapper.unmount();
 
-    subject.next(0);
+        subject.next(0);
 
-    const t = new Subject<void>();
-    setTimeout(() => t.complete(), 1);
-    await t;
+        const t = new Subject<void>();
+        setTimeout(() => t.complete(), 1);
+        await t;
 
-    expect(spy.callCount).toBe(callCount);
-    spy.restore();
-});
+        expect(spy.callCount).toBe(callCount);
+        spy.restore();
+    });
 
-it('button cleans up on unmount if click is delayed', async () => {
-    let done: (() => void) | null = null;
-    engine!.registerButton("myButton", () => new Promise<void>(x => done = x));
-    const spy = sinon.spy(ReactButton.prototype, 'setState');
-    const wrapper = mount(<Layout engine={engine!} content={`
+    it('button cleans up on unmount if click is delayed', async () => {
+        let done: (() => void) | null = null;
+        engine!.registerButton("myButton", () => new Promise<void>(x => done = x));
+        const spy = sinon.spy(ReactButton.prototype, 'setState');
+        const wrapper = mount(<Layout engine={engine!} content={`
      bindings {
         myButton: button
      }
@@ -67,16 +74,17 @@ it('button cleans up on unmount if click is delayed', async () => {
          }
      }`}/>);
 
-    wrapper.find('.vlayout_button').simulate('click');
-    // @ts-ignore
-    const callCount = spy.callCount;
+        wrapper.find('.vlayout_button').simulate('click');
+        // @ts-ignore
+        const callCount = spy.callCount;
 
-    wrapper.unmount();
-    done!();
+        wrapper.unmount();
+        done!();
 
-    // wait for async promise then completes
-    await scheduled([], asyncScheduler).toPromise();
-    // @ts-ignore
-    expect(spy.callCount).toBe(callCount);
-    spy.restore();
+        // wait for async promise then completes
+        await wait();
+        // @ts-ignore
+        expect(spy.callCount).toBe(callCount);
+        spy.restore();
+    });
 });

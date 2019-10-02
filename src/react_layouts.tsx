@@ -8,6 +8,7 @@ import {combineLatest, Subscription} from "rxjs";
 class ReactLinearLayout extends ReactContainer {
     state = {
         spacing: 0,
+        aspect: null,
         style: {} as CSSProperties,
         childrenVisible: []
     };
@@ -169,6 +170,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
 
 export class ReactLayer extends ReactContainer {
     state: ReactContainerState = {
+        aspect: null,
         childrenVisible: [],
         style: {
             width: '100%',

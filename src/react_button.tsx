@@ -7,10 +7,20 @@ import {FontContainer, ImageContainer} from "./types";
 import {finalize, map} from "rxjs/operators";
 import {Button} from "./primitives";
 import {fromPromise} from "rxjs/internal-compatibility";
+import {ReactViewState} from "./react_views";
+
+interface ReactButtonState extends ReactViewState {
+    image: ImageContainer;
+    text: string;
+    imageStyle: CSSProperties,
+    running: boolean,
+    enabled: boolean
+}
 
 export class ReactButton extends ReactRoundRect {
-    state: { image: ImageContainer; style: CSSProperties; text: string; imageStyle: CSSProperties, running: boolean, enabled: boolean } = {
+    state: ReactButtonState = {
         style: {},
+        aspect: null,
         text: '',
         image: new ImageContainer(''),
         imageStyle: {},
