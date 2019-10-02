@@ -1,7 +1,7 @@
 import React, {Component, CSSProperties} from "react";
 import {AbsoluteLayout, Container, LinearLayout, StackLayout, View, ViewProperty} from "./view";
 import {Dictionary} from "./types";
-import {combineLatest, Observable, of, Subscription} from "rxjs";
+import {combineLatest, Observable, of, Subscription, BehaviorSubject} from "rxjs";
 import {map} from "rxjs/operators";
 import _ from "lodash";
 import {ElementSize, resizeObserver} from "./resize_sensor";
@@ -214,7 +214,14 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     intrinsicSize(): Observable<ElementSize> {
         let self = this.viewRef.current as HTMLElement;
         if (self) {
-            return resizeObserver(self);
+            return resizeObserver(self).pipe(
+                map( size => {
+                    return {
+                        width: this.isWidthDefined() ? size.width : 0,
+                        height: this.isHeightDefined() ? size.height : 0
+                    };
+                })
+            );
         }
         else {
             return of({width: 0, height: 0});
@@ -256,6 +263,9 @@ export class ReactContainer extends ReactView<ReactViewProps, ReactContainerStat
         childrenVisible: []
     };
 
+    protected children = new BehaviorSubject<ReactView<ReactViewProps, ReactViewState>[]>([]);
+    protected subviewSubscription: Subscription = new Subscription();
+
     componentDidMount(): void {
         super.componentDidMount();
 
@@ -267,11 +277,35 @@ export class ReactContainer extends ReactView<ReactViewProps, ReactContainerStat
         }));
     }
 
+    componentWillUnmount(): void {
+        super.componentWillUnmount();
+        this.subviewSubscription.unsubscribe();
+    }
+
     componentDidUpdate(prevProps: Readonly<ReactViewProps>, prevState: Readonly<ReactContainerState>, snapshot?: any): void {
+        const children = (this.props.parentView as Container).views
+            .map(v => v.instance)
+            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
+        this.children.next(children);
         this.updateSubviewPositions();
     }
 
     protected updateSubviewPositions(): void {
+        const self = this.viewRef.current;
+        if (!self) return;
+
+        this.subviewSubscription.unsubscribe();
+        this.subviewSubscription = this.intrinsicSize()
+            .subscribe(size => {
+                    if (size.width > 0 && !this.isWidthDefined()) {
+                        self.style.minWidth = size.width + 'px';
+                    }
+
+                    if (size.height > 0 && !this.isHeightDefined()) {
+                        self.style.minHeight = size.height + 'px';
+                    }
+                }
+            );
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {

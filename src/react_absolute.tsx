@@ -1,7 +1,9 @@
 import {ReactContainer, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {combineLatest, Subscription} from "rxjs";
+import {combineLatest, Observable, Subscription} from "rxjs";
 import React from "react";
 import {Container, ViewProperty} from "./view";
+import {ElementSize} from "./resize_sensor";
+import {map, switchMap} from "rxjs/operators";
 
 export class ReactAbsoluteLayout extends ReactContainer {
     protected subviewSubscription: Subscription = new Subscription();
@@ -19,60 +21,44 @@ export class ReactAbsoluteLayout extends ReactContainer {
         return r;
     }
 
-    protected updateSubviewPositions(): void {
+    intrinsicSize(): Observable<ElementSize> {
+        return this.children.pipe(
+            switchMap(children =>
+                combineLatest(children.map(c => c.intrinsicSize())).pipe(map(sizes => [children, sizes]))
+            ),
+            map((project) => {
+                const children = project[0] as ReactView<ReactViewProps, ReactViewState>[];
+                const sizes = project[1] as ElementSize[];
+                let maxHeight = 0;
+                let maxWidth = 0;
 
-        const self = this.viewRef.current;
-        if (!self) return;
+                sizes.forEach((size, index) => {
+                    const child = children[index];
 
-        const children = (this.props.parentView as Container).views
-            .map(v => v.instance)
-            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
-
-        this.subviewSubscription.unsubscribe();
-        this.subviewSubscription = combineLatest(children.map(c => c!.intrinsicSize()))
-            .subscribe(sizes => {
-                    if (!this.isWidthDefined()) {
-                        let maxWidth = 0;
-
-                        // console.log('updating width from children', children);
-                        sizes.forEach((size, index) => {
-                            const child = children[index];
-                            maxWidth = Math.max(maxWidth, size.width);
-                            let match;
-                            if (typeof child.state.style.left === 'string' && (match = child.state.style.left.match(/(\d+)px/))) {
-                                maxWidth += +match[1];
-                            }
-                            if (typeof child.state.style.right === 'string' && (match = child.state.style.right.match(/(\d+)px/))) {
-                                maxWidth += +match[1];
-                            }
-                        });
-
-                        if (maxWidth > 0) {
-                            self.style.minWidth = maxWidth + 'px';
-                        }
+                    maxWidth = Math.max(maxWidth, size.width);
+                    let match;
+                    if (typeof child.state.style.left === 'string' && (match = child.state.style.left.match(/(\d+)px/))) {
+                        maxWidth += +match[1];
+                    }
+                    if (typeof child.state.style.right === 'string' && (match = child.state.style.right.match(/(\d+)px/))) {
+                        maxWidth += +match[1];
                     }
 
-                    if (!this.isHeightDefined()) {
-                        let maxHeight = 0;
-                        sizes.forEach((size, index) => {
-                            const child = children[index];
-                                maxHeight = Math.max(maxHeight, size.height);
+                    maxHeight = Math.max(maxHeight, size.height);
 
-                                let match;
-                                if (typeof child.state.style.top === 'string' && (match = child.state.style.top.match(/(\d+)px/))) {
-                                    maxHeight += +match[1];
-                                }
-                                if (typeof child.state.style.bottom === 'string' && (match = child.state.style.bottom.match(/(\d+)px/))) {
-                                    maxHeight += +match[1];
-                                }
-                        });
-
-
-                        if (maxHeight > 0) {
-                            self.style.minHeight = maxHeight + 'px';
-                        }
+                    if (typeof child.state.style.top === 'string' && (match = child.state.style.top.match(/(\d+)px/))) {
+                        maxHeight += +match[1];
                     }
-                }
-            );
+                    if (typeof child.state.style.bottom === 'string' && (match = child.state.style.bottom.match(/(\d+)px/))) {
+                        maxHeight += +match[1];
+                    }
+                });
+
+                return {
+                    width: maxWidth,
+                    height: maxHeight
+                };
+            })
+        );
     }
 }

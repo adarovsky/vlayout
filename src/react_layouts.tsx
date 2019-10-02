@@ -3,7 +3,9 @@ import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
 import _ from "lodash";
 import {ReactStackLayout} from "./react_stack";
-import {combineLatest, Subscription} from "rxjs";
+import {combineLatest, Observable, of, Subscription} from "rxjs";
+import {ElementSize} from "./resize_sensor";
+import {map, switchMap} from "rxjs/operators";
 
 class ReactLinearLayout extends ReactContainer {
     state = {
@@ -12,6 +14,8 @@ class ReactLinearLayout extends ReactContainer {
         style: {} as CSSProperties,
         childrenVisible: []
     };
+
+    protected subviewSubscription: Subscription = new Subscription();
 
     componentDidMount(): void {
         super.componentDidMount();
@@ -35,11 +39,9 @@ class ReactLinearLayout extends ReactContainer {
                 })}
         </div>);
     }
-
 }
 
 export class ReactHorizontalLayout extends ReactLinearLayout {
-    protected subviewSubscription: Subscription = new Subscription();
 
     componentWillUnmount(): void {
         super.componentWillUnmount();
@@ -82,46 +84,24 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
         return r;
     }
 
-    protected updateSubviewPositions(): void {
+    intrinsicSize(): Observable<ElementSize> {
+        return this.children.pipe(
+            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            map(sizes => {
+                let maxHeight = 0;
+                let maxWidth = 0;
 
-        const self = this.viewRef.current;
-        if (!self) return;
+                sizes.forEach((size) => {
+                    maxHeight = Math.max(maxHeight, size.height);
+                    maxWidth += size.width;
+                });
 
-        const children = (this.props.parentView as Container).views
-            .map(v => v.instance)
-            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
-
-        this.subviewSubscription.unsubscribe();
-        this.subviewSubscription = combineLatest(children.map(c => c.intrinsicSize()))
-            .subscribe(sizes => {
-                    console.log("sizes:", sizes);
-                    if (!this.isHeightDefined()) {
-                        let maxHeight = 0;
-
-                        sizes.forEach((size) => {
-                            maxHeight = Math.max(maxHeight, size.height);
-                        });
-
-                        if (maxHeight > 0) {
-                            console.log(`updating horizontal layout height to ${maxHeight}`);
-                            self.style.minHeight = maxHeight + 'px';
-                        }
-                    }
-
-                    if (!this.isWidthDefined()) {
-                        let maxWidth = 0;
-
-                        sizes.forEach((size) => {
-                            maxWidth += size.width;
-                        });
-
-                        if (maxWidth > 0) {
-                            self.style.minWidth = maxWidth + this.state.spacing * (this.state.childrenVisible.reduce((total, x) => x ? total + 1 : total, 0) - 1) + 'px';
-                            console.log(`updating horizontal layout width to ${self.style.width}`);
-                        }
-                    }
-                }
-            );
+                return {
+                    width: maxWidth + this.state.spacing * (sizes.length - 1),
+                    height: maxHeight
+                };
+            })
+        );
     }
 
     protected spacerStyle(): CSSProperties {
@@ -174,54 +154,24 @@ export class ReactVerticalLayout extends ReactLinearLayout {
         return r;
     }
 
-    protected updateSubviewPositions(): void {
+    intrinsicSize(): Observable<ElementSize> {
+        return this.children.pipe(
+            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            map(sizes => {
+                let maxHeight = 0;
+                let maxWidth = 0;
 
-        const self = this.viewRef.current;
-        if (!self) return;
+                sizes.forEach((size) => {
+                    maxHeight += maxHeight;
+                    maxWidth = Math.max(maxWidth, size.width);
+                });
 
-        const children = (this.props.parentView as Container).views
-            .map(v => v.instance)
-            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
-
-        this.subviewSubscription.unsubscribe();
-        this.subviewSubscription = combineLatest(children.map(c => c.intrinsicSize()))
-            .subscribe(sizes => {
-                    console.log("sizes:", sizes);
-                    if (!this.isWidthDefined()) {
-                        let maxWidth = 0;
-
-                        sizes.forEach((size, index) => {
-                            const child = children[index];
-                            maxWidth = Math.max(maxWidth, size.width);
-                            let match;
-                            if (typeof child.state.style.left === 'string' && (match = child.state.style.left.match(/(\d+)px/))) {
-                                maxWidth += +match[1];
-                            }
-                            if (typeof child.state.style.right === 'string' && (match = child.state.style.right.match(/(\d+)px/))) {
-                                maxWidth += +match[1];
-                            }
-                        });
-
-                        if (maxWidth > 0) {
-                            console.log(`updating vertical layout width to ${maxWidth}`);
-                            self.style.width = maxWidth + 'px';
-                        }
-                    }
-
-                    if (!this.isHeightDefined()) {
-                        let maxHeight = 0;
-
-                        sizes.forEach((size) => {
-                            maxHeight += size.height;
-                        });
-
-                        if (maxHeight > 0) {
-                            self.style.height = maxHeight + this.state.spacing * (this.state.childrenVisible.reduce((total, x) => x ? total + 1 : total, 0) - 1) + 'px';
-                            console.log(`updating horizontal layout width to ${self.style.height}`);
-                        }
-                    }
-                }
-            );
+                return {
+                    width: maxWidth,
+                    height: maxHeight + this.state.spacing * (sizes.length - 1)
+                };
+            })
+        );
     }
 
     protected spacerStyle(): CSSProperties {
