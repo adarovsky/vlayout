@@ -227,12 +227,20 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     protected isWidthDefined(): boolean {
-        return !!this.state.style.width || (!!this.state.style.left && !!this.state.style.right);
+        return !!this.state.style.width ||
+            (!!this.state.style.left && !!this.state.style.right
+                && this.props.parentView.parent !== null
+                && this.props.parentView.parent.instance !== null
+                && this.props.parentView.parent.instance.isWidthDefined()) ||
+            (!!this.state.style.height && !!this.state.aspect);
     }
 
     protected isHeightDefined(): boolean {
         return !!this.state.style.height ||
-            (!!this.state.style.top && !!this.state.style.bottom) ||
+            (!!this.state.style.top && !!this.state.style.bottom
+                && this.props.parentView.parent !== null
+                && this.props.parentView.parent.instance !== null
+                && this.props.parentView.parent.instance.isHeightDefined()) ||
             (!!this.state.style.width && !!this.state.aspect);
     }
 }

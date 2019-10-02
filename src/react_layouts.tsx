@@ -39,6 +39,13 @@ class ReactLinearLayout extends ReactContainer {
 }
 
 export class ReactHorizontalLayout extends ReactLinearLayout {
+    protected subviewSubscription: Subscription = new Subscription();
+
+    componentWillUnmount(): void {
+        super.componentWillUnmount();
+        this.subviewSubscription.unsubscribe();
+    }
+
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));
     }
@@ -73,6 +80,48 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
         }
 
         return r;
+    }
+
+    protected updateSubviewPositions(): void {
+
+        const self = this.viewRef.current;
+        if (!self) return;
+
+        const children = (this.props.parentView as Container).views
+            .map(v => v.instance)
+            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
+
+        this.subviewSubscription.unsubscribe();
+        this.subviewSubscription = combineLatest(children.map(c => c.intrinsicSize()))
+            .subscribe(sizes => {
+                    console.log("sizes:", sizes);
+                    if (!this.isHeightDefined()) {
+                        let maxHeight = 0;
+
+                        sizes.forEach((size) => {
+                            maxHeight = Math.max(maxHeight, size.height);
+                        });
+
+                        if (maxHeight > 0) {
+                            console.log(`updating horizontal layout height to ${maxHeight}`);
+                            self.style.height = maxHeight + 'px';
+                        }
+                    }
+
+                    if (!this.isWidthDefined()) {
+                        let maxWidth = 0;
+
+                        sizes.forEach((size) => {
+                            maxWidth = Math.max(maxWidth, size.width);
+                        });
+
+                        if (maxWidth > 0) {
+                            self.style.width = maxWidth + this.state.spacing * (this.state.childrenVisible.length - 1) + 'px';
+                            console.log(`updating horizontal layout width to ${self.style.width}`);
+                        }
+                    }
+                }
+            );
     }
 
     protected spacerStyle(): CSSProperties {
@@ -138,10 +187,9 @@ export class ReactVerticalLayout extends ReactLinearLayout {
         this.subviewSubscription = combineLatest(children.map(c => c.intrinsicSize()))
             .subscribe(sizes => {
                     console.log("sizes:", sizes);
-                    if (!this.state.style.width) {
+                    if (!this.isWidthDefined()) {
                         let maxWidth = 0;
 
-                        console.log('updating width from children', children);
                         sizes.forEach((size, index) => {
                             const child = children[index];
                             maxWidth = Math.max(maxWidth, size.width);
@@ -157,6 +205,19 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                         if (maxWidth > 0) {
                             console.log(`updating vertical layout width to ${maxWidth}`);
                             self.style.width = maxWidth + 'px';
+                        }
+                    }
+
+                    if (!this.isHeightDefined()) {
+                        let maxHeight = 0;
+
+                        sizes.forEach((size) => {
+                            maxHeight = Math.max(maxHeight, size.height);
+                        });
+
+                        if (maxHeight > 0) {
+                            self.style.height = maxHeight + this.state.spacing * (this.state.childrenVisible.length - 1) + 'px';
+                            console.log(`updating horizontal layout width to ${self.style.height}`);
                         }
                     }
                 }
