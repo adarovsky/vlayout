@@ -1,12 +1,8 @@
-import sinon from "sinon";
-import {ReactButton} from "./react_button";
 import {mount, shallow} from "enzyme";
-import {Layout} from "./layout";
-import {asyncScheduler, scheduled, Subject} from "rxjs";
+import {Engine, Layout} from "../src";
+import {Subject} from "rxjs";
 import React from "react";
-import {Engine} from "./engine";
-import {ReactLabel} from "./react_primitives";
-import toJson, {renderToJson} from "enzyme-to-json";
+import {ReactLabel} from "../src/react_primitives";
 
 let engine: Engine|null = null;
 
@@ -361,7 +357,6 @@ it('boolean or expression should work', async () => {
 it('compare against set should work', async () => {
     engine!.registerEnum('TestEnum', {'key1': 1, 'key2': 2, 'key3': 3});
     const test1 = new Subject<number>();
-    const test2 = new Subject<number>();
     engine!.registerInput('test1', engine!.type('TestEnum')!, test1);
     const wrapper = mount(<Layout engine={engine!} content={`
      inputs {
@@ -395,7 +390,6 @@ it('compare against set should work', async () => {
 it('compare not equal against set should work', async () => {
     engine!.registerEnum('TestEnum', {'key1': 1, 'key2': 2, 'key3': 3});
     const test1 = new Subject<number>();
-    const test2 = new Subject<number>();
     engine!.registerInput('test1', engine!.type('TestEnum')!, test1);
     const wrapper = mount(<Layout engine={engine!} content={`
      inputs {

@@ -1,10 +1,9 @@
 import React from 'react';
-import {Layout} from "./layout";
-import {Engine} from "./engine";
+import {Engine, Layout} from "../src";
 import {asyncScheduler, scheduled, Subject} from "rxjs";
 import {mount} from "enzyme";
 import sinon from 'sinon';
-import {ReactButton} from './react_button';
+import {ReactButton} from '../src/react_button';
 
 let engine: Engine|null = null;
 

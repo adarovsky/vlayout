@@ -116,7 +116,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
                         });
 
                         if (maxWidth > 0) {
-                            self.style.width = maxWidth + this.state.spacing * (this.state.childrenVisible.length - 1) + 'px';
+                            self.style.width = maxWidth + this.state.spacing * (this.state.childrenVisible.reduce((total, x) => x ? total + 1 : total, 0) - 1) + 'px';
                             console.log(`updating horizontal layout width to ${self.style.width}`);
                         }
                     }
@@ -216,7 +216,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                         });
 
                         if (maxHeight > 0) {
-                            self.style.height = maxHeight + this.state.spacing * (this.state.childrenVisible.length - 1) + 'px';
+                            self.style.height = maxHeight + this.state.spacing * (this.state.childrenVisible.reduce((total, x) => x ? total + 1 : total, 0) - 1) + 'px';
                             console.log(`updating horizontal layout width to ${self.style.height}`);
                         }
                     }
@@ -253,6 +253,15 @@ export class ReactLayer extends ReactContainer {
         r.height = '100%';
         r.position = 'absolute';
         return r;
+    }
+
+
+    protected isWidthDefined(): boolean {
+        return true;
+    }
+
+    protected isHeightDefined(): boolean {
+        return true;
     }
 }
 
