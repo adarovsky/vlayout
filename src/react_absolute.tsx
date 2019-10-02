@@ -31,11 +31,10 @@ export class ReactAbsoluteLayout extends ReactContainer {
         this.subviewSubscription.unsubscribe();
         this.subviewSubscription = combineLatest(children.map(c => c!.intrinsicSize()))
             .subscribe(sizes => {
-                    console.log("sizes:", sizes);
                     if (!this.isWidthDefined()) {
                         let maxWidth = 0;
 
-                        console.log('updating width from children', children);
+                        // console.log('updating width from children', children);
                         sizes.forEach((size, index) => {
                             const child = children[index];
                             maxWidth = Math.max(maxWidth, size.width);
@@ -49,7 +48,6 @@ export class ReactAbsoluteLayout extends ReactContainer {
                         });
 
                         if (maxWidth > 0) {
-                            console.log(`updating absolute width to ${maxWidth}`);
                             self.style.width = maxWidth + 'px';
                         }
                     }
@@ -71,11 +69,9 @@ export class ReactAbsoluteLayout extends ReactContainer {
 
 
                         if (maxHeight > 0) {
-                            console.log(`updating absolute height to ${maxHeight}`);
                             self.style.height = maxHeight + 'px';
                         }
                     }
-                    console.log(`update complete: ${self.style.width}`);
                 }
             );
     }
