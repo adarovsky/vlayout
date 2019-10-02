@@ -112,7 +112,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
                         let maxWidth = 0;
 
                         sizes.forEach((size) => {
-                            maxWidth = Math.max(maxWidth, size.width);
+                            maxWidth += size.width;
                         });
 
                         if (maxWidth > 0) {
@@ -212,7 +212,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                         let maxHeight = 0;
 
                         sizes.forEach((size) => {
-                            maxHeight = Math.max(maxHeight, size.height);
+                            maxHeight += size.height;
                         });
 
                         if (maxHeight > 0) {
