@@ -1,4 +1,4 @@
-import {ReactContainer, ReactContainerState} from "./react_views";
+import {ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
 import _ from "lodash";
@@ -129,7 +129,9 @@ export class ReactVerticalLayout extends ReactLinearLayout {
         const self = this.viewRef.current;
         if (!self) return;
 
-        const children = (this.props.parentView as Container).views.map(v => v.instance!);
+        const children = (this.props.parentView as Container).views
+            .map(v => v.instance)
+            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
 
         this.subviewSubscription.unsubscribe();
         this.subviewSubscription = combineLatest(children.map(c => c.intrinsicSize()))

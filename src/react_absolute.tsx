@@ -1,4 +1,4 @@
-import {ReactContainer} from "./react_views";
+import {ReactContainer, ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import {combineLatest, Subscription} from "rxjs";
 import React from "react";
 import {Container, ViewProperty} from "./view";
@@ -24,11 +24,12 @@ export class ReactAbsoluteLayout extends ReactContainer {
         const self = this.viewRef.current;
         if (!self) return;
 
-        const children = (this.props.parentView as Container).views.map(v => v.instance!);
-
+        const children = (this.props.parentView as Container).views
+            .map(v => v.instance)
+            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
 
         this.subviewSubscription.unsubscribe();
-        this.subviewSubscription = combineLatest(children.map(c => c.intrinsicSize()))
+        this.subviewSubscription = combineLatest(children.map(c => c!.intrinsicSize()))
             .subscribe(sizes => {
                     console.log("sizes:", sizes);
                     if (!this.state.style.width) {
