@@ -104,7 +104,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
 
                         if (maxHeight > 0) {
                             console.log(`updating horizontal layout height to ${maxHeight}`);
-                            self.style.height = maxHeight + 'px';
+                            self.style.minHeight = maxHeight + 'px';
                         }
                     }
 
@@ -116,7 +116,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
                         });
 
                         if (maxWidth > 0) {
-                            self.style.width = maxWidth + this.state.spacing * (this.state.childrenVisible.reduce((total, x) => x ? total + 1 : total, 0) - 1) + 'px';
+                            self.style.minWidth = maxWidth + this.state.spacing * (this.state.childrenVisible.reduce((total, x) => x ? total + 1 : total, 0) - 1) + 'px';
                             console.log(`updating horizontal layout width to ${self.style.width}`);
                         }
                     }

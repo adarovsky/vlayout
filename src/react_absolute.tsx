@@ -48,7 +48,7 @@ export class ReactAbsoluteLayout extends ReactContainer {
                         });
 
                         if (maxWidth > 0) {
-                            self.style.width = maxWidth + 'px';
+                            self.style.minWidth = maxWidth + 'px';
                         }
                     }
 
@@ -69,7 +69,7 @@ export class ReactAbsoluteLayout extends ReactContainer {
 
 
                         if (maxHeight > 0) {
-                            self.style.height = maxHeight + 'px';
+                            self.style.minHeight = maxHeight + 'px';
                         }
                     }
                 }

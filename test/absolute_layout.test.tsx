@@ -36,8 +36,8 @@ describe('absolute', () => {
 
         sizeChange.next({width: 30, height: 20});
 
-        expect(node.getDOMNode()).toHaveProperty('style.width', '50px');
-        expect(node.getDOMNode()).toHaveProperty('style.height', '40px');
+        expect(node.getDOMNode()).toHaveProperty('style.min-width', '50px');
+        expect(node.getDOMNode()).toHaveProperty('style.min-height', '40px');
     });
 
     it('should not autoresize to padded subview if size is set', async function () {

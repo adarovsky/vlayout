@@ -31,7 +31,7 @@ export class ReactStackLayout extends ReactContainer {
 
                         if (maxWidth > 0) {
                             // console.log(`updating stack width to ${maxWidth}`);
-                            self.style.width = maxWidth + 'px';
+                            self.style.minWidth = maxWidth + 'px';
                         }
                     }
 
@@ -42,7 +42,7 @@ export class ReactStackLayout extends ReactContainer {
 
                         if (maxHeight > 0) {
                             // console.log(`updating stack height to ${maxHeight}`);
-                            self.style.height = maxHeight + 'px';
+                            self.style.minHeight = maxHeight + 'px';
                         }
                     }
                     console.log(`update complete: ${self.style.width}`);
