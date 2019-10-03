@@ -108,7 +108,7 @@ export class Engine {
         return this.functions.filter(f => f.name === name && f.parameterTypes.length === parametersCount);
     }
 
-    registerView(key: string, createComponent: <P extends ReactViewProps, S extends ReactViewState>(parent: ViewReference) => React.ReactElement<ReactView<P, S>, React.JSXElementConstructor<P>>) {
+    registerView(key: string, createComponent: (parent: ViewReference) => React.ReactElement<ReactViewProps>) {
         this.referencedViews[key] = new ViewReference(createComponent);
     }
 
