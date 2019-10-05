@@ -48,10 +48,11 @@ export class View {
     parent: View|null = null;
     interactive: boolean = false;
     protected properties: Dictionary<ViewProperty> = {};
-    readonly key: string;
+    private readonly _key: string;
     instance: ReactView<ReactViewProps, ReactViewState>|null = null;
 
     constructor() {
+        this.registerProperty(new ViewProperty('id', 'String'));
         ['left', 'right', 'top', 'bottom'].forEach( t => {
             this.registerProperty(new ViewProperty('padding.' + t, 'Number'));
         });
@@ -68,7 +69,7 @@ export class View {
         this.registerProperty(new ViewProperty('aspect', 'Number'));
         this.registerProperty(new ViewProperty('alpha', 'Number'));
         this.registerProperty(new ViewProperty('sizePolicy', 'SizePolicy'));
-        this.key = uuid.v1();
+        this._key = uuid.v1();
     }
     link(layout: Layout): void{
         if (!this.property('alpha').value) {
@@ -79,6 +80,15 @@ export class View {
         _.forEach(this.properties, p => {
             p.link(layout);
         });
+    }
+
+    get key() : string {
+        let key = this._key;
+        const idProp = this.property('id');
+        if (idProp.value)
+            idProp.value.sink.pipe(take(1)).subscribe( i => key = i);
+
+        return key;
     }
 
     get target(): React.ReactElement {
@@ -236,7 +246,6 @@ export class Layer extends AbsoluteLayout {
         super();
         this.registerProperty(new ViewProperty('z_order', 'Number'));
         this.registerProperty(new ViewProperty('fullscreen', 'Bool'));
-        this.registerProperty(new ViewProperty('id', 'String'));
     }
 
     viewType(): string {
@@ -244,10 +253,6 @@ export class Layer extends AbsoluteLayout {
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        let key = this.key;
-        const idProp = this.property('id');
-        if (idProp.value)
-            idProp.value.sink.pipe(take(1)).subscribe( i => key = i);
-        return createElement(ReactLayer, {parentView: this, key: key});
+        return createElement(ReactLayer, {parentView: this, key: this.key});
     }
 }

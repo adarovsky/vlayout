@@ -157,8 +157,8 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        // @ts-ignore
-        return (<div style={this.style()} ref={this.viewRef} className={'vlayout_'+this.props.parentView.viewType()}>
+        const extra = _.pick(this.state, 'id');
+        return (<div style={this.style()} ref={this.viewRef} className={'vlayout_'+this.props.parentView.viewType()} {...extra}>
             <img style={this.state.innerStyle}
                  src={this.state.image.src}
                  alt=""/>
@@ -302,8 +302,8 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        // @ts-ignore
-        return (<div style={this.style()} ref={this.viewRef} className={'vlayout_'+this.props.parentView.viewType()}>
+        const extra = _.pick(this.state, 'id');
+        return (<div style={this.style()} ref={this.viewRef} className={'vlayout_'+this.props.parentView.viewType()} {...extra}>
             <svg className="vlayout_spinner" viewBox="0 0 50 50">
                 <circle className="path" cx="50%" cy="50%" r="40%" fill="none" strokeWidth="2" stroke={this.state.progressColor}/>
             </svg>

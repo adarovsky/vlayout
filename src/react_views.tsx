@@ -1,7 +1,7 @@
 import React, {Component, CSSProperties} from "react";
 import {AbsoluteLayout, Container, LinearLayout, StackLayout, View, ViewProperty} from "./view";
 import {Dictionary} from "./types";
-import {combineLatest, Observable, of, Subscription, BehaviorSubject} from "rxjs";
+import {BehaviorSubject, combineLatest, Observable, of, Subscription} from "rxjs";
 import {map} from "rxjs/operators";
 import _ from "lodash";
 import {ElementSize, resizeObserver} from "./resize_sensor";
@@ -14,6 +14,7 @@ export interface ReactViewProps {
 export interface ReactViewState {
     style: CSSProperties;
     aspect: number|null;
+    id?: string;
 }
 
 export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
@@ -46,6 +47,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 }
             }));
         }
+
+        this.wire('id', 'id', _.identity);
     }
 
     componentWillUnmount(): void {
@@ -55,7 +58,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     constructor(props: P) {
         super(props);
         // @ts-ignore
-        this.state = {style: {}, aspect: null};
+        this.state = {style: {}, aspect: null, id: null};
     }
 
     wire(name: string, field: string, mapper: (v: any) => any) {
@@ -216,11 +219,10 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         if (self) {
             return resizeObserver(self).pipe(
                 map( size => {
-                    const r = {
+                    return {
                         width: this.isWidthDefined() ? size.width : 0,
                         height: this.isHeightDefined() ? size.height : 0
                     };
-                    return r;
                 })
             );
         }
@@ -230,8 +232,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        // @ts-ignore
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}/>);
+        const extra = _.pick(this.state, 'id');
+        return (<div style={this.style()} id={this.state.id} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}/>);
     }
 
     protected isWidthDefined(): boolean {
@@ -325,7 +327,8 @@ export class ReactContainer extends ReactView<ReactViewProps, ReactContainerStat
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}>
+        const extra = _.pick(this.state, 'id');
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .map( v => v.target )}

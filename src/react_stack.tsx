@@ -1,7 +1,7 @@
-import {ReactContainer, ReactView, ReactViewProps, ReactViewState} from "./react_views";
+import {ReactContainer} from "./react_views";
 import {combineLatest, Observable, Subscription} from "rxjs";
 import React from "react";
-import {Container, ViewProperty} from "./view";
+import {ViewProperty} from "./view";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 
@@ -19,6 +19,7 @@ export class ReactStackLayout extends ReactContainer {
             r.position = 'relative';
         return r;
     }
+
 
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
