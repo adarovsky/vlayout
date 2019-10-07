@@ -46,6 +46,7 @@ describe('absolute', () => {
      layout {
          layer {
              absolute {
+                 id: "sample"
                  center { x: 0.5 y: 0.5 }
                  
                  fixedSize { width: 30 height: 20 }
