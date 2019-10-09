@@ -65,5 +65,31 @@ describe('absolute', () => {
         expect(node.getDOMNode()).toHaveProperty('style.width', '30px');
         expect(node.getDOMNode()).toHaveProperty('style.height', '20px');
     });
+
+    it('should give z-indexes to children', async function () {
+
+        const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {
+             roundRect {
+                 id: "rect1"
+                 center { x: 0.5 y: 0.5 }
+                 
+                 fixedSize { width: 30 height: 20 }                 
+             }
+             roundRect {
+                 id: "rect2"
+                 padding { left: 10 right: 10 top: 10 bottom: 10 }                     
+             }
+         }
+     }`}/>);
+
+        const node1 = wrapper.find('#rect1');
+        expect(node1.getDOMNode()).toHaveProperty('style.zIndex', '1');
+
+        const node2 = wrapper.find('#rect2');
+        expect(node2.getDOMNode()).toHaveProperty('style.zIndex', '2');
+
+    });
 });
 

@@ -199,7 +199,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     break;
             }
 
-            if (this.props.parentView.parent instanceof StackLayout) {
+            if (this.props.parentView.parent instanceof StackLayout ||
+                this.props.parentView.parent instanceof AbsoluteLayout) {
                 r.position = 'absolute';
                 const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
                 r.zIndex = index + 1;
