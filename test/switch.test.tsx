@@ -1,4 +1,4 @@
-import {mount} from "enzyme";
+import {mount, shallow} from "enzyme";
 import {Engine, Layout} from "../src";
 import {Subject} from "rxjs";
 import React from "react";
@@ -52,4 +52,32 @@ it('switch expression should deliver value when source changes', async () => {
     test1.next(3);
 
     expect(wrapper.find('.vlayout_label > span').text()).toBe("another");
+});
+
+it('switch should not crash', async () => {
+    const test1 = new Subject<number>();
+    const test2 = new Subject<boolean>();
+    engine!.registerInput('test1', engine!.numberType(), test1);
+    engine!.registerInput('test2', engine!.boolType(), test2);
+    const wrapper = () => shallow(<Layout engine={engine!} content={`
+     inputs {
+        test1: Number
+        test2: Bool
+     }
+
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : switch(userCount) {
+                       case (2, _) => 0
+                       case (3, _) => 0
+                       case (4, _) => 0
+                       case (5, _) => 0
+                    }
+             }
+         }
+     }`}/>);
+
+    expect(wrapper).toThrowError(/Extra matcher/);
 });

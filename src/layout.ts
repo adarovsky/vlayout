@@ -450,13 +450,12 @@ export class Layout extends Component<LayoutProps, LayoutState> {
                 d.push(new SwitchCompare(sources[i++], exp!));
 
                 while (this.match(',')) {
+                    if (i >= sources.length) {
+                        this.raiseError(`Extra matcher ${exp}: a tuple of exactly ${sources.length} items needed`);
+                    }
                     exp = this.match('_') ? new TrueMatcher(this._lastMatched!.line, this._lastMatched!.column) : this.parseExpression();
                     if (!exp) this.raiseError("expression expected");
                     d.push(new SwitchCompare(sources[i++], exp!));
-
-                    if (d.length > sources.length) {
-                        this.raiseError(`Extra matcher ${exp}: a tuple of exactly ${sources.length} items needed`);
-                    }
                 }
 
                 if (d.length === 1 && isFirstWildcard) {
