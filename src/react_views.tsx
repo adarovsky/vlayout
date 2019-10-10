@@ -199,8 +199,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     break;
             }
 
-            if (this.props.parentView.parent instanceof StackLayout ||
-                this.props.parentView.parent instanceof AbsoluteLayout) {
+            if (this.props.parentView.parent instanceof StackLayout) {
                 r.position = 'absolute';
                 const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
                 r.zIndex = index + 1;
@@ -209,6 +208,10 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     r.minWidth = '100%';
                 // if (!r.height)
                     r.minHeight = '100%';
+            }
+            else if (this.props.parentView.parent instanceof AbsoluteLayout) {
+                const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
+                r.zIndex = index + 1;
             }
 
         });
