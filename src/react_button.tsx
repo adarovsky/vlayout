@@ -1,10 +1,10 @@
 import {ViewProperty} from "./view";
 import {combineLatest} from "rxjs";
 import React, {CSSProperties} from "react";
-import _ from "lodash";
+import {cloneDeep} from "lodash";
 import {ReactRoundRect} from "./react_primitives";
 import {FontContainer, ImageContainer} from "./types";
-import {finalize, map} from "rxjs/operators";
+import {map} from "rxjs/operators";
 import {Button} from "./primitives";
 import {fromPromise} from "rxjs/internal-compatibility";
 import {ReactViewState} from "./react_views";
@@ -23,7 +23,11 @@ export class ReactButton extends ReactRoundRect {
         aspect: null,
         text: '',
         image: new ImageContainer(''),
-        imageStyle: {},
+        imageStyle: {
+            maxHeight: '100%',
+            maxWidth: '100%',
+            objectFit: 'scale-down'
+        },
         running: false,
         enabled: true
     };
@@ -75,7 +79,11 @@ export class ReactButton extends ReactRoundRect {
                                 r.marginTop = padding;
                                 break;
                         }
+
                     }
+                    r.maxHeight = '100%';
+                    r.maxWidth = '100%';
+                    r.objectFit = 'scale-down';
                     return r;
                 })
             ).subscribe( x => this.setState(s => Object.assign(s, {imageStyle: x}))));
@@ -101,7 +109,7 @@ export class ReactButton extends ReactRoundRect {
 
         r.display = 'flex';
         r.cursor = 'pointer';
-        _.forEach(value, (val, index) => {
+        value.forEach((val, index) => {
             switch (props[index].name) {
                 case 'textColor':
                     r.color = val.toString();
@@ -188,7 +196,7 @@ export class ReactButton extends ReactRoundRect {
     }
 
     private currentStyle(): CSSProperties {
-        const s = _.cloneDeep(this.state.style);
+        const s = cloneDeep(this.state.style);
         if (this.state.running) {
             s.cursor = 'progress';
             s.opacity = 0.6;
@@ -208,7 +216,6 @@ export class ReactButton extends ReactRoundRect {
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         return (<div style={this.currentStyle()}
                      className={'vlayout_'+this.props.parentView.viewType()}
-                     // @ts-ignore
                      ref={this.viewRef}
         onClick={() => this.handleClick()}>
             {this.state.image.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
