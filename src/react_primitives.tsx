@@ -87,8 +87,9 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         const content = this.state.text.split('\n').map(function (item, key) {
             return <span key={key}>{item}<br/></span>;
         });
+        const extra = _.pick(this.state, 'id');
 
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef as RefObject<HTMLDivElement>}>
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef as RefObject<HTMLDivElement>} {...extra}>
             {content}
             <div style={this.shadowStyle()} className={'vlayout_'+this.props.parentView.viewType()+'_shadow'} ref={this.shadowRef}>
                 {content}
