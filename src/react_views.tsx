@@ -204,10 +204,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
                 r.zIndex = index + 1;
 
-                // if (!r.width)
-                    r.minWidth = '100%';
-                // if (!r.height)
-                    r.minHeight = '100%';
+                r.minWidth = '100%';
+                r.minHeight = '100%';
             }
             else if (this.props.parentView.parent instanceof AbsoluteLayout) {
                 const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
@@ -310,14 +308,21 @@ export class ReactContainer extends ReactView<ReactViewProps, ReactContainerStat
         if (!self) return;
 
         this.subviewSubscription.unsubscribe();
+        const isInStack = this.props.parentView.parent instanceof StackLayout;
         this.subviewSubscription = this.intrinsicSize()
             .subscribe(size => {
                     if (size.width > 0 && !this.isWidthDefined()) {
                         self.style.minWidth = size.width + 'px';
                     }
+                    else {
+                        self.style.minWidth = isInStack ? '100%' : null;
+                    }
 
                     if (size.height > 0 && !this.isHeightDefined()) {
                         self.style.minHeight = size.height + 'px';
+                    }
+                    else {
+                        self.style.minHeight = isInStack ? '100%' : null;
                     }
                 }
             );
