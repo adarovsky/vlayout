@@ -1,4 +1,4 @@
-# vlayout [![Build Status](https://travis-ci.org/adarovsky/vlayout.svg?branch=master)](https://travis-ci.org/adarovsky/vlayout)
+# vlayout [![Build Status](https://travis-ci.org/adarovsky/vlayout.svg?branch=master)](https://travis-ci.org/adarovsky/vlayout) [![Coverage Status](https://coveralls.io/repos/github/adarovsky/vlayout/badge.svg)](https://coveralls.io/github/adarovsky/vlayout)
 A port of simple reactive layout engine running in browsers.
 
 Give it a layout description, wire external views, button click handlers and
