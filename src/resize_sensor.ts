@@ -1,5 +1,5 @@
-import {Observable} from "rxjs";
-import {distinctUntilChanged, refCount, share, shareReplay} from "rxjs/operators";
+import {BehaviorSubject, EMPTY, Observable} from "rxjs";
+import {distinctUntilChanged, shareReplay, switchMap} from "rxjs/operators";
 import _ from "lodash";
 
 const observers: [Element, Observable<ElementSize>][] = [];
@@ -9,13 +9,24 @@ export interface ElementSize {
     height: number;
 }
 
+let pausedCount = 0;
+export function pauseObserving() {
+    paused.next(++pausedCount > 0);
+}
+
+export function resumeObserving() {
+    paused.next(Math.max(--pausedCount, 0) > 0);
+}
+
+const paused = new BehaviorSubject<boolean>(false);
+
 export function resizeObserver(element: Element): Observable<ElementSize> {
     const obj = observers.find( o => o[0] === element);
     if (obj) {
         return obj[1];
     }
 
-    const observer = new Observable<ElementSize>(subscriber => {
+    const innerObserver = new Observable<ElementSize>(subscriber => {
         const style = getComputedStyle(element);
         const zIndex = ((style && style.zIndex) ? parseInt(style.zIndex)! : 0) - 1;
 
@@ -106,6 +117,10 @@ export function resizeObserver(element: Element): Observable<ElementSize> {
         }
     }).pipe(distinctUntilChanged(_.isEqual), shareReplay({bufferSize: 1, refCount: true}));
 
+    const observer = paused.pipe(
+        distinctUntilChanged(),
+        switchMap(paused => paused ? EMPTY : innerObserver)
+    );
     observers.push([element, observer]);
     return observer;
 }

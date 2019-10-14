@@ -1,9 +1,10 @@
 import {Engine} from "./engine";
 import {Dictionary, TypeDefinition} from "./types";
 import {Expression} from "./expression";
-import { Observable, ReplaySubject } from "rxjs";
+import {Observable, of} from "rxjs";
 import {LinkError} from "./errors";
-import {distinctUntilChanged, shareReplay, tap} from "rxjs/operators";
+import {distinctUntilChanged, finalize, shareReplay, switchMap, tap} from "rxjs/operators";
+import {pauseObserving, resumeObserving} from "./resize_sensor";
 
 export class Input extends Expression {
     line: number = 0;
@@ -29,8 +30,14 @@ export class Inputs {
         inp.typeDefinition = type;
         inp.sink = sink.pipe(
             distinctUntilChanged(),
-            shareReplay({bufferSize: 1, refCount: true} ),
-            tap( x => this.engine.logInputValue(name, x))
+            tap( x => this.engine.logInputValue(name, x)),
+            switchMap( x => {
+                pauseObserving();
+                return of(x).pipe(
+                    finalize(resumeObserving)
+                )
+            }),
+            shareReplay({bufferSize: 1, refCount: true} )
         );
 
         this.inputs[name] = inp;

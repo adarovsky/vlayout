@@ -1,8 +1,8 @@
-import { mount } from "enzyme";
-import { Engine, Layout } from "../src";
+import {mount} from "enzyme";
+import {Engine, Layout} from "../src";
 import React from "react";
-import { Subject } from "rxjs";
-import { ElementSize } from "../src/resize_sensor";
+import {Subject} from "rxjs";
+import {ElementSize} from "../src/resize_sensor";
 
 let module = require("../src/resize_sensor");
 
@@ -31,8 +31,7 @@ describe("absolute", () => {
                  }
              }
          }
-     }`}
-      />
+     }`}/>
     );
 
     const node = wrapper.find(".vlayout_absolute");
