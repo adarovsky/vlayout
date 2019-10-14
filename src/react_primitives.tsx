@@ -130,7 +130,7 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
         style: {},
         aspect: null,
         image: new ImageContainer(''),
-        innerStyle: { width: '100%', height: '100%' }
+        innerStyle: { width: '100%', height: '100%', objectFit: 'fill' }
     };
 
     componentDidMount(): void {
