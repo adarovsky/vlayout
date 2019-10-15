@@ -28,10 +28,12 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
     column: number;
     arguments: FunctionArgument[] = [];
     expression: Expression|null = null;
+    returnType: TypeDefinition;
     constructor(name: LexIdentifier, readonly layout: Layout) {
         this.name = name.content;
         this.line = name.line;
         this.column = name.column;
+        this.returnType = layout.engine.boolType();
     }
 
     addArgument(name: LexIdentifier, type: string) {
@@ -60,13 +62,11 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
         // fall back to number type to silence
         return this.arguments.map( a => a.typeDefinition!);
     }
-    get returnType(): TypeDefinition {
-        return this.expression!.typeDefinition!;
-    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         this.arguments.forEach(a => a.link(scope, null));
         this.expression!.link(this, hint);
+        this.returnType = this.expression!.typeDefinition!;
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
@@ -75,9 +75,9 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
         }
 
         this.arguments.forEach((a, index) => a.sink = parameters[index]);
-        const exp = _.cloneDeep(this.expression!);
-        exp.link(this, this.returnType);
-        return exp!.sink!;
+        this.expression!.typeDefinition = null;
+        this.expression!.link(this, this.returnType);
+        return this.expression!.sink;
     }
 }
 
