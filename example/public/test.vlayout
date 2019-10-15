@@ -6,6 +6,10 @@ inputs {
     counter: Number
 }
 
+functions {
+    testFunction(s: String, x: Number) => @("$1-$2", s, String(x))
+}
+
 layout {
    layer {
       id: "background"
@@ -27,7 +31,7 @@ layout {
           alignment: .center
           center { x: 0.5 y: 0.5 }
           label {
-              text: String(counter)
+              text: testFunction("prefix", counter)
           }
           myButton {
               backgroundColor: #dddddd

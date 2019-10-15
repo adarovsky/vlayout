@@ -1,196 +1,112 @@
+import {Expression} from "./expression";
+import {LexIdentifier} from "./lexer";
+import {TypeDefinition} from "./types";
+import {FunctionImplementationI} from "./builtin_functions";
+import {Layout, Scope} from "./layout";
 import {Engine} from "./engine";
-import {ColorContainer, FontContainer, ImageContainer, TypeDefinition} from "./types";
-import { Observable, combineLatest } from "rxjs";
-import { map } from "rxjs/operators";
+import {Observable} from "rxjs";
+import _ from "lodash";
 
-export interface FunctionImplementationI {
-    returnType: TypeDefinition;
-    name: string;
-    parameterTypes: TypeDefinition[];
+class FunctionArgument extends Expression {
+    typeDefinition: TypeDefinition | null = null;
 
-    sink(parameters: Observable<any>[]): Observable<any>;
-}
+    constructor(readonly name: LexIdentifier, readonly type: string) {
+        super(name.line, name.column);
+    }
 
-export class FunctionImplementation {
-    constructor(public readonly engine: Engine) {
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.typeDefinition = scope.engine.type(this.type);
+        if (!this.typeDefinition) {
+            throw new Error(`${this.line}:${this.column}: cannot resolve type ${this.type}`);
+        }
     }
 }
 
-export class LocalizedNumber extends FunctionImplementation implements FunctionImplementationI {
+export class FunctionDeclaration implements Scope, FunctionImplementationI {
     name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
+    line: number;
+    column: number;
+    arguments: FunctionArgument[] = [];
+    expression: Expression|null = null;
+    constructor(name: LexIdentifier, readonly layout: Layout) {
+        this.name = name.content;
+        this.line = name.line;
+        this.column = name.column;
+    }
 
-    constructor(engine: Engine) {
-        super(engine);
+    addArgument(name: LexIdentifier, type: string) {
+        this.arguments.push(new FunctionArgument(name, type));
+    }
 
-        this.name = 'String';
-        this.parameterTypes = [engine.numberType()];
-        this.returnType = engine.stringType();
+    get engine(): Engine {
+        return this.layout.engine;
+    }
+
+    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI {
+        return this.layout.functionFor(name, parameters);
+    }
+    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[] {
+        return this.layout.functionsLoose(name, parametersCount);
+    }
+
+    variableForKeyPath(keyPath: string): Expression | null {
+        const kp = keyPath.split('.');
+        if (kp.length !== 1) return null;
+
+        return this.arguments.find(x => x.name.content === kp[0]) || null;
+    }
+
+    get parameterTypes(): TypeDefinition[] {
+        // fall back to number type to silence
+        return this.arguments.map( a => a.typeDefinition!);
+    }
+    get returnType(): TypeDefinition {
+        return this.expression!.typeDefinition!;
+    }
+
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.arguments.forEach(a => a.link(scope, null));
+        this.expression!.link(this, hint);
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(
-            map( x => `${x}`)
-        );
+        if (parameters.length !== this.arguments.length) {
+            throw new Error(`${this.line}:${this.column}: wrong parameter count: ${this.arguments.length} expected, but got ${parameters.length}`);
+        }
+
+        this.arguments.forEach((a, index) => a.sink = parameters[index]);
+        const exp = _.cloneDeep(this.expression!);
+        exp.link(this, this.returnType);
+        return exp!.sink!;
     }
 }
 
-export class ShortLocalizedNumber extends FunctionImplementation implements FunctionImplementationI {
-    name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
+export class Functions {
+    private readonly functions: FunctionDeclaration[] = [];
 
-    constructor(engine: Engine) {
-        super(engine);
+    constructor(readonly line: number, readonly column: number) {
 
-        this.name = 'ShortString';
-        this.parameterTypes = [engine.numberType()];
-        this.returnType = engine.stringType();
     }
 
-    sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(
-            map( x => {
-                if (x > 1000000) {
-                    return `${Math.round(x / 100000) / 10} M`
-                }
-                else if (x > 1000) {
-                    return `${Math.round(x / 100) / 10} K`
-                }
-                return `${x}`;
-            })
-        );
-    }
-}
-
-export class LocalizedString extends FunctionImplementation implements FunctionImplementationI {
-    name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
-
-    constructor(engine: Engine) {
-        super(engine);
-
-        this.name = 'String';
-        this.parameterTypes = [engine.stringType()];
-        this.returnType = engine.stringType();
+    registerFunction(func: FunctionDeclaration) {
+        this.functions.push(func);
     }
 
-    sink(parameters: Observable<any>[]): Observable<any> {
-        return combineLatest(parameters as Observable<string>[]).pipe(
-            map(params => {
-                let key = params[0];
-                for (let i = params.length - 1; i >= 1; --i) {
-                    key = key.replace(`$${i}`, params[i]);
-                }
+    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI|null {
+        for (let f of this.functions) {
+            if (f.name === name && _.isEqual(f.parameterTypes, parameters)) {
+                return f;
+            }
+        }
 
-                return key;
-            })
-        );
-    }
-}
-
-export class Image extends FunctionImplementation implements FunctionImplementationI {
-    name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
-
-    constructor(engine: Engine) {
-        super(engine);
-
-        this.name = 'Image';
-        this.parameterTypes = [engine.stringType()];
-        this.returnType = engine.imageType();
+        return null;
     }
 
-    sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(
-            map(x => new ImageContainer(x))
-        );
-    }
-}
-
-export class FontFamily extends FunctionImplementation implements FunctionImplementationI {
-    name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
-
-    constructor(engine: Engine) {
-        super(engine);
-
-        this.name = 'Font';
-        this.parameterTypes = [engine.stringType(), engine.numberType()];
-        this.returnType = engine.fontType();
+    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[] {
+        return this.functions.filter(f => f.name === name && f.parameterTypes.length === parametersCount);
     }
 
-    sink(parameters: Observable<any>[]): Observable<any> {
-        return combineLatest(parameters as Observable<any>[]).pipe(
-            map(params => new FontContainer(params[0], params[1], null))
-        );
-    }
-}
-
-export class FontTyped extends FunctionImplementation implements FunctionImplementationI {
-    name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
-
-    constructor(engine: Engine) {
-        super(engine);
-
-        this.name = 'Font';
-        this.parameterTypes = [engine.type('FontType')!, engine.numberType()];
-        this.returnType = engine.fontType();
-    }
-
-    sink(parameters: Observable<any>[]): Observable<any> {
-        return combineLatest(parameters as Observable<any>[]).pipe(
-            map(params => new FontContainer(null, params[1], params[0]))
-        );
-    }
-}
-
-export class FontSized extends FunctionImplementation implements FunctionImplementationI {
-    name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
-
-    constructor(engine: Engine) {
-        super(engine);
-
-        this.name = 'Font';
-        this.parameterTypes = [engine.numberType()];
-        this.returnType = engine.fontType();
-    }
-
-    sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(
-            map(params => new FontContainer(null, params, null))
-        );
-    }
-}
-
-export class ColorAlpha extends FunctionImplementation implements FunctionImplementationI {
-    name: string;
-    parameterTypes: TypeDefinition[];
-    returnType: TypeDefinition;
-
-    constructor(engine: Engine) {
-        super(engine);
-
-        this.name = 'Color';
-        this.parameterTypes = [engine.colorType(), engine.numberType()];
-        this.returnType = engine.colorType();
-    }
-
-    sink(parameters: Observable<any>[]): Observable<any> {
-        return combineLatest(parameters as Observable<any>[]).pipe(
-            map(params => {
-                const original = params[0] as ColorContainer;
-                const alpha = params[1] as number;
-                return new ColorContainer(original.red, original.green, original.blue, Math.max(0, Math.min(alpha, 1)));
-            })
-        );
+    link(scope: Scope) {
+        this.functions.forEach(f => f.link(scope, null));
     }
 }

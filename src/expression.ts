@@ -1,8 +1,8 @@
-import {Observable, of, combineLatest, EMPTY } from "rxjs";
-import { map, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import {combineLatest, EMPTY, Observable, of} from "rxjs";
+import {distinctUntilChanged, map, switchMap} from 'rxjs/operators';
 import {ColorContainer, EnumDefinition, Set, TypeDefinition} from "./types";
 import {LexColor, LexNumber, LexString, LexToken} from "./lexer";
-import {Layout} from "./layout";
+import {Scope} from "./layout";
 import {LinkError} from "./errors";
 
 export class Expression {
@@ -17,7 +17,7 @@ export class Expression {
         this.typeDefinition = null;
     }
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
 
     }
 
@@ -40,25 +40,25 @@ export class Constant extends Expression {
         return this.lex.content;
     }
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         if (this.lex instanceof LexNumber) {
-            this.typeDefinition = layout.engine.numberType();
+            this.typeDefinition = scope.engine.numberType();
             this.sink = of(+this.lex.content);
         }
         else if (this.lex instanceof LexString) {
-            this.typeDefinition = layout.engine.stringType();
+            this.typeDefinition = scope.engine.stringType();
             this.sink = of(this.lex.content);
         }
         else if (this.lex instanceof LexColor) {
-            this.typeDefinition = layout.engine.colorType();
+            this.typeDefinition = scope.engine.colorType();
             this.sink = of(ColorContainer.fromHex(this.lex.content));
         }
         else if (this.lex.content === 'true') {
-            this.typeDefinition = layout.engine.boolType();
+            this.typeDefinition = scope.engine.boolType();
             this.sink = of(true);
         }
         else if (this.lex.content === 'false') {
-            this.typeDefinition = layout.engine.boolType();
+            this.typeDefinition = scope.engine.boolType();
             this.sink = of(false);
         }
 
@@ -70,16 +70,16 @@ export class Constant extends Expression {
 
 export class Nil extends Constant {
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        if  (hint === layout.engine.numberType() ||
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        if  (hint === scope.engine.numberType() ||
             // hint === layout.engine.stringType() ||
-            hint === layout.engine.imageType()) {
+            hint === scope.engine.imageType()) {
             this.typeDefinition = hint;
             this.sink = of(null);
         }
 
         if (!hint) {
-            this.typeDefinition = layout.engine.numberType();
+            this.typeDefinition = scope.engine.numberType();
             this.sink = of(null);
         }
 
@@ -96,7 +96,7 @@ export class EnumValue extends Expression {
         this.key = key;
     }
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         this.linkEnum(hint);
     }
 
@@ -128,11 +128,11 @@ export class Variable extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        const prop = layout.variableForKeyPath(this.keyPath);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        const prop = scope.variableForKeyPath(this.keyPath);
 
         if (prop) {
-            prop.link(layout, hint);
+            prop.link(scope, hint);
             this.typeDefinition = prop.typeDefinition;
             this.sink = prop.sink;
         }
@@ -156,17 +156,17 @@ export class NegateOp extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         switch (this.op.content) {
             case '-':
-                this.typeDefinition = layout.engine.numberType();
-                this.expression.link(layout, this.typeDefinition);
+                this.typeDefinition = scope.engine.numberType();
+                this.expression.link(scope, this.typeDefinition);
                 this.sink = this.expression.sink.pipe(map(x => - (+x)));
                 break;
 
             case '!':
-                this.typeDefinition = layout.engine.boolType();
-                this.expression.link(layout, this.typeDefinition);
+                this.typeDefinition = scope.engine.boolType();
+                this.expression.link(scope, this.typeDefinition);
                 this.sink = this.expression.sink.pipe(map(x => ! x));
                 break;
             default:
@@ -193,23 +193,23 @@ export class FunctionCall extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         try {
             for (let p of this.parameters) {
-                p.link(layout, null);
+                p.link(scope, null);
             }
-            const impl = layout.engine.functionFor(this.name, this.parameters.map(p => p.typeDefinition!));
+            let impl = scope.functionFor(this.name, this.parameters.map(p => p.typeDefinition!));
             this.typeDefinition = impl.returnType;
             this.sink = impl.sink(this.parameters.map(p => p.sink));
         }
         catch (e) {
-            for (let f of layout.engine.functionsLoose(this.name, this.parameters.length)) {
+            for (let f of scope.functionsLoose(this.name, this.parameters.length)) {
                 try {
                     for (let i = 0; i < this.parameters.length; ++i) {
                         const p = this.parameters[i];
                         p.typeDefinition = null;
                         p.sink = EMPTY;
-                        p.link(layout, f.parameterTypes[i]);
+                        p.link(scope, f.parameterTypes[i]);
 
                         this.typeDefinition = f.returnType;
                         this.sink = f.sink(this.parameters.map(p => p.sink));
@@ -241,21 +241,21 @@ export class BinaryExpression extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         if (!this.left.typeDefinition && this.right.typeDefinition) {
-            this.left.link(layout, this.right.typeDefinition);
+            this.left.link(scope, this.right.typeDefinition);
         }
         else if (this.left.typeDefinition && !this.right.typeDefinition) {
-            this.right.link(layout, this.left.typeDefinition);
+            this.right.link(scope, this.left.typeDefinition);
         }
         else {
-            this.left.link(layout, null);
-            this.right.link(layout, this.left.typeDefinition);
+            this.left.link(scope, null);
+            this.right.link(scope, this.left.typeDefinition);
             if (!this.right.typeDefinition) {
                 throw new LinkError(this.line, this.column, `type definitions for ${this.left} and ${this.right} could not be deduced`);
             }
             if (!this.left.typeDefinition) {
-                this.left.link(layout, this.right.typeDefinition);
+                this.left.link(scope, this.right.typeDefinition);
 
                 if (!this.left.typeDefinition) {
                     throw new LinkError(this.line, this.column, `type definitions for ${this.left} and ${this.right} could not be deduced`);
@@ -267,18 +267,18 @@ export class BinaryExpression extends Expression {
 
 export class Addition extends BinaryExpression {
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
         this.typeDefinition = this.left.typeDefinition;
 
-        if (this.typeDefinition === layout.engine.numberType()) {
+        if (this.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
                 map (([a, b]) => a + b),
                 distinctUntilChanged());
         }
-        else if (this.typeDefinition === layout.engine.stringType()) {
+        else if (this.typeDefinition === scope.engine.stringType()) {
             const left = this.left.sink as Observable<string>;
             const right = this.right.sink as Observable<string>;
             this.sink = combineLatest([left, right]).pipe(
@@ -297,11 +297,11 @@ export class Addition extends BinaryExpression {
 }
 
 export class Subtraction extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
         this.typeDefinition = this.left.typeDefinition;
 
-        if (this.typeDefinition === layout.engine.numberType()) {
+        if (this.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -318,11 +318,11 @@ export class Subtraction extends BinaryExpression {
 }
 
 export class Multiply extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
         this.typeDefinition = this.left.typeDefinition;
 
-        if (this.typeDefinition === layout.engine.numberType()) {
+        if (this.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -340,11 +340,11 @@ export class Multiply extends BinaryExpression {
 }
 
 export class Divide extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
         this.typeDefinition = this.left.typeDefinition;
 
-        if (this.typeDefinition === layout.engine.numberType()) {
+        if (this.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -362,14 +362,14 @@ export class Divide extends BinaryExpression {
 }
 
 export class ModDivide extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
         this.typeDefinition = this.left.typeDefinition;
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
 
-        if (this.typeDefinition === layout.engine.numberType()) {
+        if (this.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -387,14 +387,14 @@ export class ModDivide extends BinaryExpression {
 }
 
 export class More extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
 
-        if (this.left.typeDefinition === layout.engine.numberType()) {
+        if (this.left.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -412,14 +412,14 @@ export class More extends BinaryExpression {
 }
 
 export class Less extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
 
-        if (this.left.typeDefinition === layout.engine.numberType()) {
+        if (this.left.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -437,14 +437,14 @@ export class Less extends BinaryExpression {
 }
 
 export class MoreEqual extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
 
-        if (this.left.typeDefinition === layout.engine.numberType()) {
+        if (this.left.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -462,14 +462,14 @@ export class MoreEqual extends BinaryExpression {
 }
 
 export class LessEqual extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
 
-        if (this.left.typeDefinition === layout.engine.numberType()) {
+        if (this.left.typeDefinition === scope.engine.numberType()) {
             const left = this.left.sink as Observable<number>;
             const right = this.right.sink as Observable<number>;
             this.sink = combineLatest([left, right]).pipe(
@@ -487,9 +487,9 @@ export class LessEqual extends BinaryExpression {
 }
 
 export class NotEqual extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
@@ -536,9 +536,9 @@ export class NotEqual extends BinaryExpression {
 }
 
 export class EqualExp extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        super.link(layout, hint);
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        super.link(scope, hint);
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
@@ -584,18 +584,18 @@ export class EqualExp extends BinaryExpression {
 }
 
 export class OrExp extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
 
-        this.left.link(layout, layout.engine.boolType());
-        if (this.left.typeDefinition !== layout.engine.boolType()) {
+        this.left.link(scope, scope.engine.boolType());
+        if (this.left.typeDefinition !== scope.engine.boolType()) {
             throw new LinkError(this.line, this.column, `cannot cast ${this.left.typeDefinition} to ${this.typeDefinition} while linking ${this.left}`);
         }
-        this.right.link(layout, layout.engine.boolType());
-        if (this.left.typeDefinition !== layout.engine.boolType()) {
+        this.right.link(scope, scope.engine.boolType());
+        if (this.left.typeDefinition !== scope.engine.boolType()) {
             throw new LinkError(this.line, this.column, `cannot cast ${this.right.typeDefinition} to ${this.typeDefinition} while linking ${this.right}`);
         }
 
@@ -614,18 +614,18 @@ export class OrExp extends BinaryExpression {
 }
 
 export class AndExp extends BinaryExpression {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        this.typeDefinition = layout.engine.boolType();
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.typeDefinition = scope.engine.boolType();
         if (hint && hint !== this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition} while linking ${this}`);
         }
 
-        this.left.link(layout, layout.engine.boolType());
-        if (this.left.typeDefinition !== layout.engine.boolType()) {
+        this.left.link(scope, scope.engine.boolType());
+        if (this.left.typeDefinition !== scope.engine.boolType()) {
             throw new LinkError(this.line, this.column, `cannot cast ${this.left.typeDefinition} to ${this.typeDefinition} while linking ${this.left}`);
         }
-        this.right.link(layout, layout.engine.boolType());
-        if (this.left.typeDefinition !== layout.engine.boolType()) {
+        this.right.link(scope, scope.engine.boolType());
+        if (this.left.typeDefinition !== scope.engine.boolType()) {
             throw new LinkError(this.line, this.column, `cannot cast ${this.right.typeDefinition} to ${this.typeDefinition} while linking ${this.right}`);
         }
 
@@ -650,10 +650,10 @@ export class Alternative extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         let typeDef = hint;
         for (let a of this.alternatives) {
-            a.link(layout, typeDef);
+            a.link(scope, typeDef);
             if (!typeDef && a.typeDefinition) {
                 typeDef = a.typeDefinition;
             } else if (typeDef !==null && a.typeDefinition !==null && typeDef !== a.typeDefinition) {
@@ -667,10 +667,10 @@ export class Alternative extends Expression {
 
         for (let a of this.alternatives) {
             if (!a.typeDefinition)
-                a.link(layout, typeDef);
+                a.link(scope, typeDef);
         }
 
-        this.typeDefinition = layout.engine.type(typeDef.typeName + '*');
+        this.typeDefinition = scope.engine.type(typeDef.typeName + '*');
         const sinks = this.alternatives.map(x => x.sink);
         this.sink = combineLatest(sinks);
     }
@@ -693,18 +693,18 @@ export class Conditional extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        this.condition.link(layout, layout.engine.boolType());
-        this.ifTrue.link(layout, hint);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.condition.link(scope, scope.engine.boolType());
+        this.ifTrue.link(scope, hint);
         if (this.ifTrue.typeDefinition) {
-            this.ifFalse.link(layout, this.ifTrue.typeDefinition);
+            this.ifFalse.link(scope, this.ifTrue.typeDefinition);
         }
         else {
-            this.ifFalse.link(layout, hint);
+            this.ifFalse.link(scope, hint);
             if (!this.ifFalse.typeDefinition) {
                 throw new LinkError(this.ifFalse.line, this.ifFalse.column, `cannot deduce type for ${this.ifTrue} and ${this.ifFalse}`);
             }
-            this.ifTrue.link(layout, this.ifFalse.typeDefinition);
+            this.ifTrue.link(scope, this.ifFalse.typeDefinition);
         }
 
         if (this.ifTrue.typeDefinition !== this.ifFalse.typeDefinition) {
@@ -730,7 +730,7 @@ export class SwitchMatcher extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         this.typeDefinition = this.result.typeDefinition;
         this.sink = combineLatest(this.matchers.map(m => m.sink as Observable<boolean>)).pipe(
             map(arr => arr.reduce((previousValue, currentValue) => previousValue && currentValue)),
@@ -746,16 +746,16 @@ export class SwitchMatcher extends Expression {
 
 export class TrueMatcher extends Expression {
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         if (hint) this.typeDefinition = hint;
     }
 }
 
 export class SwitchCompare extends EqualExp {
-    link(layout: Layout, hint: TypeDefinition | null): void {
-        this.left.link(layout, hint);
-        this.right.link(layout, hint);
-        super.link(layout, null);
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.left.link(scope, hint);
+        this.right.link(scope, hint);
+        super.link(scope, null);
     }
 }
 
@@ -769,9 +769,9 @@ export class Switch extends Expression {
     }
 
 
-    link(layout: Layout, hint: TypeDefinition | null): void {
+    link(scope: Scope, hint: TypeDefinition | null): void {
         for (let s of this.sources) {
-            s.link(layout, null);
+            s.link(scope, null);
             if (!s.typeDefinition) {
                 throw new LinkError(s.line, s.column, `type for ${s} cannot be found`);
             }
@@ -781,9 +781,9 @@ export class Switch extends Expression {
         for (let line of this.matchers) {
             line.matchers.forEach((m, index) => {
                 const src = this.sources[index];
-                m.link(layout, src.typeDefinition);
+                m.link(scope, src.typeDefinition);
             });
-            line.result.link(layout, resultType);
+            line.result.link(scope, resultType);
             if (line.result.typeDefinition) {
                 if (!resultType) {
                     resultType = line.result.typeDefinition;
@@ -800,9 +800,9 @@ export class Switch extends Expression {
 
         for (let line of this.matchers) {
             if (!line.result.typeDefinition) {
-                line.result.link(layout, resultType);
+                line.result.link(scope, resultType);
             }
-            line.link(layout, null);
+            line.link(scope, null);
         }
 
         this.typeDefinition = resultType;

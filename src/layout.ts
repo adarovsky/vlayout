@@ -35,6 +35,9 @@ import {Gradient, ImageView, Label, Progress, RoundRect} from "./primitives";
 import {LinkError} from "./errors";
 import React, {Component} from "react";
 import './vlayout.css';
+import {FunctionDeclaration, Functions} from "./functions";
+import {TypeDefinition} from "./types";
+import {FunctionImplementationI} from "./builtin_functions";
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {
@@ -51,10 +54,17 @@ interface LayoutState {
     layout: LayoutView|null;
 }
 
-export class Layout extends Component<LayoutProps, LayoutState> {
+export interface Scope {
+    engine: Engine;
+    variableForKeyPath(keyPath: string): Expression|null;
+    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI;
+    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[];
+}
+
+export class Layout extends Component<LayoutProps, LayoutState> implements Scope {
     readonly bindings: Bindings;
     properties: CompoundPropertyDeclaration|null = null;
-
+    functions: Functions|null = null;
 
     private _lexer: Lexer;
     private _lastMatched: LexToken|null = null;
@@ -79,10 +89,18 @@ export class Layout extends Component<LayoutProps, LayoutState> {
         this.parseTypes();
         this.parseInputs();
         this.parseProperties();
+        this.parseFunctions();
         const l = this.parseLayout();
+
+        if (this.functions) {
+            this.functions.link(this);
+        }
 
         if (l) {
             l.link(this);
+        }
+        else {
+            throw new Error()
         }
 
         return l;
@@ -228,6 +246,48 @@ export class Layout extends Component<LayoutProps, LayoutState> {
         else {
             return null;
         }
+    }
+
+    private parseFunctions(): void {
+        if (this.match('functions')) {
+            this.functions = new Functions(this._lastMatched!.line, this._lastMatched!.column);
+            this.matchOrFail('{');
+            let p: FunctionDeclaration|null;
+            while ((p = this.parseFunction())) {
+                this.functions.registerFunction(p);
+            }
+            this.matchOrFail('}');
+        }
+    }
+
+    private parseFunction(): FunctionDeclaration|null {
+        const name = this.matchIdentifier();
+        if (name) {
+            const func = new FunctionDeclaration(name, this);
+            this.matchOrFail('(');
+            let paramName;
+            while( (paramName = this.matchIdentifier()) ) {
+                this.matchOrFail(':');
+                const paramType = this.matchIdentifier();
+                if (paramType) {
+                    func.addArgument(paramName, paramType.content);
+                }
+                else {
+                    this.raiseError('function parameter type expected');
+                }
+                if (!this.match(',')) break;
+            }
+            this.matchOrFail(')');
+            this.matchOrFail('=>');
+            func.expression = this.parseExpression();
+            if (!func.expression) {
+                this.raiseError('function body expected');
+            }
+
+            return func;
+        }
+
+        return null;
     }
 
     private parseExpression(): Expression|null {
@@ -550,23 +610,20 @@ export class Layout extends Component<LayoutProps, LayoutState> {
 
 
     private parseLayout(): LayoutView|null {
-        if (this.match('layout')) {
-            const layout = new LayoutView();
-            layout.line = this._lastMatched!.line;
-            layout.column = this._lastMatched!.column;
+        this.matchOrFail('layout');
+        const layout = new LayoutView();
+        layout.line = this._lastMatched!.line;
+        layout.column = this._lastMatched!.column;
 
-            this.matchOrFail('{');
+        this.matchOrFail('{');
 
-            let layer: Layer|null;
-            while ((layer = this.parseLayer())) {
-                layout!.addManagedView(layer);
-            }
-
-            this.matchOrFail('}');
-            return layout;
+        let layer: Layer|null;
+        while ((layer = this.parseLayer())) {
+            layout!.addManagedView(layer);
         }
 
-        return null;
+        this.matchOrFail('}');
+        return layout;
     }
 
     private parseLayer(): Layer|null {
@@ -774,6 +831,18 @@ export class Layout extends Component<LayoutProps, LayoutState> {
         return this.engine.variableForKeyPath(keyPath);
     }
 
+    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI {
+        const f = this.functions ? this.functions.functionFor(name, parameters) : null;
+        if (f) return f;
+
+        return this.engine.functionFor(name, parameters);
+    }
+
+    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[] {
+        const arr = this.functions ? this.functions.functionsLoose(name, parametersCount) : [];
+        return arr.concat(this.engine.functionsLoose(name, parametersCount));
+    }
+
     private match(s: string): LexToken|null {
         if(this._lexer.current().content === s) {
             this._lastMatched = this._lexer.current();
@@ -846,4 +915,5 @@ export class Layout extends Component<LayoutProps, LayoutState> {
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         return this.state.layout ? this.state.layout.target : null;
     }
+
 }

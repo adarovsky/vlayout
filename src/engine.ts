@@ -11,12 +11,12 @@ import {
     LocalizedNumber,
     LocalizedString,
     ShortLocalizedNumber
-} from "./functions";
+} from "./builtin_functions";
 import React from "react";
 import {ViewReference} from "./view_reference";
 import {View} from "./view";
 import _ from "lodash";
-import {ReactView, ReactViewProps, ReactViewState} from "./react_views";
+import {ReactViewProps} from "./react_views";
 import {Button} from "./primitives";
 import {Observable} from "rxjs";
 
