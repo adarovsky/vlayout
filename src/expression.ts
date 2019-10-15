@@ -223,6 +223,10 @@ export class FunctionCall extends Expression {
 
             throw new LinkError(this.line, this.column, `cannot find function for ${this}`);
         }
+
+        if (hint && hint !== this.typeDefinition) {
+            throw new LinkError(this.line, this.column, `cannot cast ${hint} to ${this.typeDefinition}`);
+        }
     }
 
     toString(): string {

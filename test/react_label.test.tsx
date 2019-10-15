@@ -1,8 +1,8 @@
-import { mount } from "enzyme";
-import { Engine, Layout } from "../src";
+import {mount, shallow} from "enzyme";
+import {Engine, Layout} from "../src";
 import React from "react";
-import { Subject } from "rxjs";
-import { ElementSize } from "../src/resize_sensor";
+import {Subject} from "rxjs";
+import {ElementSize} from "../src/resize_sensor";
 
 let module = require("../src/resize_sensor");
 
@@ -58,4 +58,26 @@ describe("label", () => {
       </div>
     `);
   });
+
+  it("should not accept label of wrong type", async function() {
+    const wrapper = () => shallow(
+        <Layout
+            engine={engine!}
+            content={`
+     layout {
+         layer {
+             label {
+                 id: "label1"
+                 center { x: 0.5 y: 0.5 }
+                 
+                 text: 123                 
+             }
+         }
+     }`}
+        />
+    );
+
+    expect(wrapper).toThrowError(/cannot cast String to Number/);
+  });
+
 });

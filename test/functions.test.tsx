@@ -1,4 +1,4 @@
-import {mount} from "enzyme";
+import {mount, shallow} from "enzyme";
 import {Engine, Layout} from "../src";
 import {Subject} from "rxjs";
 import React from "react";
@@ -52,6 +52,37 @@ it('function call should update', async () => {
     expect(wrapper.find('.vlayout_label > span').text()).toBe("");
     test1.next(2);
     expect(wrapper.find('.vlayout_label > span').text()).toBe("3");
+
+});
+
+it('function call should access properties', async () => {
+    const test1 = new Subject<number>();
+    engine!.registerInput('test1', engine!.numberType(), test1);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     inputs {
+        test1: Number
+     }
+     
+     properties {
+        prop1: test1 + 10
+     }
+
+     functions {
+         testFunction(x: Number, y: Number) => x + y
+     }
+
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(testFunction(1, prop1))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
+    test1.next(2);
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("13");
 
 });
 
@@ -142,4 +173,22 @@ it('function call should work with variadic functions', async () => {
     test1.next(2);
     expect(wrapper.find('.vlayout_label > span').text()).toBe("prefix-2");
 
+});
+
+it('function call should fail to cast to wrong type', async () => {
+    const wrapper = () => shallow(<Layout engine={engine!} content={`
+     functions {
+         testFunction(x: Number, y: Number) => x + y
+     }
+
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : testFunction(1, 2)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper).toThrowError(/cannot cast String to Number/);
 });
