@@ -1,9 +1,9 @@
 import {Engine} from "./engine";
 import {Dictionary, TypeDefinition} from "./types";
 import {Expression} from "./expression";
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {LinkError} from "./errors";
-import {distinctUntilChanged, finalize, shareReplay, switchMap, tap} from "rxjs/operators";
+import {distinctUntilChanged, shareReplay, switchMap, tap} from "rxjs/operators";
 import {pauseObserving, resumeObserving} from "./resize_sensor";
 
 export class Input extends Expression {
@@ -32,10 +32,12 @@ export class Inputs {
             distinctUntilChanged(),
             tap( x => this.engine.logInputValue(name, x)),
             switchMap( x => {
-                pauseObserving();
-                return of(x).pipe(
-                    finalize(resumeObserving)
-                )
+                return new Observable<typeof x>(subscriber => {
+                    pauseObserving();
+                    subscriber.next(x);
+                    resumeObserving();
+                    subscriber.complete();
+                });
             }),
             shareReplay({bufferSize: 1, refCount: true} )
         );

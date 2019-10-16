@@ -31,7 +31,8 @@ describe("absolute", () => {
                  }
              }
          }
-     }`}/>
+     }`}
+      />
     );
 
     const node = wrapper.find(".vlayout_absolute");
@@ -72,7 +73,7 @@ describe("absolute", () => {
     expect(node.getDOMNode()).toHaveProperty("style.height", "20px");
   });
 
-  it("should give z-indexes to children", async function() {
+  it("should give z-indexes to children when it's layer", async function() {
     const wrapper = mount(
       <Layout
         engine={engine!}
@@ -88,6 +89,49 @@ describe("absolute", () => {
              roundRect {
                  id: "rect2"
                  padding { left: 10 right: 10 top: 10 bottom: 10 }                     
+             }
+         }
+     }`}
+      />
+    );
+
+    const node1 = wrapper.find("#rect1");
+    expect(node1.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_roundRect"
+        id="rect1"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; width: 30px; height: 20px; box-sizing: border-box;"
+      />
+    `);
+
+    const node2 = wrapper.find("#rect2");
+    expect(node2.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_roundRect"
+        id="rect2"
+        style="position: absolute; left: 10px; z-index: 2; right: 10px; top: 10px; bottom: 10px; box-sizing: border-box;"
+      />
+    `);
+  });
+
+  it("should give z-indexes to children", async function() {
+    const wrapper = mount(
+      <Layout
+        engine={engine!}
+        content={`
+     layout {
+         layer {
+             absolute {
+                 roundRect {
+                     id: "rect1"
+                     center { x: 0.5 y: 0.5 }
+                     
+                     fixedSize { width: 30 height: 20 }                 
+                 }
+                 roundRect {
+                     id: "rect2"
+                     padding { left: 10 right: 10 top: 10 bottom: 10 }                     
+                 }
              }
          }
      }`}

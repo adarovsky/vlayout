@@ -29,6 +29,15 @@ export class EnumDefinition extends TypeDefinition {
     }
 }
 
+export type SimpleListDefinitionItem = Dictionary<TypeDefinition>;
+export type ListDefinitionItem = SimpleListDefinitionItem|Dictionary<any>;
+
+export class ListDefinition extends TypeDefinition {
+    constructor(engine: Engine, typeName: string, private readonly values:ListDefinitionItem []) {
+        super(engine, typeName);
+    }
+}
+
 export class Set extends TypeDefinition {
     readonly original: TypeDefinition;
 
@@ -114,6 +123,9 @@ export class Types {
     }
 
     registerEnum(e: EnumDefinition): void {
+        if (this._types[e.typeName]) {
+            throw new Error(`type ${e.typeName} is already registered`);
+        }
         const s = new Set(e);
         this._types[s.typeName] = s;
         this._types[e.typeName] = e;
@@ -121,6 +133,13 @@ export class Types {
 
     type(named: string): TypeDefinition|null {
         return this._types[named] || null;
+    }
+
+    registerList(listDefinition: ListDefinition) {
+        if (this._types[listDefinition.typeName]) {
+            throw new Error(`type ${listDefinition.typeName} is already registered`);
+        }
+        this._types[listDefinition.typeName] = listDefinition;
     }
 }
 

@@ -36,8 +36,9 @@ import {LinkError} from "./errors";
 import React, {Component} from "react";
 import './vlayout.css';
 import {FunctionDeclaration, Functions} from "./functions";
-import {TypeDefinition} from "./types";
+import {Dictionary, ListDefinitionItem, TypeDefinition} from "./types";
 import {FunctionImplementationI} from "./builtin_functions";
+import {List, ListItemPrototype} from "./list";
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {
@@ -147,8 +148,8 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
     private parseTypePair() : boolean {
         if (this.matchIdentifier()) {
             this.matchOrFail(":");
-            if (!this.parseEnum()) {
-                this.raiseError("enum declaration expected");
+            if (!this.parseEnum() && !this.parseList()) {
+                this.raiseError("enum or list declaration expected");
             }
             return true;
         }
@@ -178,6 +179,55 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         }
 
         return null;
+    }
+
+    private parseList(): Dictionary<any>[]|null {
+
+        if (this.match("list")) {
+            let r: Dictionary<any>[] = [];
+
+            this.matchOrFail('(');
+
+            do {
+                r.push(this.parseListItem());
+            } while (this.match(','));
+
+            this.matchOrFail(')');
+
+            console.log('parsed:', r);
+            return r;
+        }
+
+        return null;
+    }
+
+    private parseListItem(): ListDefinitionItem {
+        let v = this.matchIdentifier();
+        if (v) {
+            const item: ListDefinitionItem = {};
+            if (this.match(':')) {
+                const typeName = this.matchIdentifier();
+                if (typeName) {
+                    const type = this.engine.type(typeName.content);
+                    if (type) {
+                        item[v.content] = type;
+                    }
+                    else {
+                        this.raiseError(`unknown type ${typeName.content}`);
+                    }
+                }
+                else {
+                    this.raiseError('type name expected');
+                }
+            }
+            else if (this.match('{')) {
+                item[v.content] = this.parseListItem();
+                this.matchOrFail('}');
+            }
+            return item;
+        } else {
+            return {};
+        }
     }
 
     private parseInputs(): void {
@@ -668,28 +718,61 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         }
     }
 
+    private parseListContents(list: List): boolean {
+        const name = this.matchIdentifier();
+        if (name) {
+            if (this.parsePredefinedProperty(name, list)) return true;
+            if (name.content === 'model') {
+                this.matchOrFail(':');
+                const ref = this.parseReference();
+                if (!ref) {
+                    this.raiseError(`model reference expected`);
+                }
+                else if (ref instanceof Variable) {
+                    list.model = ref;
+                    return true;
+                }
+                else {
+                    this.raiseError(`only input references supported in models`);
+                }
+            }
+            const proto = new ListItemPrototype(name);
+            this.matchOrFail('{');
+            this.parseContainerContents(proto);
+            this.matchOrFail('}');
+            list.prototypes.push(proto);
+
+            return true;
+        }
+        return false;
+    }
+
     private parseContainerContents(container: Container): boolean {
         const name = this.matchIdentifier();
         if (name) {
             if (this.parsePredefinedProperty(name, container)) return true;
             if (this.match('{')) {
                 const view = this.viewForKey(name.content);
-                if (!view) {
+                if (view) {
+                    view.line = name.line;
+                    view.column  = name.column;
+
+                    if (view instanceof Container) {
+                        while (this.parseContainerContents(view)) {}
+                    }
+                    else if (view instanceof List) {
+                        while (this.parseListContents(view)) {}
+                    }
+                    else {
+                        while (this.parseViewContents(view!)) {}
+                    }
+
+                    container.addManagedView(view!);
+
+                    this.matchOrFail('}')
+                } else {
                     this.raiseError(`unknown view description: ${name.content}`);
                 }
-                view!.line = name.line;
-                view!.column  = name.column;
-
-                if (view instanceof Container) {
-                    while (this.parseContainerContents(view)) {}
-                }
-                else {
-                    while (this.parseViewContents(view!)) {}
-                }
-
-                container.addManagedView(view!);
-
-                this.matchOrFail('}')
             }
             else {
                 this.matchOrFail(':');
@@ -778,35 +861,32 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
     }
 
     private viewForKey(key: string): View|null {
-        if (key === 'horizontal') {
-            return new LinearLayout(LinearLayoutAxis.Horizontal);
+        switch (key) {
+            case 'horizontal':
+                return new LinearLayout(LinearLayoutAxis.Horizontal);
+            case 'vertical':
+                return new LinearLayout(LinearLayoutAxis.Vertical);
+            case 'absolute':
+                return new AbsoluteLayout();
+            case 'stack':
+                return new StackLayout();
+            case 'label':
+                return new Label();
+            case 'image':
+                return new ImageView();
+            case 'gradient':
+                return new Gradient();
+            case 'roundRect':
+                return new RoundRect();
+            case 'progress':
+                return new Progress();
+            case 'verticalList':
+                return new List(LinearLayoutAxis.Vertical);
+            case 'horizontalList':
+                return new List(LinearLayoutAxis.Horizontal);
+            default:
+                return this.bindings.viewForKey(key);
         }
-        if (key === 'vertical') {
-            return new LinearLayout(LinearLayoutAxis.Vertical);
-        }
-        if (key === 'absolute') {
-            return new AbsoluteLayout();
-        }
-        if (key === 'stack') {
-            return new StackLayout();
-        }
-        if (key === 'label') {
-            return new Label();
-        }
-        if (key === 'image') {
-            return new ImageView();
-        }
-        if (key === 'gradient') {
-            return new Gradient();
-        }
-        if (key === 'roundRect') {
-            return new RoundRect();
-        }
-        if (key === 'progress') {
-            return new Progress();
-        }
-
-        return this.bindings.viewForKey(key);
     }
 
     variableForKeyPath(keyPath: string): Expression|null {
