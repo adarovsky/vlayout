@@ -2,7 +2,7 @@ import {View, ViewProperty} from "./view";
 import React, {createElement} from "react";
 import {ReactGradient, ReactImage, ReactLabel, ReactProgress, ReactRoundRect} from "./react_primitives";
 import {ReactButton} from "./react_button";
-import { Layout } from "./layout";
+import {Scope} from "./layout";
 import {EnumValue} from "./expression";
 
 export class Label extends View {
@@ -101,11 +101,11 @@ export class Button extends RoundRect {
         });
     }
 
-    link(layout: Layout): void {
+    link(scope: Scope): void {
         if (!this.property('imagePosition').value) {
             this.property('imagePosition').value = new EnumValue('leftToText', 0, 0);
         }
-        super.link(layout);
+        super.link(scope);
     }
 
     viewType(): string {

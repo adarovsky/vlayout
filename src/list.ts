@@ -16,8 +16,8 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         this.column = name.column;
     }
 
-    link(layout: Layout): void {
-        super.link(layout);
+    link(scope: Scope): void {
+        super.link(this);
     }
 
     get engine(): Engine {
@@ -45,14 +45,14 @@ export class List extends View {
         super();
     }
 
-    link(layout: Layout): void {
-        super.link(layout);
+    link(scope: Scope): void {
+        super.link(scope);
         if (this.model) {
-            this.model.link(layout, null);
+            this.model.link(scope, null);
             if (!(this.model.typeDefinition instanceof ListDefinition)) {
                 throw new Error(`${this.line}:${this.column}: model type is not a model list`);
             }
         }
-        this.prototypes.forEach(p => p.link(layout));
+        this.prototypes.forEach(p => p.link(scope));
     }
 }

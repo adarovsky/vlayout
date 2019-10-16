@@ -1,16 +1,11 @@
 import {Constant, EnumValue, Expression} from "./expression";
 import {Dictionary} from "./types";
-import {Layout} from "./layout";
+import {Scope} from "./layout";
 import _ from "lodash";
 import React, {createElement} from "react";
 import {ReactContainer, ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import uuid from "uuid";
-import {
-    ReactHorizontalLayout,
-    ReactLayer,
-    ReactTopLayout,
-    ReactVerticalLayout
-} from "./react_layouts";
+import {ReactHorizontalLayout, ReactLayer, ReactTopLayout, ReactVerticalLayout} from "./react_layouts";
 import {LexNumber} from "./lexer";
 import {take} from "rxjs/operators";
 import {ReactStackLayout} from "./react_stack";
@@ -30,9 +25,9 @@ export class ViewProperty {
         this.typeName = typeName;
     }
 
-    link(layout: Layout): void {
+    link(scope: Scope): void {
         if (this.value) {
-            this.value.link(layout, layout.engine.type(this.typeName));
+            this.value.link(scope, scope.engine.type(this.typeName));
         }
     }
 
@@ -71,14 +66,15 @@ export class View {
         this.registerProperty(new ViewProperty('sizePolicy', 'SizePolicy'));
         this._key = uuid.v1();
     }
-    link(layout: Layout): void{
+
+    link(scope: Scope): void {
         if (!this.property('alpha').value) {
             const n = new LexNumber(0, 0);
             n.content = '1';
             this.property('alpha').value = new Constant(n);
         }
         _.forEach(this.properties, p => {
-            p.link(layout);
+            p.link(scope);
         });
     }
 
@@ -139,10 +135,10 @@ export class Container extends View {
         return this._views;
     }
 
-    link(layout: Layout): void {
-        super.link(layout);
+    link(scope: Scope): void {
+        super.link(scope);
         for (let v of this._views) {
-            v.link(layout);
+            v.link(scope);
         }
     }
 
@@ -201,11 +197,11 @@ export class LinearLayout extends Container {
         return this.axis === LinearLayoutAxis.Horizontal ? 'horizontal' : 'vertical';
     }
 
-    link(layout: Layout): void {
+    link(scope: Scope): void {
         if (!this.property('alignment').value) {
             this.property('alignment').value = new EnumValue('fill', 0, 0);
         }
-        super.link(layout);
+        super.link(scope);
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {

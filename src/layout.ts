@@ -736,7 +736,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                     this.raiseError(`only input references supported in models`);
                 }
             }
-            const proto = new ListItemPrototype(name);
+            const proto = new ListItemPrototype(name, this);
             this.matchOrFail('{');
             this.parseContainerContents(proto);
             this.matchOrFail('}');
