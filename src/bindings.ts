@@ -8,6 +8,9 @@ export class Bindings {
     }
 
     registerSlot(name: string, type: string): void {
+        if (type === 'listButton' && this.engine.listButtonForKey(name))
+            return;
+
         const v = this.viewForKey(name);
         if (!v) {
             throw new Error(`view ${name} is not registered`);

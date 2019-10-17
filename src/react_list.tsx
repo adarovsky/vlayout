@@ -1,28 +1,48 @@
-import {ReactView, ReactViewProps, ReactViewState} from "./react_views";
+import {ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import {List, ListItemPrototype} from "./list";
 import {ReactAbsoluteLayout} from "./react_absolute";
 import _ from "lodash";
 import React from "react";
-import {LinearLayoutAxis, StackLayout, ViewProperty} from "./view";
+import {Container, LinearLayoutAxis, StackLayout, ViewProperty} from "./view";
 import {BehaviorSubject, combineLatest, Observable, Subscription} from "rxjs";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
+import {Dictionary} from "./types";
+import {fromPromise} from "rxjs/internal-compatibility";
 
 export interface ReactListState extends ReactViewState{
     childItems: ListItemPrototype[];
 }
 
-export class ReactListItemPrototype extends ReactAbsoluteLayout {
+export interface ReactListItemState extends ReactContainerState {
+    running: boolean;
+}
+
+export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemState> {
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state, running: false};
+    }
+
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const parentList = this.props.parentView.parent as List;
         const r = super.styleValue(props, value);
         if (parentList.axis === LinearLayoutAxis.Vertical) {
             r.minWidth = '100%';
         }
+        if (parentList.tapCallback) {
+            r.pointerEvents = 'auto';
+        }
 
         return r;
     }
 
+    style(): React.CSSProperties {
+        const r = {...super.style()};
+        r.cursor = this.state.running ? 'progress' : 'pointer';
+        return r;
+    }
 
     protected isWidthDefined(): boolean {
         const parentList = this.props.parentView.parent as List;
@@ -37,6 +57,32 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout {
             return true
         return super.isHeightDefined();
     }
+
+    private handleClick(): void {
+        const self = this.props.parentView as ListItemPrototype;
+        const tapCallback = (this.props.parentView.parent as List).tapCallback;
+        if (tapCallback) {
+            if (this.state.running) return;
+            this.setState(s => Object.assign(s, {running: true}));
+            const promise = tapCallback(self.modelItem!);
+            this.subscription.add(fromPromise(promise)
+                .subscribe({
+                    error: () => this.setState(s => Object.assign(s, {running: false})),
+                    complete: () => this.setState(s => Object.assign(s, {running: false}))
+                }));
+        }
+    }
+
+    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+        // @ts-ignore
+        const extra: Dictionary<any> = _.pick(this.state, 'id');
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} onClick={() => this.handleClick()} {...extra}>
+            {(this.props.parentView as Container).views
+                .filter((v, index) => this.state.childrenVisible[index])
+                .map( v => v.target )}
+        </div>);
+    }
+
 }
 
 export class ReactList extends ReactView<ReactViewProps, ReactListState> {

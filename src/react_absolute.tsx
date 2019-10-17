@@ -1,11 +1,11 @@
-import {ReactContainer, ReactView, ReactViewProps, ReactViewState} from "./react_views";
+import {ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import {combineLatest, Observable, Subscription} from "rxjs";
 import React from "react";
-import {Container, ViewProperty} from "./view";
+import {ViewProperty} from "./view";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 
-export class ReactAbsoluteLayout extends ReactContainer {
+export class ReactAbsoluteLayout<S extends ReactContainerState> extends ReactContainer<S> {
     protected subviewSubscription: Subscription = new Subscription();
 
     componentWillUnmount(): void {

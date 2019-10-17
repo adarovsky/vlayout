@@ -1,13 +1,13 @@
-import {ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
+import {ReactContainer, ReactContainerState} from "./react_views";
 import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
 import _ from "lodash";
 import {ReactStackLayout} from "./react_stack";
-import {combineLatest, Observable, of, Subscription} from "rxjs";
+import {combineLatest, Observable, Subscription} from "rxjs";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 
-class ReactLinearLayout extends ReactContainer {
+class ReactLinearLayout extends ReactContainer<ReactContainerState> {
     state = {
         spacing: 0,
         aspect: null,
@@ -179,7 +179,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
     }
 }
 
-export class ReactLayer extends ReactContainer {
+export class ReactLayer extends ReactContainer<ReactContainerState> {
     state: ReactContainerState = {
         aspect: null,
         childrenVisible: [],

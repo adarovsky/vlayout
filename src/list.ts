@@ -6,7 +6,7 @@ import {Dictionary, ListDefinition, TypeDefinition} from "./types";
 import {Engine} from "./engine";
 import {FunctionImplementationI} from "./builtin_functions";
 import {LinkError} from "./errors";
-import {BehaviorSubject, EMPTY, Observable, of, Subscription} from "rxjs";
+import {BehaviorSubject, EMPTY, Observable, of} from "rxjs";
 import _ from "lodash";
 import {switchMap} from "rxjs/operators";
 import {createElement} from "react";
@@ -57,7 +57,7 @@ class ListItemAccessor extends Expression {
 export class ListItemPrototype extends AbsoluteLayout implements Scope {
 
     accessors: Dictionary<ListItemAccessor> = {};
-    private subscription: Subscription|null = null;
+    modelItem: ListModelItem|null = null;
 
     constructor(readonly  name: LexIdentifier, readonly layout: Layout) {
         super();
@@ -122,6 +122,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
 
     setModelItem(modelItem: ListModelItem|null): void {
         this._key = uuid.v1();
+        this.modelItem = modelItem;
         if (modelItem)
             this._key = modelItem.id;
         _.forIn(this.accessors, a => a.setModelItem(modelItem));
@@ -136,8 +137,12 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     }
 }
 
+export type ListClickHandler = (i: ListModelItem) => Promise<void>;
+
 export class List extends View {
     model: Variable|null = null;
+    tapHandler: Variable|null = null;
+    tapCallback: ListClickHandler|null = null;
     prototypes: ListItemPrototype[] = [];
     private readonly reusableItems: Dictionary<ListItemPrototype[]> = {};
 
@@ -163,6 +168,14 @@ export class List extends View {
             }
             else {
                 throw new LinkError(this.line, this.column, `model should be set for list to work`);
+            }
+        }
+        if (this.tapHandler) {
+            if (scope.engine.listButtonForKey(this.tapHandler.keyPath)) {
+                this.tapCallback = scope.engine.listButtonForKey(this.tapHandler.keyPath);
+            }
+            else {
+                throw new LinkError(this.line, this.column, `list button '${this.tapHandler.keyPath}' is not found`);
             }
         }
     }

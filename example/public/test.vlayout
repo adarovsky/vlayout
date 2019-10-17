@@ -1,3 +1,7 @@
+bindings {
+    itemTapped: listButton
+}
+
 types {
     MyItems: list (
         user {
@@ -20,6 +24,7 @@ layout {
             size { width: 0.5 }
             fixedSize { height: 80 }
             model: items
+            itemTapped: itemTapped
 
             user {
                 fixedSize { width: 120 }

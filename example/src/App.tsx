@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import {Engine, Layout} from '@adarovsky/vlayout';
-import {EMPTY, interval} from "rxjs";
+import {EMPTY, interval, timer} from "rxjs";
 import {delay, pluck, scan, startWith, take, tap} from "rxjs/operators";
 import {Dictionary} from "../../src/types";
 
@@ -67,6 +67,12 @@ class App extends Component {
             console.log('clicked');
             await EMPTY.pipe(delay(1000)).toPromise();
         });
+
+        this.engine.registerListButton('itemTapped', async item => {
+            console.log('item', item, 'tapped')
+            await timer(1000).toPromise();
+        })
+
     }
 
     componentDidMount() {

@@ -270,12 +270,11 @@ export interface ReactContainerState extends ReactViewState{
     childrenVisible: boolean[];
 }
 
-export class ReactContainer extends ReactView<ReactViewProps, ReactContainerState> {
-    state: ReactContainerState = {
-        style: {},
-        aspect: null,
-        childrenVisible: []
-    };
+export class ReactContainer<S extends ReactContainerState> extends ReactView<ReactViewProps, S> {
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state, childrenVisible: []};
+    }
 
     protected children = new BehaviorSubject<ReactView<ReactViewProps, ReactViewState>[]>([]);
     protected subviewSubscription: Subscription = new Subscription();

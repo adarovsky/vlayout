@@ -19,6 +19,7 @@ import _ from "lodash";
 import {ReactViewProps} from "./react_views";
 import {Button} from "./primitives";
 import {Observable} from "rxjs";
+import {ListClickHandler, ListModelItem} from "./list";
 
 export class Engine {
     readonly inputs = new Inputs(this);
@@ -26,6 +27,7 @@ export class Engine {
     readonly functions: FunctionImplementationI[];
     private readonly referencedViews: Dictionary<ViewReference> = {};
     private readonly buttons: Dictionary<() => Promise<void>> = {};
+    private readonly listButtons: Dictionary<(i: ListModelItem) => Promise<void>> = {};
 
     readonly valueSnapshot: Dictionary<any> = {};
 
@@ -128,6 +130,10 @@ export class Engine {
         this.types.registerList(new ListDefinition(this, name, fields));
     }
 
+    registerListButton(name: string, onClick: (item: ListModelItem) => Promise<void>) {
+        this.listButtons[name] = onClick;
+    }
+
     viewForKey(key: string): View|null {
         if (this.buttons[key])
             return new Button(this.buttons[key]);
@@ -135,6 +141,10 @@ export class Engine {
             return new ViewReference(this.referencedViews[key].createComponent);
         else
             return null;
+    }
+
+    listButtonForKey(key: string) : ListClickHandler|null {
+        return this.listButtons[key] || null;
     }
 
     logInputValue(name: string, value: any): void {
