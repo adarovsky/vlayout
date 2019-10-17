@@ -21,7 +21,7 @@ export function resumeObserving() {
 
 const paused = new BehaviorSubject<boolean>(false);
 
-export function resizeObserver(element: Element): Observable<ElementSize> {
+export function resizeObserver(element: HTMLDivElement): Observable<ElementSize> {
     const obj = observers.find( o => o[0] === element);
     if (obj) {
         return obj[1];

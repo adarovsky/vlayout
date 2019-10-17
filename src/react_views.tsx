@@ -36,16 +36,17 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
         const p = this.props.parentView.property('aspect');
         if (p.value) {
-            let self = this.viewRef.current as HTMLElement;
-            this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(([size, aspect])=> {
-                this.setState({aspect: aspect});
-                if (this.state.style.width && !this.state.style.height) {
-                    self.style.height = aspect !== null ? `${size.width / aspect}px` : null;
-                }
-                else if (!this.state.style.width && this.state.style.height) {
-                    self.style.width = aspect !== null ? `${size.height * aspect}px` : null;
-                }
-            }));
+            let self = this.viewRef.current;
+            if (self) {
+                this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(([size, aspect]) => {
+                    this.setState({aspect: aspect});
+                    if (self &&  this.state.style.width && !this.state.style.height) {
+                        self.style.height = aspect !== null ? `${size.width / aspect}px` : null;
+                    } else if (self && !this.state.style.width && this.state.style.height) {
+                        self.style.width = aspect !== null ? `${size.height * aspect}px` : null;
+                    }
+                }));
+            }
         }
 
         this.wire('id', 'id', _.identity);
@@ -217,7 +218,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        let self = this.viewRef.current as HTMLElement;
+        let self = this.viewRef.current;
         if (self) {
             return resizeObserver(self).pipe(
                 map( size => {

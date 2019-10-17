@@ -219,11 +219,17 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
     get cornerRadiusWatcher(): Observable<[ElementSize, number]> {
         if (!this._cornerRadiusWatcher) {
             const p = this.props.parentView.property('cornerRadius');
+            let self = this.viewRef.current;
             if (p.value) {
-                let self = this.viewRef.current as HTMLElement;
-                this._cornerRadiusWatcher = combineLatest([resizeObserver(self), p.value.sink as Observable<number>]).pipe(
-                    shareReplay({refCount: true, bufferSize: 1})
-                );
+                if (self) {
+                    this._cornerRadiusWatcher = combineLatest([resizeObserver(self), p.value.sink as Observable<number>]).pipe(
+                        shareReplay({refCount: true, bufferSize: 1})
+                    );
+                    return this._cornerRadiusWatcher;
+                }
+                else {
+                    return of([{width: 0, height: 0}, 0]);
+                }
             }
             else {
                 this._cornerRadiusWatcher = of([{width: 0, height: 0}, 0]);
