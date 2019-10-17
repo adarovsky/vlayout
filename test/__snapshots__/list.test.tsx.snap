@@ -3,7 +3,7 @@
 exports[`lists should initialize and render vertical list 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; flex-direction: column; justify-content: stretch; display: flex; align-items: stretch; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; flex-direction: column; justify-content: stretch; display: flex; align-items: stretch; overflow-y: scroll;"
 >
   <div
     class="vlayout_listPrototype_user"
