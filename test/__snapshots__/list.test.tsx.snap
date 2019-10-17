@@ -588,3 +588,103 @@ exports[`lists should reuse items on updates 2`] = `
   </div>
 </div>
 `;
+
+exports[`lists should support tappable items 1`] = `
+<div
+  class="vlayout_verticalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="cursor: pointer; height: 44px; pointer-events: auto; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        Alex
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          Alex
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="cursor: pointer; height: 44px; pointer-events: auto; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        Anton
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          Anton
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="cursor: pointer; height: 44px; pointer-events: auto; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        Denis
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          Denis
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="cursor: pointer; pointer-events: auto; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

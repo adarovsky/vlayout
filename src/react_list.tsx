@@ -42,7 +42,10 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
 
     style(): React.CSSProperties {
         const r = {...super.style()};
-        r.cursor = this.state.running ? 'progress' : 'pointer';
+        const parentList = this.props.parentView.parent as List;
+        if (parentList.tapCallback) {
+            r.cursor = this.state.running ? 'progress' : 'pointer';
+        }
         return r;
     }
 
