@@ -12,6 +12,7 @@ import {switchMap} from "rxjs/operators";
 import {createElement} from "react";
 import {ReactHorizontalList, ReactListItemPrototype, ReactVerticalList} from "./react_list";
 import uuid from "uuid";
+import {ListButton} from "./primitives";
 
 export interface ListModelItem extends Dictionary<any> {
     id: string;
@@ -134,6 +135,14 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
         return createElement(ReactListItemPrototype, {parentView: this, key: this.key});
+    }
+
+    viewForKey(key: string): View | null {
+        const handler = this.engine.listButtonForKey(key);
+        if (handler) {
+            return new ListButton(handler);
+        }
+        return this.layout.viewForKey(key);
     }
 }
 

@@ -31,7 +31,7 @@ import {
     Variable
 } from "./expression";
 import {AbsoluteLayout, Container, Layer, LayoutView, LinearLayout, LinearLayoutAxis, StackLayout, View} from "./view";
-import {Gradient, ImageView, Label, Progress, RoundRect} from "./primitives";
+import {Gradient, ImageView, Label, ListButton, Progress, RoundRect} from "./primitives";
 import {LinkError} from "./errors";
 import React, {Component} from "react";
 import './vlayout.css';
@@ -60,6 +60,7 @@ export interface Scope {
     variableForKeyPath(keyPath: string): Expression|null;
     functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI;
     functionsLoose(name: string, parametersCount: number): FunctionImplementationI[];
+    viewForKey(key: string): View|null;
 }
 
 export class Layout extends Component<LayoutProps, LayoutState> implements Scope {
@@ -766,7 +767,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         if (name) {
             if (this.parsePredefinedProperty(name, container)) return true;
             if (this.match('{')) {
-                const view = this.viewForKey(name.content);
+                let view = this.viewForKey(name.content);
                 if (view) {
                     view.line = name.line;
                     view.column  = name.column;
@@ -784,7 +785,19 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                     container.addManagedView(view!);
 
                     this.matchOrFail('}')
-                } else {
+                } else if (container instanceof ListItemPrototype) {
+                    const callback = this.engine.listButtonForKey(name.content);
+                    if (callback) {
+                        view = new ListButton(callback);
+                        while (this.parseViewContents(view!)) {}
+                        container.addManagedView(view!);
+                        this.matchOrFail('}')
+                    }
+                    else {
+                        this.raiseError(`unknown view description: ${name.content}`);
+                    }
+                }
+                else {
                     this.raiseError(`unknown view description: ${name.content}`);
                 }
             }
@@ -874,7 +887,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         prop.column = propName.column;
     }
 
-    private viewForKey(key: string): View|null {
+    viewForKey(key: string): View|null {
         switch (key) {
             case 'horizontal':
                 return new LinearLayout(LinearLayoutAxis.Horizontal);

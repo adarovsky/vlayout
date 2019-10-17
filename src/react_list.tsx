@@ -9,6 +9,8 @@ import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 import {Dictionary} from "./types";
 import {fromPromise} from "rxjs/internal-compatibility";
+import {ListButton} from "./primitives";
+import {ReactButtonBase} from "./react_button";
 
 export interface ReactListState extends ReactViewState{
     childItems: ListItemPrototype[];
@@ -218,4 +220,25 @@ export class ReactVerticalList extends ReactList {
             })
         );
     }
+}
+
+export class ReactListButton extends ReactButtonBase {
+    protected handleClick(): void {
+        if (this.state.running) return;
+        let proto : any | null  = this.props.parentView;
+        while (proto &&  !(proto instanceof ListItemPrototype)) {
+            proto = proto.parent;
+        }
+
+        if (proto !== null) {
+            this.setState(s => Object.assign(s, {running: true}));
+            const promise = (this.props.parentView as ListButton).onClick(proto.modelItem);
+            this.subscription.add(fromPromise(promise)
+                .subscribe({
+                    error: () => this.setState(s => Object.assign(s, {running: false})),
+                    complete: () => this.setState(s => Object.assign(s, {running: false}))
+                }));
+        }
+    }
+
 }

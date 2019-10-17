@@ -17,7 +17,7 @@ interface ReactButtonState extends ReactViewState {
     enabled: boolean
 }
 
-export class ReactButton extends ReactRoundRect {
+export class ReactButtonBase extends ReactRoundRect {
     state: ReactButtonState = {
         style: {},
         aspect: null,
@@ -185,16 +185,6 @@ export class ReactButton extends ReactRoundRect {
         return r;
     }
 
-    private handleClick(): void {
-        if (this.state.running) return;
-        this.setState(s => Object.assign(s, {running: true}));
-        const promise = (this.props.parentView as Button).onClick();
-        this.subscription.add(fromPromise(promise)
-            .subscribe({
-                error: () => this.setState(s => Object.assign(s, {running: false})),
-                complete: () => this.setState(s => Object.assign(s, {running: false})) }));
-    }
-
     private currentStyle(): CSSProperties {
         const s = cloneDeep(this.state.style);
         if (this.state.running) {
@@ -213,6 +203,10 @@ export class ReactButton extends ReactRoundRect {
         return s;
     }
 
+    protected handleClick(): void {
+    }
+
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         return (<div style={this.currentStyle()}
                      className={'vlayout_'+this.props.parentView.viewType()}
@@ -225,5 +219,17 @@ export class ReactButton extends ReactRoundRect {
                 )
             })}
         </div>);
+    }
+}
+
+export class ReactButton extends ReactButtonBase {
+    protected handleClick(): void {
+        if (this.state.running) return;
+        this.setState(s => Object.assign(s, {running: true}));
+        const promise = (this.props.parentView as Button).onClick();
+        this.subscription.add(fromPromise(promise)
+            .subscribe({
+                error: () => this.setState(s => Object.assign(s, {running: false})),
+                complete: () => this.setState(s => Object.assign(s, {running: false})) }));
     }
 }

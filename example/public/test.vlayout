@@ -24,7 +24,6 @@ layout {
             size { width: 0.5 }
             fixedSize { height: 80 }
             model: items
-            itemTapped: itemTapped
 
             user {
                 fixedSize { width: 120 }
@@ -48,6 +47,17 @@ layout {
                     center { y: 0.5 }
                     padding { left: 40 }
                     text: name
+                }
+
+                itemTapped {
+                    center { y: 0.5 }
+                    padding { right: 10 }
+                    backgroundColor: #cccccc
+                    cornerRadius: 10
+                    fixedSize {
+                        width: 60
+                        height: 30
+                    }
                 }
             }
             newUser {

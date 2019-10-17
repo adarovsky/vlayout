@@ -4,6 +4,8 @@ import {ReactGradient, ReactImage, ReactLabel, ReactProgress, ReactRoundRect} fr
 import {ReactButton} from "./react_button";
 import {Scope} from "./layout";
 import {EnumValue} from "./expression";
+import {ListModelItem} from "./list";
+import {ReactListButton} from "./react_list";
 
 export class Label extends View {
     constructor() {
@@ -85,8 +87,8 @@ export class Progress extends View {
     }
 }
 
-export class Button extends RoundRect {
-    constructor(public readonly onClick: () => Promise<void>) {
+export class ButtonBase extends RoundRect {
+    constructor() {
         super();
         this.interactive = true;
         this.registerProperty(new ViewProperty('enabled', 'Bool'));
@@ -111,7 +113,37 @@ export class Button extends RoundRect {
     viewType(): string {
         return 'button';
     }
+}
+
+export class Button extends ButtonBase {
+
+    constructor(public readonly onClick: () => Promise<void>) {
+        super();
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof Button)(this.onClick);
+        v.copyFrom(this);
+        return v as this;
+    }
+
     get target(): React.ReactElement {
         return createElement(ReactButton, {parentView: this, key: this.key});
+    }
+}
+
+export class ListButton extends ButtonBase {
+    constructor(public readonly onClick: (i: ListModelItem) => Promise<void>) {
+        super();
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof ListButton)(this.onClick);
+        v.copyFrom(this);
+        return v as this;
+    }
+
+    get target(): React.ReactElement {
+        return createElement(ReactListButton, {parentView: this, key: this.key});
     }
 }

@@ -6,6 +6,7 @@ import {Layout, Scope} from "./layout";
 import {Engine} from "./engine";
 import {Observable} from "rxjs";
 import _ from "lodash";
+import {View} from "./view";
 
 class FunctionArgument extends Expression {
     typeDefinition: TypeDefinition | null = null;
@@ -78,6 +79,10 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
         this.expression!.typeDefinition = null;
         this.expression!.link(this, this.returnType);
         return this.expression!.sink;
+    }
+
+    viewForKey(key: string): View | null {
+        return this.layout.viewForKey(key);
     }
 }
 
