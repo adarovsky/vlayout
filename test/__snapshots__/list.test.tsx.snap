@@ -300,6 +300,110 @@ exports[`lists should fetch values which are observables 2`] = `
 </div>
 `;
 
+exports[`lists should initialize and render horizontal list 1`] = `
+<div
+  class="vlayout_horizontalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-x: scroll;"
+>
+  <div
+    style="position: absolute; display: flex; flex-direction: row; height: 100%; justify-content: unsafe start; align-items: stretch;"
+  >
+    <div
+      class="vlayout_listPrototype_user"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1;"
+      >
+        <span>
+          Alex
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+        >
+          <span>
+            Alex
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="vlayout_listPrototype_user"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1;"
+      >
+        <span>
+          Anton
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+        >
+          <span>
+            Anton
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="vlayout_listPrototype_user"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1;"
+      >
+        <span>
+          Denis
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+        >
+          <span>
+            Denis
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="vlayout_listPrototype_newUser"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+        >
+          <span>
+            add new
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should initialize and render vertical list 1`] = `
 <div
   class="vlayout_verticalList"
