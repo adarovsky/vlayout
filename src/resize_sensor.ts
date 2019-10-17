@@ -28,7 +28,8 @@ export function resizeObserver(element: HTMLDivElement): Observable<ElementSize>
     }
 
     const innerObserver = new Observable<ElementSize>(subscriber => {
-        const style = getComputedStyle(element);
+        let style = getComputedStyle(element);
+
         const zIndex = ((style && style.zIndex) ? parseInt(style.zIndex)! : 0) - 1;
 
         let expand = document.createElement('div');

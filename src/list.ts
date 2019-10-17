@@ -139,9 +139,16 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
 export class List extends View {
     model: Variable|null = null;
     prototypes: ListItemPrototype[] = [];
+    private readonly reusableItems: Dictionary<ListItemPrototype[]> = {};
 
     constructor(readonly axis: LinearLayoutAxis) {
         super();
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof List)(this.axis);
+        v.copyFrom(this);
+        return v as this;
     }
 
     link(scope: Scope): void {
@@ -174,13 +181,23 @@ export class List extends View {
     }
 
     requestReusableItem(modelItem: ListModelItem): ListItemPrototype {
-        const item = this.createNewReusableItem(modelItem);
-        const [, value] = _.toPairs(modelItem)[0];
+        const [key, value] = _.toPairs(modelItem)[0];
+        let item: ListItemPrototype|null = null;
+        if (this.reusableItems[key] &&  this.reusableItems[key].length > 0) {
+            item = this.reusableItems[key].splice(0, 1)[0];
+        }
+        else {
+            item = this.createNewReusableItem(modelItem);
+        }
         item.setModelItem(value);
         return item;
     }
 
     returnReusableItem(proto: ListItemPrototype) {
+        if (!this.reusableItems[proto.name.content]) {
+            this.reusableItems[proto.name.content] = [];
+        }
+        this.reusableItems[proto.name.content].push(proto);
         proto.setModelItem(null);
     }
 
