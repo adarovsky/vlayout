@@ -17,7 +17,8 @@ beforeEach(() => {
     engine = new Engine();
 });
 
-const content = `
+function getContent(type: string) {
+    return `
   types {
       MyItems: list (
           user {
@@ -35,7 +36,7 @@ const content = `
   
   layout {
       layer {
-          verticalList {
+          ${type} {
               padding { left: 10 right: 10 top: 10 bottom: 10 }
               model: items
   
@@ -52,6 +53,7 @@ const content = `
           }
       }
   }`;
+}
 
 describe("lists", () => {
     it("should initialize and render vertical list", async function () {
@@ -75,11 +77,41 @@ describe("lists", () => {
         const wrapper = mount(
             <Layout
                 engine={engine!}
-                content={content}
+                content={getContent('verticalList')}
             />
         );
 
         const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
+    it("should initialize and render horizontal list", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: "Denis"}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={getContent('horizontalList')}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_horizontalList");
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
@@ -108,7 +140,7 @@ describe("lists", () => {
         const wrapper = mount(
             <Layout
                 engine={engine!}
-                content={content}
+                content={getContent('verticalList')}
             />
         );
 
@@ -149,7 +181,7 @@ describe("lists", () => {
         const wrapper = mount(
             <Layout
                 engine={engine!}
-                content={content}
+                content={getContent('verticalList')}
             />
         );
 

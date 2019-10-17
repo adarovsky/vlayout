@@ -59,7 +59,7 @@ class App extends Component {
             //     { newUser: { id: "new" } }
             // ])
 
-            list.pipe(take(100))
+            list.pipe(take(20))
         );
         //   this.engine.inputs.registerInput("counter", this.engine.numberType(), of(3));
         // this.engine.registerView('myView', x => <SampleView parentView={x} key={'123'}/>);

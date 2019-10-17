@@ -15,16 +15,16 @@ inputs {
 
 layout {
     layer {
-        verticalList {
+        horizontalList {
             center { x : 0.5 y : 0.5 }
-            size { height: 0.5 }
-            fixedSize { width: 300 }
+            size { width: 0.5 }
+            fixedSize { height: 80 }
             model: items
 
             user {
-                fixedSize { height: 44 }
+                fixedSize { width: 120 }
                 roundRect  {
-                    padding { left: 0 right: 0 top: 5 bottom: 5 }
+                    padding { left: 5 right: 5 top: 5 bottom: 5 }
                     strokeWidth: 2
                     strokeColor: #000000
                     cornerRadius: 5

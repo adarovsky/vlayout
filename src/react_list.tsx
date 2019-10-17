@@ -19,11 +19,23 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout {
         if (parentList.axis === LinearLayoutAxis.Vertical) {
             r.minWidth = '100%';
         }
-        else {
-            r.minHeight = '100%';
-        }
 
         return r;
+    }
+
+
+    protected isWidthDefined(): boolean {
+        const parentList = this.props.parentView.parent as List;
+        if (parentList.axis === LinearLayoutAxis.Vertical)
+            return true
+        return super.isWidthDefined();
+    }
+
+    protected isHeightDefined(): boolean {
+        const parentList = this.props.parentView.parent as List;
+        if (parentList.axis === LinearLayoutAxis.Horizontal)
+            return true
+        return super.isHeightDefined();
     }
 }
 
@@ -120,6 +132,15 @@ export class ReactHorizontalList extends ReactList {
                 };
             })
         );
+    }
+
+    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+        const extra = _.pick(this.state, 'id');
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
+            <div style={{position: 'absolute', display: 'flex', flexDirection: 'row', height: '100%', justifyContent: 'unsafe start', alignItems: 'stretch'}}>
+                {this.state.childItems.map(item => item.target)}
+            </div>
+        </div>);
     }
 }
 
