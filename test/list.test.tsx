@@ -14,7 +14,7 @@ module.resizeObserver = jest.fn(() => sizeChange);
 let engine: Engine | null = null;
 
 beforeEach(() => {
-  engine = new Engine();
+    engine = new Engine();
 });
 
 const content = `
@@ -54,37 +54,37 @@ const content = `
   }`;
 
 describe("lists", () => {
-  it("should initialize and render vertical list", async function() {
-    engine!.registerList("MyItems", {
-      user: {
-        name: engine!.stringType()
-      },
-      newUser: {}
+    it("should initialize and render vertical list", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: "Denis"}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={content}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
     });
-    engine!.registerInput(
-      "items",
-      engine!.type("MyItems")!,
-      of([
-        { user: { id: 1, name: "Alex" } },
-        { user: { id: 2, name: "Anton" } },
-        { user: { id: 3, name: "Denis" } },
-        { newUser: { id: "new" } }
-      ])
-    );
 
-      const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={content}
-      />
-    );
-
-    const node = wrapper.find(".vlayout_verticalList");
-
-    expect(node.getDOMNode()).toMatchSnapshot();
-  });
-
-    it("should reuse items on updates", async function() {
+    it("should reuse items on updates", async function () {
         // @ts-ignore
         const spy = sinon.spy(List.prototype, "createNewReusableItem");
         engine!.registerList("MyItems", {
@@ -95,7 +95,7 @@ describe("lists", () => {
         });
 
         let items = [
-            { user: { id: 1, name: "Alex" } }
+            {user: {id: 1, name: "Alex"}}
         ];
         const subj = new BehaviorSubject(items);
 
@@ -117,12 +117,48 @@ describe("lists", () => {
         expect(spy.callCount).toBe(1);
         expect(node.getDOMNode()).toMatchSnapshot();
 
-        items = items.concat([{ user: { id: 2, name: "Anton" } }]);
+        items = items.concat([{user: {id: 2, name: "Anton"}}]);
         subj.next(items);
 
         expect(spy.callCount).toBe(2);
         expect(node.getDOMNode()).toMatchSnapshot();
 
         spy.restore();
+    });
+
+    it("should fetch values which are observables", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+
+        const n = new BehaviorSubject('Anton');
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: n}},
+                {user: {id: 3, name: "Denis"}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={content}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+
+        n.next('Michael');
+
+        expect(node.getDOMNode()).toMatchSnapshot();
     });
 });
