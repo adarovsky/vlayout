@@ -1,8 +1,9 @@
 import {BehaviorSubject, EMPTY, Observable} from "rxjs";
-import {distinctUntilChanged, shareReplay, switchMap} from "rxjs/operators";
+import {distinctUntilChanged, finalize, shareReplay, switchMap} from "rxjs/operators";
 import _ from "lodash";
 
 const observers: [Element, Observable<ElementSize>][] = [];
+export {observers};
 
 export interface ElementSize {
     width: number;
@@ -111,15 +112,16 @@ export function resizeObserver(element: Element): Observable<ElementSize> {
             expandChild.remove();
             shrink.remove();
             shrinkChild.remove();
-
-            const index = observers.findIndex( o => o[0] === element);
-            if (index >= 0) observers.splice(index, 1);
         }
     }).pipe(distinctUntilChanged(_.isEqual), shareReplay({bufferSize: 1, refCount: true}));
 
     const observer = paused.pipe(
         distinctUntilChanged(),
-        switchMap(paused => paused ? EMPTY : innerObserver)
+        switchMap(paused => paused ? EMPTY : innerObserver),
+        finalize(() => {
+            const index = observers.findIndex( o => o[0] === element);
+            if (index >= 0) observers.splice(index, 1);
+        })
     );
     observers.push([element, observer]);
     return observer;
