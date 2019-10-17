@@ -40,10 +40,6 @@ class ListItemAccessor extends Expression {
         this.modelSubject.next(modelItem);
     }
 
-    unlink(): void {
-        this.modelSubject.next(null);
-    }
-
     toString(): string {
         return `<model>.${this.keyPath}`;
     }
@@ -108,6 +104,10 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     setModelItem(modelItem: any|null): void {
         this._key = modelItem['id'] || uuid.v1();
         _.forIn(this.accessors, a => a.setModelItem(modelItem));
+    }
+
+    viewType(): string {
+        return `listPrototype_${this.name}`;
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {

@@ -194,7 +194,6 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
 
             this.matchOrFail(')');
 
-            console.log('parsed:', r);
             return r;
         }
 
@@ -737,6 +736,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 }
             }
             const proto = new ListItemPrototype(name, this);
+            proto.parent = list;
             this.matchOrFail('{');
             this.parseContainerContents(proto);
             this.matchOrFail('}');
