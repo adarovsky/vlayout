@@ -98,10 +98,6 @@ export class ReactList extends ReactView<ReactViewProps, ReactListState> {
 export class ReactHorizontalList extends ReactList {
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        r.flexDirection = 'row';
-        r.justifyContent = 'start';
-        r.display = 'flex';
-        r.alignItems = 'stretch';
         r.overflowX = 'scroll';
         return r;
     }
@@ -131,10 +127,6 @@ export class ReactVerticalList extends ReactList {
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        r.flexDirection = 'column';
-        r.justifyContent = 'stretch';
-        r.display = 'flex';
-        r.alignItems = 'stretch';
         r.overflowY = 'scroll';
 
         return r;

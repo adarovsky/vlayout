@@ -18,10 +18,30 @@ layout {
         verticalList {
             center { x : 0.5 y : 0.5 }
             size { height: 0.5 }
+            fixedSize { width: 300 }
             model: items
 
             user {
+                fixedSize { height: 44 }
+                roundRect  {
+                    padding { left: 0 right: 0 top: 5 bottom: 5 }
+                    strokeWidth: 2
+                    strokeColor: #000000
+                    cornerRadius: 5
+                }
+                image {
+                    center { y: 0.5 }
+                    padding { left: 10 }
+                    fixedSize {
+                        width: 24
+                        height: 24
+                    }
+                    contentPolicy: .aspectFit
+                    image: Image("/logo192.png")
+                }
                 label {
+                    center { y: 0.5 }
+                    padding { left: 40 }
                     text: name
                 }
             }

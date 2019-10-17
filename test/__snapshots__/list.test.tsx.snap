@@ -1,9 +1,109 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`lists should allow setting fixed width or height for items 1`] = `
+<div
+  class="vlayout_verticalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        Alex
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          Alex
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        Anton
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          Anton
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        Denis
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          Denis
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should fetch values which are observables 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; flex-direction: column; justify-content: stretch; display: flex; align-items: stretch; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -103,7 +203,7 @@ exports[`lists should fetch values which are observables 1`] = `
 exports[`lists should fetch values which are observables 2`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; flex-direction: column; justify-content: stretch; display: flex; align-items: stretch; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -203,7 +303,7 @@ exports[`lists should fetch values which are observables 2`] = `
 exports[`lists should initialize and render vertical list 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; flex-direction: column; justify-content: stretch; display: flex; align-items: stretch; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -303,7 +403,7 @@ exports[`lists should initialize and render vertical list 1`] = `
 exports[`lists should reuse items on updates 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; flex-direction: column; justify-content: stretch; display: flex; align-items: stretch; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -334,7 +434,7 @@ exports[`lists should reuse items on updates 1`] = `
 exports[`lists should reuse items on updates 2`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; flex-direction: column; justify-content: stretch; display: flex; align-items: stretch; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
 >
   <div
     class="vlayout_listPrototype_user"
