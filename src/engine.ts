@@ -124,7 +124,7 @@ export class Engine {
         this.types.registerEnum(new EnumDefinition(this, name, values));
     }
 
-    registerList(name: string, fields: Dictionary<any>[]): void {
+    registerList(name: string, fields: Dictionary<any>): void {
         this.types.registerList(new ListDefinition(this, name, fields));
     }
 

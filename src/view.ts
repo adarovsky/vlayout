@@ -43,7 +43,7 @@ export class View {
     parent: View|null = null;
     interactive: boolean = false;
     protected properties: Dictionary<ViewProperty> = {};
-    private readonly _key: string;
+    protected _key: string;
     instance: ReactView<ReactViewProps, ReactViewState>|null = null;
 
     constructor() {

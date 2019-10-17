@@ -33,7 +33,7 @@ export type SimpleListDefinitionItem = Dictionary<TypeDefinition>;
 export type ListDefinitionItem = SimpleListDefinitionItem|Dictionary<any>;
 
 export class ListDefinition extends TypeDefinition {
-    constructor(engine: Engine, typeName: string, private readonly values:ListDefinitionItem []) {
+    constructor(engine: Engine, typeName: string, readonly values:Dictionary<ListDefinitionItem>) {
         super(engine, typeName);
     }
 }
