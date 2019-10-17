@@ -10,11 +10,15 @@ import {BehaviorSubject, EMPTY, Observable, of, Subscription} from "rxjs";
 import _ from "lodash";
 import {switchMap} from "rxjs/operators";
 import {createElement} from "react";
-import {ReactList, ReactListItemPrototype} from "./react_list";
+import {ReactHorizontalList, ReactListItemPrototype, ReactVerticalList} from "./react_list";
 import uuid from "uuid";
 
+export interface ListModelItem extends Dictionary<any> {
+    id: string;
+}
+
 class ListItemAccessor extends Expression {
-    private modelSubject = new BehaviorSubject<any|null>(null);
+    private modelSubject = new BehaviorSubject<ListModelItem|null>(null);
     constructor(readonly keyPath: string) {
         super(0, 0);
         this.sink = this.modelSubject.pipe(
@@ -36,7 +40,12 @@ class ListItemAccessor extends Expression {
         )
     }
 
-    setModelItem(modelItem: any) {
+    instantiate(): this {
+        const v = new (this.constructor as typeof ListItemAccessor)(this.keyPath);
+        return v as this;
+    }
+
+    setModelItem(modelItem: ListModelItem|null) {
         this.modelSubject.next(modelItem);
     }
 
@@ -46,14 +55,12 @@ class ListItemAccessor extends Expression {
 }
 
 export class ListItemPrototype extends AbsoluteLayout implements Scope {
-    name: string;
 
     accessors: Dictionary<ListItemAccessor> = {};
     private subscription: Subscription|null = null;
 
-    constructor(name: LexIdentifier, readonly layout: Layout) {
+    constructor(readonly  name: LexIdentifier, readonly layout: Layout) {
         super();
-        this.name = name.content;
         this.line = name.line;
         this.column = name.column;
     }
@@ -71,7 +78,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     }
 
     linkPrototype(scope: Scope, model: Variable): void {
-        const modelItem = (model.typeDefinition! as ListDefinition).values[this.name];
+        const modelItem = (model.typeDefinition! as ListDefinition).values[this.name.content];
         if (modelItem) {
             this.buildAccessors(model.sink, modelItem, '');
             super.link(this);
@@ -79,6 +86,18 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         else {
             throw new LinkError(this.line, this.column, `cannot find prototype ${this.name} in model ${model.typeDefinition!.typeName}`);
         }
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof ListItemPrototype)(this.name, this.layout);
+        v.copyFrom(this);
+        return v as this;
+    }
+
+    copyFrom(what: this): void {
+        super.copyFrom(what);
+        this.accessors = {};
+        _.forIn(what.accessors, a => this.accessors[a.keyPath] = a.instantiate());
     }
 
     linkModel(): void {
@@ -101,13 +120,15 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         return this.accessors[keyPath] || this.layout.variableForKeyPath(keyPath);
     }
 
-    setModelItem(modelItem: any|null): void {
-        this._key = modelItem['id'] || uuid.v1();
+    setModelItem(modelItem: ListModelItem|null): void {
+        this._key = uuid.v1();
+        if (modelItem)
+            this._key = modelItem.id;
         _.forIn(this.accessors, a => a.setModelItem(modelItem));
     }
 
     viewType(): string {
-        return `listPrototype_${this.name}`;
+        return `listPrototype_${this.name.content}`;
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
@@ -139,19 +160,20 @@ export class List extends View {
         }
     }
 
-    private createNewReusableItem(modelItem: any): ListItemPrototype {
+    private createNewReusableItem(modelItem: ListModelItem): ListItemPrototype {
         const [key, value] = _.toPairs(modelItem)[0];
-        const proto = this.prototypes.find(p => p.name === key);
+        const proto = this.prototypes.find(p => p.name.content === key);
         if (!proto) {
             throw new LinkError(this.line, this.column, `model item ${key} not found`);
         }
 
-        const real = _.cloneDeep(proto);
+        const real = proto.instantiate(); //_.cloneDeep(proto);
+        real.parent = this;
         real.linkModel();
         return real;
     }
 
-    requestReusableItem(modelItem: any): ListItemPrototype {
+    requestReusableItem(modelItem: ListModelItem): ListItemPrototype {
         const item = this.createNewReusableItem(modelItem);
         const [, value] = _.toPairs(modelItem)[0];
         item.setModelItem(value);
@@ -164,7 +186,7 @@ export class List extends View {
 
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactList, {parentView: this, key: this.key});
+        return createElement(this.axis == LinearLayoutAxis.Horizontal ? ReactHorizontalList : ReactVerticalList, {parentView: this, key: this.key});
     }
 
     viewType(): string {

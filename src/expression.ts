@@ -17,6 +17,13 @@ export class Expression {
         this.typeDefinition = null;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof Expression)(this.line, this.column);
+        v.typeDefinition = null;
+        v.sink = EMPTY;
+        return v as this;
+    }
+
     link(scope: Scope, hint: TypeDefinition | null): void {
 
     }
@@ -27,11 +34,14 @@ export class Expression {
 }
 
 export class Constant extends Expression {
-    readonly lex: LexToken;
-    constructor(lex: LexToken) {
+    constructor(readonly lex: LexToken) {
         super(lex.line, lex.column);
-        this.lex = lex;
     }
+    instantiate(): this {
+        const v = new (this.constructor as typeof Constant)(this.lex);
+        return v as this;
+    }
+
 
     toString(): string {
         if (this.lex instanceof LexString) {
@@ -95,6 +105,11 @@ export class EnumValue extends Expression {
         super(line, column);
         this.key = key;
     }
+    instantiate(): this {
+        const v = new (this.constructor as typeof EnumValue)(this.key, this.line, this.column);
+        return v as this;
+    }
+
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         this.linkEnum(hint);
@@ -126,6 +141,10 @@ export class Variable extends Expression {
         super(line, column);
         this.keyPath = keyPath;
     }
+    instantiate(): this {
+        const v = new (this.constructor as typeof Variable)(this.keyPath, this.line, this.column);
+        return v as this;
+    }
 
 
     link(scope: Scope, hint: TypeDefinition | null): void {
@@ -155,6 +174,11 @@ export class NegateOp extends Expression {
         this.expression = expression;
     }
 
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof NegateOp)(this.op, this.expression.instantiate(), this.line, this.column);
+        return v as this;
+    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         switch (this.op.content) {
@@ -192,6 +216,11 @@ export class FunctionCall extends Expression {
         this.parameters = parameters;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof FunctionCall)(this.line, this.column, this.name,
+            this.parameters.map(p => p.instantiate()));
+        return v as this;
+    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         try {
@@ -244,6 +273,10 @@ export class BinaryExpression extends Expression {
         this.right = right;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof BinaryExpression)(this.left.instantiate(), this.right.instantiate());
+        return v as this;
+    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         if (!this.left.typeDefinition && this.right.typeDefinition) {
@@ -653,6 +686,10 @@ export class Alternative extends Expression {
         this.alternatives = alternatives;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof Alternative)(this.alternatives.map(a => a.instantiate()));
+        return v as this;
+    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         let typeDef = hint;
@@ -696,6 +733,11 @@ export class Conditional extends Expression {
         this.ifFalse = ifFalse;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof Conditional)(this.condition.instantiate(),
+            this.ifTrue.instantiate(), this.ifFalse.instantiate());
+        return v as this;
+    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         this.condition.link(scope, scope.engine.boolType());
@@ -733,6 +775,11 @@ export class SwitchMatcher extends Expression {
         this.result = result;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof SwitchMatcher)(this.line, this.column,
+            this.matchers.map(m => m.instantiate()), this.result.instantiate());
+        return v as this;
+    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         this.typeDefinition = this.result.typeDefinition;
@@ -764,14 +811,19 @@ export class SwitchCompare extends EqualExp {
 }
 
 export class Switch extends Expression {
-    readonly sources: Array<Expression>;
-    readonly matchers: Array<SwitchMatcher>;
+    sources: Array<Expression>;
+    matchers: Array<SwitchMatcher>;
     constructor(line: number, column: number, sources: Array<Expression>, matchers: Array<SwitchMatcher>) {
         super(line, column);
         this.sources = sources;
         this.matchers = matchers;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof Switch)(this.line, this.column,
+            this.sources.map(s => s.instantiate()), this.matchers.map(m => m.instantiate()));
+        return v as this;
+    }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         for (let s of this.sources) {

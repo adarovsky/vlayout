@@ -3,7 +3,10 @@ import {List, ListItemPrototype} from "./list";
 import {ReactAbsoluteLayout} from "./react_absolute";
 import _ from "lodash";
 import React from "react";
-import {LinearLayoutAxis, ViewProperty} from "./view";
+import {LinearLayoutAxis, StackLayout, ViewProperty} from "./view";
+import {BehaviorSubject, combineLatest, Observable, Subscription} from "rxjs";
+import {ElementSize} from "./resize_sensor";
+import {map, switchMap} from "rxjs/operators";
 
 export interface ReactListState extends ReactViewState{
     childItems: ListItemPrototype[];
@@ -25,6 +28,9 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout {
 }
 
 export class ReactList extends ReactView<ReactViewProps, ReactListState> {
+    protected children = new BehaviorSubject<ReactView<ReactViewProps, ReactViewState>[]>([]);
+    protected subviewSubscription: Subscription = new Subscription();
+
     constructor(props: ReactViewProps) {
         super(props);
         this.state = {...this.state, childItems: []};
@@ -41,17 +47,37 @@ export class ReactList extends ReactView<ReactViewProps, ReactListState> {
         }));
     }
 
+    componentDidUpdate(prevProps: Readonly<ReactViewProps>, prevState: Readonly<ReactListState>, snapshot?: any): void {
+        const children = this.state.childItems
+            .map(v => v.instance)
+            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
+        this.children.next(children);
+        this.updateSubviewPositions();
+    }
 
-    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
-        const r = super.styleValue(props, value);
-        const parentList = this.props.parentView as List;
-        if (parentList.axis === LinearLayoutAxis.Horizontal) {
-            r.overflowX = 'scroll';
-        }
-        else {
-            r.overflowY = 'scroll';
-        }
-        return r;
+    protected updateSubviewPositions(): void {
+        const self = this.viewRef.current;
+        if (!self) return;
+
+        this.subviewSubscription.unsubscribe();
+        const isInStack = this.props.parentView.parent instanceof StackLayout;
+        this.subviewSubscription = this.intrinsicSize()
+            .subscribe(size => {
+                    if (size.width > 0 && !this.isWidthDefined()) {
+                        self.style.minWidth = size.width + 'px';
+                    }
+                    else {
+                        self.style.minWidth = isInStack ? '100%' : null;
+                    }
+
+                    if (size.height > 0 && !this.isHeightDefined()) {
+                        self.style.minHeight = size.height + 'px';
+                    }
+                    else {
+                        self.style.minHeight = isInStack ? '100%' : null;
+                    }
+                }
+            );
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
@@ -62,3 +88,68 @@ export class ReactList extends ReactView<ReactViewProps, ReactListState> {
     }
 }
 
+export class ReactHorizontalList extends ReactList {
+    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
+        const r = super.styleValue(props, value);
+        r.flexDirection = 'row';
+        r.justifyContent = 'start';
+        r.display = 'flex';
+        r.alignItems = 'stretch';
+        r.overflowX = 'scroll';
+        return r;
+    }
+
+    intrinsicSize(): Observable<ElementSize> {
+        return this.children.pipe(
+            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            map(sizes => {
+                let maxHeight = 0;
+                let maxWidth = 0;
+
+                sizes.forEach((size) => {
+                    maxHeight = Math.max(maxHeight, size.height);
+                    maxWidth += size.width;
+                });
+
+                return {
+                    width: maxWidth,
+                    height: maxHeight
+                };
+            })
+        );
+    }
+}
+
+export class ReactVerticalList extends ReactList {
+
+    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
+        const r = super.styleValue(props, value);
+        r.flexDirection = 'column';
+        r.justifyContent = 'stretch';
+        r.display = 'flex';
+        r.alignItems = 'stretch';
+        r.overflowY = 'scroll';
+
+        return r;
+    }
+
+    intrinsicSize(): Observable<ElementSize> {
+        return this.children.pipe(
+            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            map(sizes => {
+                let maxHeight = 0;
+                let maxWidth = 0;
+
+                sizes.forEach((size) => {
+                    maxHeight += maxHeight;
+                    maxWidth = Math.max(maxWidth, size.width);
+                });
+
+                return {
+                    width: maxWidth,
+                    height: maxHeight
+                };
+            })
+        );
+    }
+}

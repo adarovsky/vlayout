@@ -25,6 +25,13 @@ export class ViewProperty {
         this.typeName = typeName;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof ViewProperty)(this.name, this.typeName);
+        if (this.value)
+            v.value = this.value.instantiate();
+        return v as this;
+    }
+
     link(scope: Scope): void {
         if (this.value) {
             this.value.link(scope, scope.engine.type(this.typeName));
@@ -65,6 +72,17 @@ export class View {
         this.registerProperty(new ViewProperty('alpha', 'Number'));
         this.registerProperty(new ViewProperty('sizePolicy', 'SizePolicy'));
         this._key = uuid.v1();
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof View);
+        v.copyFrom(this);
+        return v as this;
+    }
+
+    copyFrom(that: this) {
+        this.properties = {};
+        _.forIn(that.properties, p => this.registerProperty(p.instantiate()));
     }
 
     link(scope: Scope): void {
@@ -131,6 +149,18 @@ export class Container extends View {
             this.interactive = true;
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof Container)();
+        v.copyFrom(this);
+        return v as this;
+    }
+
+    copyFrom(what: this): void {
+        super.copyFrom(what);
+        this._views = [];
+        what._views.forEach(v => this.addManagedView(v.instantiate()));
+    }
+
     get views(): View[] {
         return this._views;
     }
@@ -169,6 +199,11 @@ export class AbsoluteLayout extends Container {
         this.registerProperty(new ViewProperty('backgroundColor', 'Color'));
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof AbsoluteLayout)();
+        return v as this;
+    }
+
     viewType(): string {
         return 'absolute';
     }
@@ -191,6 +226,12 @@ export class LinearLayout extends Container {
         this.axis = axis;
         this.registerProperty(new ViewProperty('spacing', 'Number'));
         this.registerProperty(new ViewProperty('alignment', 'LayoutAlignment'));
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof LinearLayout)(this.axis);
+        v.copyFrom(this);
+        return v as this;
     }
 
     viewType(): string {
@@ -218,6 +259,11 @@ export class StackLayout extends Container {
         this.registerProperty(new ViewProperty('backgroundColor', 'Color'));
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof StackLayout)();
+        return v as this;
+    }
+
     viewType(): string {
         return 'stack';
     }
@@ -242,6 +288,10 @@ export class Layer extends AbsoluteLayout {
         super();
         this.registerProperty(new ViewProperty('z_order', 'Number'));
         this.registerProperty(new ViewProperty('fullscreen', 'Bool'));
+    }
+    instantiate(): this {
+        const v = new (this.constructor as typeof Layer)();
+        return v as this;
     }
 
     viewType(): string {
