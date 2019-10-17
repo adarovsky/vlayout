@@ -31,7 +31,7 @@ class App extends Component {
             pluck(0)
         ));
 
-        const list = interval(1000).pipe(
+        const list = interval(100).pipe(
             scan((acc: Dictionary<any>, one) => {
                 const record = { user: { id: one, name: `User-${one + 1}` } };
                 return acc.concat([record]);
@@ -59,7 +59,7 @@ class App extends Component {
             //     { newUser: { id: "new" } }
             // ])
 
-            list.pipe(take(6))
+            list.pipe(take(100))
         );
         //   this.engine.inputs.registerInput("counter", this.engine.numberType(), of(3));
         // this.engine.registerView('myView', x => <SampleView parentView={x} key={'123'}/>);

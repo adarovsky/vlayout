@@ -80,6 +80,13 @@ export class ReactList extends ReactView<ReactViewProps, ReactListState> {
             );
     }
 
+
+    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
+        const r = super.styleValue(props, value);
+        r.pointerEvents = 'auto';
+        return r;
+    }
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
         return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
