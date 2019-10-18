@@ -20,8 +20,9 @@ export interface ListModelItem extends Dictionary<any> {
 
 class ListItemAccessor extends Expression {
     private modelSubject = new BehaviorSubject<ListModelItem|null>(null);
-    constructor(readonly keyPath: string) {
+    constructor(readonly keyPath: string, type: TypeDefinition) {
         super(0, 0);
+        this.typeDefinition = type;
         this.sink = this.modelSubject.pipe(
             switchMap(m => {
                 if (m === null) {
@@ -42,7 +43,7 @@ class ListItemAccessor extends Expression {
     }
 
     instantiate(): this {
-        const v = new (this.constructor as typeof ListItemAccessor)(this.keyPath);
+        const v = new (this.constructor as typeof ListItemAccessor)(this.keyPath, this.typeDefinition!);
         return v as this;
     }
 
@@ -70,7 +71,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         _.forIn(structure, (value, key) => {
             const path = prefix.length > 0 ? prefix + '.' + key : key;
             if (value instanceof TypeDefinition) {
-                this.accessors[path] = new ListItemAccessor(path);
+                this.accessors[path] = new ListItemAccessor(path, value);
             }
             else {
                 this.buildAccessors(source, value, path);

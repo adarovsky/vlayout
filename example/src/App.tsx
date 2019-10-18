@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
 import {Engine, Layout} from '@adarovsky/vlayout';
-import {EMPTY, interval, timer} from "rxjs";
-import {delay, pluck, scan, startWith, take, tap} from "rxjs/operators";
+import {interval, timer} from "rxjs";
+import {pluck, scan, startWith, take} from "rxjs/operators";
 import {Dictionary} from "../../src/types";
 
 class App extends Component {
@@ -35,8 +35,7 @@ class App extends Component {
             scan((acc: Dictionary<any>, one) => {
                 const record = { user: { id: one, name: `User-${one + 1}` } };
                 return acc.concat([record]);
-            }, []),
-            tap(console.log)
+            }, [])
         );
 
         this.engine.registerList("MyItems", {
@@ -65,12 +64,12 @@ class App extends Component {
         // this.engine.registerView('myView', x => <SampleView parentView={x} key={'123'}/>);
         this.engine.registerButton('myButton', async () => {
             console.log('clicked');
-            await EMPTY.pipe(delay(1000)).toPromise();
+            await timer(1000).toPromise();
         });
 
         this.engine.registerListButton('itemTapped', async item => {
             console.log('item', item, 'tapped')
-            await timer(1000).toPromise();
+            await timer(10).toPromise();
         })
 
     }

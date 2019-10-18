@@ -63,17 +63,19 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
         return super.isHeightDefined();
     }
 
-    private handleClick(): void {
+    private handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
         const self = this.props.parentView as ListItemPrototype;
         const tapCallback = (this.props.parentView.parent as List).tapCallback;
         if (tapCallback) {
             if (this.state.running) return;
-            this.setState(s => Object.assign(s, {running: true}));
+            this.setState(s => ({...s, running: true}));
+            e.preventDefault();
+            e.stopPropagation();
             const promise = tapCallback(self.modelItem!);
             this.subscription.add(fromPromise(promise)
                 .subscribe({
-                    error: () => this.setState(s => Object.assign(s, {running: false})),
-                    complete: () => this.setState(s => Object.assign(s, {running: false}))
+                    error: () => this.setState(s => ({...s, running: false})),
+                    complete: () => this.setState(s => ({...s, running: false}))
                 }));
         }
     }
@@ -81,7 +83,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
         const extra: Dictionary<any> = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} onClick={() => this.handleClick()} {...extra}>
+        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} onClick={e => this.handleClick(e)} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .map( v => v.target )}
@@ -226,7 +228,7 @@ export class ReactVerticalList extends ReactList {
 }
 
 export class ReactListButton extends ReactButtonBase {
-    protected handleClick(): void {
+    protected handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
         if (this.state.running) return;
         let proto : any | null  = this.props.parentView;
         while (proto &&  !(proto instanceof ListItemPrototype)) {
@@ -235,11 +237,13 @@ export class ReactListButton extends ReactButtonBase {
 
         if (proto !== null) {
             this.setState(s => Object.assign(s, {running: true}));
+            e.preventDefault();
+            e.stopPropagation();
             const promise = (this.props.parentView as ListButton).onClick(proto.modelItem);
             this.subscription.add(fromPromise(promise)
                 .subscribe({
-                    error: () => this.setState(s => Object.assign(s, {running: false})),
-                    complete: () => this.setState(s => Object.assign(s, {running: false}))
+                    error: () => this.setState(s => ({...s, running: false})),
+                    complete: () => this.setState(s => ({...s, running: false}))
                 }));
         }
     }

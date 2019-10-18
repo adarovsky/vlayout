@@ -1,9 +1,9 @@
 import React from "react";
-import { Engine, Layout } from "../src";
-import { asyncScheduler, scheduled, Subject } from "rxjs";
-import { mount } from "enzyme";
+import {Engine, Layout} from "../src";
+import {asyncScheduler, scheduled, Subject} from "rxjs";
+import {mount} from "enzyme";
 import sinon from "sinon";
-import { ReactButton } from "../src/react_button";
+import {ReactButton} from "../src/react_button";
 
 let engine: Engine | null = null;
 
@@ -141,6 +141,75 @@ describe("button", () => {
           src="/logo512.png"
           style="margin-right: 20px; max-height: 100%; max-width: 100%; object-fit: scale-down;"
         />
+        <span>
+          sample
+          <br />
+        </span>
+      </div>
+    `);
+  });
+
+  it("button enable/disable should work", async () => {
+    engine!.registerButton("myButton", async () => {});
+    const enable = new Subject<boolean>();
+    engine!.registerInput("enable", engine!.boolType(), enable);
+    const wrapper = mount(
+      <Layout
+        engine={engine!}
+        content={`
+            bindings {
+                myButton: button
+            }
+            inputs {
+              enable: Bool
+            }
+            
+            layout {
+                layer {            
+                    myButton {
+                        center { x: 0.5 y: 0.5 }
+                        fixedSize { height: 50 }
+                        text: "sample"
+                        enabled: enable
+                    }         
+                }
+             }`}
+      />
+    );
+
+    const node = wrapper.find(".vlayout_button");
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_button"
+        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+      >
+        
+        <span>
+          sample
+          <br />
+        </span>
+      </div>
+    `);
+    enable.next(true);
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_button"
+        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+      >
+        
+        <span>
+          sample
+          <br />
+        </span>
+      </div>
+    `);
+    enable.next(false);
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_button"
+        style="pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: not-allowed; align-items: center; text-decoration: none; flex-direction: row; justify-content: center; opacity: 0.6;"
+      >
+        
         <span>
           sample
           <br />

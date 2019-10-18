@@ -50,6 +50,7 @@ export class ReactButtonBase extends ReactRoundRect {
         super.componentDidMount();
         this.wire('text', 'text', x => x);
         this.wire('image', 'image', x => x);
+        this.wire('enabled', 'enabled', x => x);
 
         const paddingProp = this.props.parentView.property('imagePadding');
         const imagePositionProp = this.props.parentView.property('imagePosition');
@@ -203,7 +204,7 @@ export class ReactButtonBase extends ReactRoundRect {
         return s;
     }
 
-    protected handleClick(): void {
+    protected handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
     }
 
 
@@ -211,7 +212,7 @@ export class ReactButtonBase extends ReactRoundRect {
         return (<div style={this.currentStyle()}
                      className={'vlayout_'+this.props.parentView.viewType()}
                      ref={this.viewRef}
-        onClick={() => this.handleClick()}>
+        onClick={(e) => this.handleClick(e)}>
             {this.state.image.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
             {this.state.text && this.state.text.split('\n').map(function(item, key) {
                 return (
@@ -223,8 +224,10 @@ export class ReactButtonBase extends ReactRoundRect {
 }
 
 export class ReactButton extends ReactButtonBase {
-    protected handleClick(): void {
+    protected handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
         if (this.state.running) return;
+        e.preventDefault();
+        e.stopPropagation();
         this.setState(s => Object.assign(s, {running: true}));
         const promise = (this.props.parentView as Button).onClick();
         this.subscription.add(fromPromise(promise)

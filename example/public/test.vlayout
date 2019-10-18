@@ -24,9 +24,10 @@ layout {
             size { width: 0.5 }
             fixedSize { height: 80 }
             model: items
+            itemTapped: itemTapped
 
             user {
-                fixedSize { width: 120 }
+                fixedSize { width: 140 }
                 roundRect  {
                     padding { left: 5 right: 5 top: 5 bottom: 5 }
                     strokeWidth: 2
@@ -54,8 +55,10 @@ layout {
                     padding { right: 10 }
                     backgroundColor: #cccccc
                     cornerRadius: 10
+                    text: "..."
+                    enabled: name == "User-3"
                     fixedSize {
-                        width: 60
+                        width: 30
                         height: 30
                     }
                 }
