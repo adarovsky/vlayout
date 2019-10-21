@@ -69,7 +69,12 @@ class App extends Component {
 
         this.engine.registerListButton('itemTapped', async item => {
             console.log('item', item, 'tapped')
-            await timer(10).toPromise();
+            await timer(100).toPromise();
+        })
+
+        this.engine.registerListButton('buttonTapped', async item => {
+            console.log('button', item, 'tapped')
+            await timer(100).toPromise();
         })
 
     }

@@ -1,5 +1,6 @@
 bindings {
     itemTapped: listButton
+    buttonTapped: listButton
 }
 
 types {
@@ -50,7 +51,7 @@ layout {
                     text: name
                 }
 
-                itemTapped {
+                buttonTapped {
                     center { y: 0.5 }
                     padding { right: 10 }
                     backgroundColor: #cccccc

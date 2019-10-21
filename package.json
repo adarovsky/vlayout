@@ -21,11 +21,11 @@
   "peerDependencies": {
     "react": ">=16.9.0",
     "react-dom": ">=16.9.0",
-    "rxjs": ">=6.5.3"
+    "rxjs": "^6.5.3"
   },
   "dependencies": {
     "lodash": "^4.17.15",
-    "uuid": ">=3.3.3"
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@testing-library/react": "^9.2.0",
