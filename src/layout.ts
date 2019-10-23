@@ -291,7 +291,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 this.matchOrFail(':');
                 let e = this.parseExpression();
                 if (!e) this.raiseError("expression expected");
-                return new ExpressionPropertyDeclaration(this, name.content, e!, name.line, name.column);
+                return new ExpressionPropertyDeclaration(name.content, e!, name.line, name.column);
             }
         }
         else {

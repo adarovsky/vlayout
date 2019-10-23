@@ -1,6 +1,6 @@
 import {Expression} from "./expression";
 import {Dictionary, TypeDefinition} from "./types";
-import {Layout, Scope} from "./layout";
+import {Scope} from "./layout";
 import {tap} from "rxjs/operators";
 
 export class PropertyDeclaration extends Expression {
@@ -48,7 +48,7 @@ export class CompoundPropertyDeclaration extends PropertyDeclaration {
 }
 
 export class ExpressionPropertyDeclaration extends PropertyDeclaration {
-    constructor(readonly layout: Layout, name: string, readonly expression: Expression, line: number, column: number) {
+    constructor(name: string, readonly expression: Expression, line: number, column: number) {
         super(name, line, column);
     }
 
