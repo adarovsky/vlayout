@@ -71,6 +71,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
     private _lexer: Lexer;
     private _lastMatched: LexToken|null = null;
     state: LayoutState;
+    readonly valueSnapshot: Dictionary<any> = {};
 
     constructor(props: LayoutProps) {
         super(props);
@@ -102,7 +103,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
             l.link(this);
         }
         else {
-            throw new Error()
+            throw new Error(`no layout parsed!`);
         }
 
         return l;
@@ -264,7 +265,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
 
     private parseProperties(): void {
         if (this.match('properties')) {
-            this.properties = new CompoundPropertyDeclaration("properties", this._lastMatched!.line, this._lastMatched!.column);
+            this.properties = new CompoundPropertyDeclaration("", this._lastMatched!.line, this._lastMatched!.column);
             this.matchOrFail('{');
             let p: PropertyDeclaration|null;
             while ((p = this.parseProperty())) {
@@ -290,7 +291,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 this.matchOrFail(':');
                 let e = this.parseExpression();
                 if (!e) this.raiseError("expression expected");
-                return new ExpressionPropertyDeclaration(name.content, e!, name.line, name.column);
+                return new ExpressionPropertyDeclaration(this, name.content, e!, name.line, name.column);
             }
         }
         else {
@@ -932,7 +933,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         }
 
         if (ret instanceof ExpressionPropertyDeclaration) {
-            return ret.expression;
+            return ret;
         }
 
         return this.engine.variableForKeyPath(keyPath);

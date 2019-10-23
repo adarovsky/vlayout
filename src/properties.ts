@@ -1,15 +1,21 @@
 import {Expression} from "./expression";
-import {Dictionary} from "./types";
+import {Dictionary, TypeDefinition} from "./types";
+import {Layout, Scope} from "./layout";
+import {tap} from "rxjs/operators";
 
-export class PropertyDeclaration {
-    readonly name: string;
-    readonly line: number;
-    readonly column: number;
+export class PropertyDeclaration extends Expression {
+    parent: PropertyDeclaration|null = null;
+    constructor(readonly name: string, line: number, column: number) {
+        super(line, column);
+    }
 
-    constructor(name: string, line: number, column: number) {
-        this.name = name;
-        this.line = line;
-        this.column = column;
+    get fullName(): string {
+        if (this.parent && this.parent.name.length > 0) {
+            return this.parent.fullName + '.' + this.name;
+        }
+        else {
+            return this.name;
+        }
     }
 
     toString(padding: number = 0): string {
@@ -22,6 +28,7 @@ export class CompoundPropertyDeclaration extends PropertyDeclaration {
 
     registerProperty(p: PropertyDeclaration) {
         this.properties[p.name] = p;
+        p.parent = this;
     }
 
     propertyWithName(name: string) : PropertyDeclaration|null {
@@ -38,18 +45,22 @@ export class CompoundPropertyDeclaration extends PropertyDeclaration {
         r += `${' '.repeat(padding)}}\n`;
         return r;
     }
-
 }
 
 export class ExpressionPropertyDeclaration extends PropertyDeclaration {
-    readonly expression: Expression;
-
-    constructor(name: string, expression: Expression, line: number, column: number) {
+    constructor(readonly layout: Layout, name: string, readonly expression: Expression, line: number, column: number) {
         super(name, line, column);
-        this.expression = expression;
     }
 
     toString(padding: number = 0): string {
         return `${' '.repeat(padding)}${this.name}: ${this.expression}`;
+    }
+
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.expression.link(scope, hint);
+        this.sink = this.expression.sink.pipe(
+            tap(v => scope.engine.valueSnapshot.properties[this.fullName] = v)
+        );
+        this.typeDefinition = this.expression.typeDefinition;
     }
 }

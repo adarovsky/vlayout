@@ -59,11 +59,149 @@ describe("label", () => {
     `);
   });
 
+  it("concatenated strings whould work", async function() {
+    const wrapper = mount(
+      <Layout
+        engine={engine!}
+        content={`
+     layout {
+         layer {
+             label {
+                 id: "label1"
+                 center { x: 0.5 y: 0.5 }
+                 
+                 text: "test" + " label"                 
+             }
+         }
+     }`}
+      />
+    );
+
+    const node = wrapper.find(".vlayout_label");
+
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_label"
+        id="label1"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
+      >
+        <span>
+          test label
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1;"
+        >
+          <span>
+            test label
+            <br />
+          </span>
+        </div>
+      </div>
+    `);
+  });
+
+  it("localized string should work", async function() {
+    const source = new Subject<string>();
+    engine!.registerInput("source", engine!.stringType(), source);
+    const wrapper = mount(
+      <Layout
+        engine={engine!}
+        content={`
+     inputs {
+         source: String
+     }
+     layout {
+         layer {
+             label {
+                 id: "label1"
+                 center { x: 0.5 y: 0.5 }
+                 
+                 text: @("test label $1", source)                 
+             }
+         }
+     }`}
+      />
+    );
+
+    const node = wrapper.find(".vlayout_label");
+
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_label"
+        id="label1"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
+      >
+        <span>
+          
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1;"
+        >
+          <span>
+            
+            <br />
+          </span>
+        </div>
+      </div>
+    `);
+
+    source.next("string 1");
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_label"
+        id="label1"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
+      >
+        <span>
+          test label string 1
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1;"
+        >
+          <span>
+            test label string 1
+            <br />
+          </span>
+        </div>
+      </div>
+    `);
+
+    source.next("string 2");
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_label"
+        id="label1"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
+      >
+        <span>
+          test label string 2
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1;"
+        >
+          <span>
+            test label string 2
+            <br />
+          </span>
+        </div>
+      </div>
+    `);
+  });
+
   it("should not accept label of wrong type", async function() {
-    const wrapper = () => shallow(
+    const wrapper = () =>
+      shallow(
         <Layout
-            engine={engine!}
-            content={`
+          engine={engine!}
+          content={`
      layout {
          layer {
              label {
@@ -75,9 +213,8 @@ describe("label", () => {
          }
      }`}
         />
-    );
+      );
 
     expect(wrapper).toThrowError(/cannot cast String to Number/);
   });
-
 });

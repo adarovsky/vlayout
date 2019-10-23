@@ -29,7 +29,10 @@ export class Engine {
     private readonly buttons: Dictionary<() => Promise<void>> = {};
     private readonly listButtons: Dictionary<(i: ListModelItem) => Promise<void>> = {};
 
-    readonly valueSnapshot: Dictionary<any> = {};
+    readonly valueSnapshot: { inputs: Dictionary<any>; properties: Dictionary<any> } = {
+        inputs: {},
+        properties: {}
+    };
 
     constructor() {
         this.functions = [
@@ -148,6 +151,6 @@ export class Engine {
     }
 
     logInputValue(name: string, value: any): void {
-        this.valueSnapshot[name] = value;
+        this.valueSnapshot.inputs[name] = value;
     }
 }
