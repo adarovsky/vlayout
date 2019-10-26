@@ -52,14 +52,14 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
     protected isWidthDefined(): boolean {
         const parentList = this.props.parentView.parent as List;
         if (parentList.axis === LinearLayoutAxis.Vertical)
-            return true
+            return true;
         return super.isWidthDefined();
     }
 
     protected isHeightDefined(): boolean {
         const parentList = this.props.parentView.parent as List;
         if (parentList.axis === LinearLayoutAxis.Horizontal)
-            return true
+            return true;
         return super.isHeightDefined();
     }
 

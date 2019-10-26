@@ -20,7 +20,7 @@ class App extends Component {
         this.engine = new Engine();
         this.engine.inputs.registerInput("counter", this.engine.numberType(), interval(5000).pipe(
             startWith(0),
-            scan((acc, one) => {
+            scan((acc) => {
                 const [cur, delta] = acc;
                 let d = delta;
                 if (cur + d > 4 || cur + d < 0) {
@@ -68,12 +68,12 @@ class App extends Component {
         });
 
         this.engine.registerListButton('itemTapped', async item => {
-            console.log('item', item, 'tapped')
+            console.log('item', item, 'tapped');
             await timer(100).toPromise();
-        })
+        });
 
         this.engine.registerListButton('buttonTapped', async item => {
-            console.log('button', item, 'tapped')
+            console.log('button', item, 'tapped');
             await timer(100).toPromise();
         })
 

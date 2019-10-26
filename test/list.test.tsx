@@ -279,7 +279,7 @@ describe("lists", () => {
             ])
         );
 
-        engine!.registerListButton('itemTapped', async item => console.log('item', item, 'tapped'))
+        engine!.registerListButton('itemTapped', async item => console.log('item', item, 'tapped'));
 
         const wrapper = mount(
             <Layout
