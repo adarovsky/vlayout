@@ -26,6 +26,7 @@ layout {
             fixedSize { height: 80 }
             model: items
             itemTapped: itemTapped
+            alignment: .trailing
 
             user {
                 fixedSize { width: 140 }

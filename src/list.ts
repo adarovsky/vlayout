@@ -1,4 +1,4 @@
-import {AbsoluteLayout, LinearLayoutAxis, View} from "./view";
+import {AbsoluteLayout, LinearLayoutAxis, View, ViewProperty} from "./view";
 import {Layout, Scope} from "./layout";
 import {LexIdentifier} from "./lexer";
 import {Expression, Variable} from "./expression";
@@ -158,6 +158,9 @@ export class List extends View {
 
     constructor(readonly axis: LinearLayoutAxis) {
         super();
+        if (this.axis === LinearLayoutAxis.Horizontal) {
+            this.registerProperty(new ViewProperty('alignment', 'LayoutAlignment'));
+        }
     }
 
     instantiate(): this {

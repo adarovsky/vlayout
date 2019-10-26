@@ -2,10 +2,10 @@ import {ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./
 import {List, ListItemPrototype} from "./list";
 import {ReactAbsoluteLayout} from "./react_absolute";
 import _ from "lodash";
-import React from "react";
+import React, {CSSProperties} from "react";
 import {Container, LinearLayoutAxis, StackLayout, ViewProperty} from "./view";
 import {BehaviorSubject, combineLatest, Observable, Subscription} from "rxjs";
-import {ElementSize} from "./resize_sensor";
+import {ElementSize, resizeObserver} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 import {Dictionary} from "./types";
 import {fromPromise} from "rxjs/internal-compatibility";
@@ -92,7 +92,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
 
 }
 
-export class ReactList extends ReactView<ReactViewProps, ReactListState> {
+export class ReactList<S extends ReactListState> extends ReactView<ReactViewProps, S> {
     protected children = new BehaviorSubject<ReactView<ReactViewProps, ReactViewState>[]>([]);
     protected subviewSubscription: Subscription = new Subscription();
 
@@ -160,7 +160,17 @@ export class ReactList extends ReactView<ReactViewProps, ReactListState> {
     }
 }
 
-export class ReactHorizontalList extends ReactList {
+interface ReactHorizontalListState extends ReactListState  {
+    scrollerStyle: CSSProperties;
+}
+export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
+    readonly scrollerRef = React.createRef<HTMLDivElement>();
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state, scrollerStyle: {}};
+    }
+
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         r.overflowX = 'scroll';
@@ -187,17 +197,50 @@ export class ReactHorizontalList extends ReactList {
         );
     }
 
+    componentDidMount(): void {
+        super.componentDidMount();
+        const align = this.props.parentView.property('alignment');
+        if (align && align.value && this.viewRef.current && this.scrollerRef.current) {
+            this.subscription.add(combineLatest([align.value.sink, resizeObserver(this.viewRef.current), resizeObserver(this.scrollerRef.current)])
+                .subscribe(([align, containerSize, scrollerSize]) => {
+                    if (containerSize.width > scrollerSize.width) {
+                        switch (align) {
+                            case 'center':
+                                this.setState({scrollerStyle: {left: '50%', transform: 'translateX(-50%)'}});
+                                break;
+                            case 'trailing':
+                                this.setState({scrollerStyle: {right: 0}});
+                                break;
+                            default:
+                                this.setState({scrollerStyle: {}});
+                        }
+                    }
+                    else {
+                        this.setState({scrollerStyle: {}});
+                    }
+                }));
+        }
+    }
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
         return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
-            <div style={{position: 'absolute', display: 'flex', flexDirection: 'row', height: '100%', justifyContent: 'unsafe start', alignItems: 'stretch'}}>
+            <div style={{...this.state.scrollerStyle,
+                position: 'absolute',
+                display: 'flex',
+                flexDirection: 'row',
+                height: '100%',
+                justifyContent: 'unsafe start',
+                alignItems: 'stretch'
+            }}
+                 ref={this.scrollerRef}>
                 {this.state.childItems.map(item => item.target)}
             </div>
         </div>);
     }
 }
 
-export class ReactVerticalList extends ReactList {
+export class ReactVerticalList extends ReactList<ReactListState> {
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);

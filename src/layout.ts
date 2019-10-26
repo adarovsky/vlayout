@@ -737,7 +737,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                     this.raiseError(`only input references supported in models`);
                 }
             }
-            if (name.content === 'itemTapped') {
+            else if (name.content === 'itemTapped') {
                 this.matchOrFail(':');
                 const ref = this.parseReference();
                 if (!ref) {
@@ -751,12 +751,26 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                     this.raiseError(`only input references supported in models`);
                 }
             }
-            const proto = new ListItemPrototype(name, this);
-            proto.parent = list;
-            this.matchOrFail('{');
-            while (this.parseContainerContents(proto)) {}
-            this.matchOrFail('}');
-            list.prototypes.push(proto);
+            if (this.match(':')) {
+                const exp = this.parseExpression();
+                if (exp) {
+                    const prop = list.property(name.content);
+                    if (prop) {
+                        prop.value = exp;
+                    } else {
+                        this.raiseError(`property ${name.content} is not found in ${list}`);
+                    }
+                }
+            }
+            else {
+                const proto = new ListItemPrototype(name, this);
+                proto.parent = list;
+                this.matchOrFail('{');
+                while (this.parseContainerContents(proto)) {
+                }
+                this.matchOrFail('}');
+                list.prototypes.push(proto);
+            }
 
             return true;
         }
