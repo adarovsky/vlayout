@@ -777,44 +777,30 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         return false;
     }
 
+
     private parseContainerContents(container: Container): boolean {
         const name = this.matchIdentifier();
         if (name) {
             if (this.parsePredefinedProperty(name, container)) return true;
             if (this.match('{')) {
-                let view = this.viewForKey(name.content);
+                let view = this.viewForContext(container, name.content);
                 if (view) {
-                    view.line = name.line;
-                    view.column  = name.column;
-
-                    if (view instanceof Container) {
-                        while (this.parseContainerContents(view)) {}
-                    }
-                    else if (view instanceof List) {
-                        while (this.parseListContents(view)) {}
-                    }
-                    else {
-                        while (this.parseViewContents(view!)) {}
-                    }
-
+                    this.setupView(view, name, container);
                     container.addManagedView(view!);
-
-                    this.matchOrFail('}')
-                } else if (container instanceof ListItemPrototype) {
+                    this.matchOrFail('}');
+                    return true;
+                } else if (isListMember(container)) {
                     const callback = this.engine.listButtonForKey(name.content);
                     if (callback) {
                         view = new ListButton(callback);
                         while (this.parseViewContents(view!)) {}
                         container.addManagedView(view!);
-                        this.matchOrFail('}')
-                    }
-                    else {
-                        this.raiseError(`unknown view description: ${name.content}`);
+                        this.matchOrFail('}');
+                        return true;
                     }
                 }
-                else {
-                    this.raiseError(`unknown view description: ${name.content}`);
-                }
+
+                this.raiseError(`unknown view description: ${name.content}`);
             }
             else {
                 this.matchOrFail(':');
@@ -834,6 +820,22 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
             return true;
         }
         return false;
+    }
+
+    private setupView(view: View, name: LexIdentifier, container: Container) {
+        view.line = name.line;
+        view.column = name.column;
+
+        if (view instanceof Container) {
+            while (this.parseContainerContents(view)) {
+            }
+        } else if (view instanceof List) {
+            while (this.parseListContents(view)) {
+            }
+        } else {
+            while (this.parseViewContents(view!)) {
+            }
+        }
     }
 
     private parseViewContents(view: View): boolean {
@@ -931,6 +933,18 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         }
     }
 
+    viewForContext(container: Container, key: string) {
+        if (isListMember(container)) {
+            const view = this.engine.listViewForKey(key);
+            if (view) return view;
+        }
+
+        return this.viewForKey(key);
+    }
+
+    listViewForKey(key: string): View|null {
+        return this.engine.listViewForKey(key);
+    }
     variableForKeyPath(keyPath: string): Expression|null {
         let kp = keyPath.split('.');
         let ret = this.properties as PropertyDeclaration;
@@ -1038,4 +1052,16 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         return this.state.layout ? this.state.layout.target : null;
     }
 
+}
+
+function isListMember(view: View): boolean {
+    let p: View|null = view;
+    while (p) {
+        if (p instanceof ListItemPrototype) {
+            return true;
+        }
+        p = p.parent;
+    }
+
+    return false;
 }

@@ -1,5 +1,5 @@
 import {ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {List, ListItemPrototype} from "./list";
+import {List, ListItemPrototype, ListModelItem} from "./list";
 import {ReactAbsoluteLayout} from "./react_absolute";
 import _ from "lodash";
 import React, {CSSProperties} from "react";
@@ -11,6 +11,7 @@ import {Dictionary} from "./types";
 import {fromPromise} from "rxjs/internal-compatibility";
 import {ListButton} from "./primitives";
 import {ReactButtonBase} from "./react_button";
+import {ViewListReference} from "./view_reference";
 
 export interface ReactListState extends ReactViewState{
     childItems: ListItemPrototype[];
@@ -71,7 +72,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
             this.setState(s => ({...s, running: true}));
             e.preventDefault();
             e.stopPropagation();
-            const promise = tapCallback(self.modelItem!);
+            const promise = tapCallback(self.modelItem!.value!);
             this.subscription.add(fromPromise(promise)
                 .subscribe({
                     error: () => this.setState(s => ({...s, running: false})),
@@ -291,4 +292,11 @@ export class ReactListButton extends ReactButtonBase {
         }
     }
 
+}
+
+export class ReactViewListReference extends ReactView<ReactViewProps & {modelItem: Observable<ListModelItem>}, ReactListState & {modelItem: ListModelItem}> {
+    render() {
+        const parent = this.props.parentView as ViewListReference;
+        return parent.createComponent(this.state.style, this.state.modelItem);
+    }
 }

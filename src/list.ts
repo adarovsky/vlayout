@@ -19,27 +19,9 @@ export interface ListModelItem extends Dictionary<any> {
 }
 
 class ListItemAccessor extends Expression {
-    private modelSubject = new BehaviorSubject<ListModelItem|null>(null);
     constructor(readonly keyPath: string, type: TypeDefinition) {
         super(0, 0);
         this.typeDefinition = type;
-        this.sink = this.modelSubject.pipe(
-            switchMap(m => {
-                if (m === null) {
-                    return EMPTY;
-                }
-                const prop = _.get(m, this.keyPath);
-                if (prop === undefined) {
-                    return EMPTY;
-                }
-
-                if (prop instanceof Observable) {
-                    return prop;
-                }
-
-                return of(prop);
-            })
-        )
     }
 
     instantiate(): this {
@@ -47,8 +29,31 @@ class ListItemAccessor extends Expression {
         return v as this;
     }
 
-    setModelItem(modelItem: ListModelItem|null) {
-        this.modelSubject.next(modelItem);
+
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        if (scope instanceof  ListItemPrototype) {
+            const item = scope as ListItemPrototype;
+            this.sink = item.modelItem.pipe(
+                switchMap(m => {
+                    if (m === null) {
+                        return EMPTY;
+                    }
+                    const prop = _.get(m, this.keyPath);
+                    if (prop === undefined) {
+                        return EMPTY;
+                    }
+
+                    if (prop instanceof Observable) {
+                        return prop;
+                    }
+
+                    return of(prop);
+                })
+            )
+        }
+        else {
+            throw new LinkError(this.line, this.column, `accessor should be in list prototype item, but got ${scope}`);
+        }
     }
 
     toString(): string {
@@ -59,7 +64,7 @@ class ListItemAccessor extends Expression {
 export class ListItemPrototype extends AbsoluteLayout implements Scope {
 
     accessors: Dictionary<ListItemAccessor> = {};
-    modelItem: ListModelItem|null = null;
+    modelItem = new BehaviorSubject<ListModelItem|null>(null);
 
     constructor(readonly  name: LexIdentifier, readonly layout: Layout) {
         super();
@@ -124,10 +129,9 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
 
     setModelItem(modelItem: ListModelItem|null): void {
         this._key = uuid.v1();
-        this.modelItem = modelItem;
+        this.modelItem.next(modelItem);
         if (modelItem)
             this._key = modelItem.id;
-        _.forIn(this.accessors, a => a.setModelItem(modelItem));
     }
 
     viewType(): string {

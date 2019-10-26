@@ -12,8 +12,8 @@ import {
     LocalizedString,
     ShortLocalizedNumber
 } from "./builtin_functions";
-import React from "react";
-import {ViewReference} from "./view_reference";
+import React, {CSSProperties} from "react";
+import {ViewListReference, ViewReference} from "./view_reference";
 import {View} from "./view";
 import _ from "lodash";
 import {ReactViewProps} from "./react_views";
@@ -28,7 +28,7 @@ export class Engine {
     private readonly referencedViews: Dictionary<ViewReference> = {};
     private readonly buttons: Dictionary<() => Promise<void>> = {};
     private readonly listButtons: Dictionary<(i: ListModelItem) => Promise<void>> = {};
-
+    private readonly referencedListViews: Dictionary<ViewListReference> = {};
     readonly valueSnapshot: { inputs: Dictionary<any>; properties: Dictionary<any> } = {
         inputs: {},
         properties: {}
@@ -137,6 +137,10 @@ export class Engine {
         this.listButtons[name] = onClick;
     }
 
+    registerListView(name: string, createComponent: (style: CSSProperties, modelItem: ListModelItem) => React.ReactElement<ReactViewProps>) {
+        this.referencedListViews[name] = new ViewListReference(createComponent);
+    }
+
     viewForKey(key: string): View|null {
         if (this.buttons[key])
             return new Button(this.buttons[key]);
@@ -148,6 +152,15 @@ export class Engine {
 
     listButtonForKey(key: string) : ListClickHandler|null {
         return this.listButtons[key] || null;
+    }
+
+    listViewForKey(key: string): ViewListReference|null {
+        const view =  this.referencedListViews[key];
+        if (view) {
+            return new ViewListReference(view.createComponent);
+        }
+
+        return null;
     }
 
     logInputValue(name: string, value: any): void {
