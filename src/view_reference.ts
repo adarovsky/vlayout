@@ -1,9 +1,11 @@
 import {View} from "./view";
-import React, {createElement, CSSProperties} from "react";
+import React, {createElement} from "react";
 import {ReactViewProps} from "./react_views";
-import {ListModelItem} from "./list";
+import {ListItemPrototype, ListModelItem} from "./list";
 import {ReactViewListReference} from "./react_list";
 import {EMPTY, Observable} from "rxjs";
+import {Scope} from "./layout";
+import {LinkError} from "./errors";
 
 export class ViewReference extends View {
     constructor(public readonly createComponent: (parent: ViewReference)
@@ -18,9 +20,24 @@ export class ViewReference extends View {
 
 export class ViewListReference extends View {
     modelItem: Observable<ListModelItem> = EMPTY;
-    constructor(public readonly createComponent: (style: CSSProperties, modelItem: ListModelItem)
-        => React.ReactElement<ReactViewProps> ) {
+    constructor(public readonly createComponent: (parent: ViewListReference, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
         super();
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof ViewListReference)(this.createComponent);
+        v.copyFrom(this);
+        return v as this;
+    }
+
+    link(scope: Scope): void {
+        super.link(scope);
+        if (scope instanceof ListItemPrototype) {
+            this.modelItem = scope.modelItem;
+        }
+        else {
+            throw new LinkError(this.line, this.column, `list view reference should be declared only in list item prorotype. Got ${scope} instead`);
+        }
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {

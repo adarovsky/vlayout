@@ -12,7 +12,7 @@ import {
     LocalizedString,
     ShortLocalizedNumber
 } from "./builtin_functions";
-import React, {CSSProperties} from "react";
+import React from "react";
 import {ViewListReference, ViewReference} from "./view_reference";
 import {View} from "./view";
 import _ from "lodash";
@@ -137,7 +137,7 @@ export class Engine {
         this.listButtons[name] = onClick;
     }
 
-    registerListView(name: string, createComponent: (style: CSSProperties, modelItem: ListModelItem) => React.ReactElement<ReactViewProps>) {
+    registerListView(name: string, createComponent: (parent: ViewListReference, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
         this.referencedListViews[name] = new ViewListReference(createComponent);
     }
 

@@ -6,7 +6,7 @@ import {Dictionary, ListDefinition, TypeDefinition} from "./types";
 import {Engine} from "./engine";
 import {FunctionImplementationI} from "./builtin_functions";
 import {LinkError} from "./errors";
-import {BehaviorSubject, EMPTY, Observable, of} from "rxjs";
+import {EMPTY, Observable, of, ReplaySubject} from "rxjs";
 import _ from "lodash";
 import {switchMap} from "rxjs/operators";
 import {createElement} from "react";
@@ -64,7 +64,8 @@ class ListItemAccessor extends Expression {
 export class ListItemPrototype extends AbsoluteLayout implements Scope {
 
     accessors: Dictionary<ListItemAccessor> = {};
-    modelItem = new BehaviorSubject<ListModelItem|null>(null);
+    modelItem = new ReplaySubject<ListModelItem>(1);
+    modelItemSnapshot: ListModelItem|null = null;
 
     constructor(readonly  name: LexIdentifier, readonly layout: Layout) {
         super();
@@ -127,11 +128,11 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         return this.accessors[keyPath] || this.layout.variableForKeyPath(keyPath);
     }
 
-    setModelItem(modelItem: ListModelItem|null): void {
+    setModelItem(modelItem: ListModelItem): void {
         this._key = uuid.v1();
         this.modelItem.next(modelItem);
-        if (modelItem)
-            this._key = modelItem.id;
+        this._key = modelItem.id;
+        this.modelItemSnapshot = modelItem;
     }
 
     viewType(): string {
@@ -228,7 +229,7 @@ export class List extends View {
             this.reusableItems[proto.name.content] = [];
         }
         this.reusableItems[proto.name.content].push(proto);
-        proto.setModelItem(null);
+        proto.modelItemSnapshot = null;
     }
 
 

@@ -4,6 +4,7 @@ import {Engine, Layout} from '@adarovsky/vlayout';
 import {interval, timer} from "rxjs";
 import {pluck, scan, startWith, take} from "rxjs/operators";
 import {Dictionary} from "../../src/types";
+import {SampleView} from "./sample_view";
 
 class App extends Component {
     private readonly engine: Engine;
@@ -61,7 +62,8 @@ class App extends Component {
             list.pipe(take(10))
         );
         //   this.engine.inputs.registerInput("counter", this.engine.numberType(), of(3));
-        // this.engine.registerView('myView', x => <SampleView parentView={x} key={'123'}/>);
+        this.engine.registerListView('myView', (x, item) =>
+            <SampleView parentView={x} key={'123'} color={'#aa99cc'} user={item}/>);
         this.engine.registerButton('myButton', async () => {
             console.log('clicked');
             await timer(1000).toPromise();

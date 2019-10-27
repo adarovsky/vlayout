@@ -10,7 +10,7 @@ import {map, switchMap} from "rxjs/operators";
 import {Dictionary} from "./types";
 import {fromPromise} from "rxjs/internal-compatibility";
 import {ListButton} from "./primitives";
-import {ReactButtonBase} from "./react_button";
+import {ReactButtonBase, ReactButtonState} from "./react_button";
 import {ViewListReference} from "./view_reference";
 
 export interface ReactListState extends ReactViewState{
@@ -68,11 +68,11 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
         const self = this.props.parentView as ListItemPrototype;
         const tapCallback = (this.props.parentView.parent as List).tapCallback;
         if (tapCallback) {
-            if (this.state.running) return;
+            if (this.state.running || self.modelItemSnapshot === null) return;
             this.setState(s => ({...s, running: true}));
             e.preventDefault();
             e.stopPropagation();
-            const promise = tapCallback(self.modelItem!.value!);
+            const promise = tapCallback(self.modelItemSnapshot);
             this.subscription.add(fromPromise(promise)
                 .subscribe({
                     error: () => this.setState(s => ({...s, running: false})),
@@ -271,19 +271,26 @@ export class ReactVerticalList extends ReactList<ReactListState> {
     }
 }
 
-export class ReactListButton extends ReactButtonBase {
+export class ReactListButton extends ReactButtonBase<ReactButtonState & {modelItem: ListModelItem|null}> {
+    constructor(props: ReactViewProps) {
+        super(props);
+
+        this.state = {...this.state, modelItem: null};
+    }
+
+    componentDidMount(): void {
+        super.componentDidMount();
+        this.subscription.add((this.props.parentView as ListButton).modelItem.subscribe(x => this.setState({modelItem: x})));
+    }
+
     protected handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
         if (this.state.running) return;
-        let proto : any | null  = this.props.parentView;
-        while (proto &&  !(proto instanceof ListItemPrototype)) {
-            proto = proto.parent;
-        }
-
-        if (proto !== null) {
+        const parent = this.props.parentView as ListButton;
+        if (this.state.modelItem !== null) {
             this.setState(s => Object.assign(s, {running: true}));
             e.preventDefault();
             e.stopPropagation();
-            const promise = (this.props.parentView as ListButton).onClick(proto.modelItem);
+            const promise = parent.onClick(this.state.modelItem);
             this.subscription.add(fromPromise(promise)
                 .subscribe({
                     error: () => this.setState(s => ({...s, running: false})),
@@ -294,9 +301,9 @@ export class ReactListButton extends ReactButtonBase {
 
 }
 
-export class ReactViewListReference extends ReactView<ReactViewProps & {modelItem: Observable<ListModelItem>}, ReactListState & {modelItem: ListModelItem}> {
+export class ReactViewListReference extends ReactView<ReactViewProps & {modelItem: Observable<ListModelItem>}, ReactListState> {
     render() {
         const parent = this.props.parentView as ViewListReference;
-        return parent.createComponent(this.state.style, this.state.modelItem);
+        return parent.createComponent(parent, this.props.modelItem);
     }
 }

@@ -4,8 +4,10 @@ import {ReactGradient, ReactImage, ReactLabel, ReactProgress, ReactRoundRect} fr
 import {ReactButton} from "./react_button";
 import {Scope} from "./layout";
 import {EnumValue} from "./expression";
-import {ListModelItem} from "./list";
+import {ListItemPrototype, ListModelItem} from "./list";
 import {ReactListButton} from "./react_list";
+import {EMPTY, Observable} from "rxjs";
+import {LinkError} from "./errors";
 
 export class Label extends View {
     constructor() {
@@ -133,6 +135,7 @@ export class Button extends ButtonBase {
 }
 
 export class ListButton extends ButtonBase {
+    modelItem: Observable<ListModelItem> = EMPTY;
     constructor(public readonly onClick: (i: ListModelItem) => Promise<void>) {
         super();
     }
@@ -141,6 +144,17 @@ export class ListButton extends ButtonBase {
         const v = new (this.constructor as typeof ListButton)(this.onClick);
         v.copyFrom(this);
         return v as this;
+    }
+
+    link(scope: Scope): void {
+        super.link(scope);
+
+        if (scope instanceof ListItemPrototype) {
+            this.modelItem = scope.modelItem;
+        }
+        else {
+            throw new LinkError(this.line, this.column, `list button should be declared only in list item prototype. Got ${scope} instead`);
+        }
     }
 
     get target(): React.ReactElement {

@@ -7,9 +7,9 @@ import {FontContainer, ImageContainer} from "./types";
 import {map} from "rxjs/operators";
 import {Button} from "./primitives";
 import {fromPromise} from "rxjs/internal-compatibility";
-import {ReactViewState} from "./react_views";
+import {ReactViewProps, ReactViewState} from "./react_views";
 
-interface ReactButtonState extends ReactViewState {
+export interface ReactButtonState extends ReactViewState {
     image: ImageContainer;
     text: string;
     imageStyle: CSSProperties,
@@ -17,20 +17,22 @@ interface ReactButtonState extends ReactViewState {
     enabled: boolean
 }
 
-export class ReactButtonBase extends ReactRoundRect {
-    state: ReactButtonState = {
-        style: {},
-        aspect: null,
-        text: '',
-        image: new ImageContainer(''),
-        imageStyle: {
-            maxHeight: '100%',
-            maxWidth: '100%',
-            objectFit: 'scale-down'
-        },
-        running: false,
-        enabled: true
-    };
+export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> extends ReactRoundRect<S> {
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state, text: '',
+            image: new ImageContainer(''),
+            imageStyle: {
+                maxHeight: '100%',
+                maxWidth: '100%',
+                objectFit: 'scale-down'
+            },
+            running: false,
+            enabled: true
+        };
+    }
+
 
     public styleProperties(): ViewProperty[] {
         const sup = super.styleProperties();
