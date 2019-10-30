@@ -20,7 +20,7 @@ export class ViewReference extends View {
 
 export class ViewListReference extends View {
     modelItem: Observable<ListModelItem> = EMPTY;
-    constructor(public readonly createComponent: (parent: ViewListReference, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
+    constructor(public readonly createComponent: (parent: View, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
         super();
     }
 
@@ -41,6 +41,6 @@ export class ViewListReference extends View {
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactViewListReference, {parentView: this, modelItem: this.modelItem});
+        return createElement(ReactViewListReference, {parentView: this, key: this.key});
     }
 }

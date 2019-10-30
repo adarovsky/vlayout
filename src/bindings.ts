@@ -11,6 +11,9 @@ export class Bindings {
         if (type === 'listButton' && this.engine.listButtonForKey(name))
             return;
 
+        if (type === 'listView' && this.engine.listViewForKey(name))
+            return;
+
         const v = this.viewForKey(name);
         if (!v) {
             throw new Error(`view ${name} is not registered`);

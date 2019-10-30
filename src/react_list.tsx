@@ -84,7 +84,9 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
         const extra: Dictionary<any> = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} onClick={e => this.handleClick(e)} {...extra}>
+        return (<div style={this.style()}
+                     className={'vlayout_'+this.props.parentView.viewType()}
+                     ref={this.viewRef} onClick={e => this.handleClick(e)} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .map( v => v.target )}
@@ -301,9 +303,9 @@ export class ReactListButton extends ReactButtonBase<ReactButtonState & {modelIt
 
 }
 
-export class ReactViewListReference extends ReactView<ReactViewProps & {modelItem: Observable<ListModelItem>}, ReactListState> {
+export class ReactViewListReference extends ReactView<ReactViewProps, ReactListState> {
     render() {
         const parent = this.props.parentView as ViewListReference;
-        return parent.createComponent(parent, this.props.modelItem);
+        return parent.createComponent(parent, parent.modelItem);
     }
 }

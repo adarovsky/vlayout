@@ -2,19 +2,25 @@ import {mount} from "enzyme";
 import {Engine, Layout} from "../src";
 import React from "react";
 import {BehaviorSubject, of, Subject} from "rxjs";
-import {ElementSize} from "../src/resize_sensor";
 import {List} from "../src/list";
 import sinon from "sinon";
+import {SampleListView} from "./sample_list_view";
+import {ElementSize} from "../src/resize_sensor";
 
 let module = require("../src/resize_sensor");
 
+let engine = new Engine();
 const sizeChange = new Subject<ElementSize>();
-module.resizeObserver = jest.fn(() => sizeChange);
-
-let engine: Engine | null = null;
+let sandbox = sinon.createSandbox();
 
 beforeEach(() => {
     engine = new Engine();
+    sandbox = sinon.createSandbox();
+    sandbox.stub(module, 'resizeObserver').returns(sizeChange);
+});
+
+afterEach(() => {
+    sandbox.restore();
 });
 
 function getContent(type: string) {
@@ -331,4 +337,78 @@ describe("lists", () => {
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
+
+    it("should support external views", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: "Denis"}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        engine!.registerListView('myView', (x, item) => <SampleListView parentView={x} key={'123'} color={'#aa99cc'} user={item}/>);
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+  bindings {
+      myView: listView
+  }
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          verticalList {
+              padding { left: 10 right: 10 top: 10 bottom: 10 }
+              model: items
+  
+              user {
+                  fixedSize { height: 44 }
+                  myView {                      
+                  }
+                  label {
+                      text: name
+                  }
+              }
+              newUser {
+                  label {
+                      text: "add new"
+                  }
+              }
+          }
+      }
+  }`}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
 });

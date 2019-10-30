@@ -113,7 +113,7 @@ export class Engine {
         return this.functions.filter(f => f.name === name && f.parameterTypes.length === parametersCount);
     }
 
-    registerView(key: string, createComponent: (parent: ViewReference) => React.ReactElement<ReactViewProps>) {
+    registerView(key: string, createComponent: (parent: View) => React.ReactElement<ReactViewProps>) {
         this.referencedViews[key] = new ViewReference(createComponent);
     }
 
@@ -137,7 +137,7 @@ export class Engine {
         this.listButtons[name] = onClick;
     }
 
-    registerListView(name: string, createComponent: (parent: ViewListReference, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
+    registerListView(name: string, createComponent: (parent: View, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
         this.referencedListViews[name] = new ViewListReference(createComponent);
     }
 

@@ -1,6 +1,7 @@
 bindings {
     itemTapped: listButton
     buttonTapped: listButton
+    myView: listView
 }
 
 types {
