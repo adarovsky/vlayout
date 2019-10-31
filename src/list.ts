@@ -163,6 +163,7 @@ export class List extends View {
 
     constructor(readonly axis: LinearLayoutAxis) {
         super();
+        this.registerProperty(new ViewProperty('spacing', 'Number'));
         if (this.axis === LinearLayoutAxis.Horizontal) {
             this.registerProperty(new ViewProperty('alignment', 'LayoutAlignment'));
         }

@@ -15,6 +15,7 @@ import {ViewListReference} from "./view_reference";
 
 export interface ReactListState extends ReactViewState{
     childItems: ListItemPrototype[];
+    spacing: number;
 }
 
 export interface ReactListItemState extends ReactContainerState {
@@ -101,11 +102,12 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
 
     constructor(props: ReactViewProps) {
         super(props);
-        this.state = {...this.state, childItems: []};
+        this.state = {...this.state, childItems: [], spacing: 0};
     }
 
     componentDidMount(): void {
         super.componentDidMount();
+        this.wire('spacing', 'spacing', _.identity);
         const parentList = this.props.parentView as List;
         this.subscription.add(parentList.model!.sink.subscribe(arr => {
             const current = this.state.childItems;
@@ -152,13 +154,21 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         r.pointerEvents = 'auto';
+        if (!r.position) {
+            r.position = 'relative';
+        }
         return r;
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
         return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
-            {this.state.childItems.map(item => item.target)}
+            {this.state.childItems.flatMap( (v, index) => {
+                const result = [v.target];
+                if (index > 0 && this.state.spacing)
+                    result.unshift(<div style={{height: this.state.spacing + 'px'}} key={index}/>);
+                return result;
+            })}
         </div>);
     }
 }
@@ -237,7 +247,12 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
                 alignItems: 'stretch'
             }}
                  ref={this.scrollerRef}>
-                {this.state.childItems.map(item => item.target)}
+                {this.state.childItems.flatMap( (v, index) => {
+                    const result = [v.target];
+                    if (index > 0 && this.state.spacing)
+                        result.unshift(<div style={{width: this.state.spacing + 'px'}} key={index}/>);
+                    return result;
+                })}
             </div>
         </div>);
     }

@@ -242,7 +242,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     protected isWidthDefined(): boolean {
         return !!this.state.style.width ||
             (this.props.parentView.parent !== null
-                && this.props.parentView.parent instanceof StackLayout
+                && (this.props.parentView.parent instanceof StackLayout ||
+                    this.props.parentView.parent instanceof LinearLayout)
                 && this.props.parentView.parent.instance !== null
                 && this.props.parentView.parent.instance.isWidthDefined()) ||
             (!!this.state.style.left && !!this.state.style.right
@@ -255,7 +256,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     protected isHeightDefined(): boolean {
         return !!this.state.style.height ||
             (this.props.parentView.parent !== null
-                && this.props.parentView.parent instanceof StackLayout
+                && (this.props.parentView.parent instanceof StackLayout ||
+                    this.props.parentView.parent instanceof LinearLayout)
                 && this.props.parentView.parent.instance !== null
                 && this.props.parentView.parent.instance.isHeightDefined()) ||
             (!!this.state.style.top && !!this.state.style.bottom

@@ -26,5 +26,7 @@
   "include": [
     "src"
   ],
-  "exclude": ["src/*.test.ts", "src/*.test.js", "src/*.test.tsx", "src/setupEnzyme.ts"]
+  "exclude": ["src/*.test.ts", "src/*.test.js", "src/*.test.tsx",
+    "test/setupEnzyme.ts"
+  ]
 }
