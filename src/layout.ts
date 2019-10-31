@@ -39,6 +39,7 @@ import {FunctionDeclaration, Functions} from "./functions";
 import {Dictionary, ListDefinitionItem, TypeDefinition} from "./types";
 import {FunctionImplementationI} from "./builtin_functions";
 import {List, ListItemPrototype} from "./list";
+import {extend, isEmpty} from "lodash"
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {
@@ -191,7 +192,20 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
             this.matchOrFail('(');
 
             do {
-                r.push(this.parseListItem());
+                let v = this.matchIdentifier();
+                if (v) {
+                    const item: ListDefinitionItem = {};
+                    this.matchOrFail('{');
+                    let i: ListDefinitionItem|null = null;
+                    while( !isEmpty(i = this.parseListItem()) ) {
+                        extend(item, i);
+                    }
+                    this.matchOrFail('}');
+                    r.push(item);
+                }
+                else {
+                    this.raiseError(`model item identifier expected`)
+                }
             } while (this.match(','));
 
             this.matchOrFail(')');

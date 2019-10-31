@@ -92,6 +92,72 @@ describe("lists", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it("model description should support multiple properties", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType(),
+                prop2: engine!.boolType(),
+            },
+            newUser: {}
+        });
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex", prop2: false}},
+                {user: {id: 2, name: "Anton", prop2: true}},
+                {user: {id: 3, name: "Denis", prop2: false}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+                      types {
+                          MyItems: list (
+                              user {
+                                  name: String
+                                  prop2: Bool
+                              },
+                              newUser {
+                                  // no fields required
+                              }
+                          )
+                      }
+                      
+                      inputs {
+                          items: MyItems
+                      }
+                      
+                      layout {
+                          layer {
+                              verticalList {
+                                  padding { left: 10 right: 10 top: 10 bottom: 10 }
+                                  model: items
+                      
+                                  user {
+                                      label {
+                                          text: name + (prop2 ? " - good" : " - bad")
+                                      }
+                                  }
+                                  newUser {
+                                      label {
+                                          text: "add new"
+                                      }
+                                  }
+                              }
+                          }
+                      }`}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
     it("should initialize and render horizontal list", async function () {
         engine!.registerList("MyItems", {
             user: {
