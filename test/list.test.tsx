@@ -474,9 +474,9 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find(".vlayout_button");
 
-        expect(node.getDOMNode()).toMatchSnapshot();
+        expect(node).toHaveLength(3);
     });
 
     it("should support external views", async function () {

@@ -199,6 +199,7 @@ export class AbsoluteLayout extends Container {
 
     instantiate(): this {
         const v = new (this.constructor as typeof AbsoluteLayout)();
+        v.copyFrom(this);
         return v as this;
     }
 
