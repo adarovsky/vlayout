@@ -48,7 +48,7 @@ export class View {
     column: number = 0;
 
     parent: View|null = null;
-    interactive: boolean = false;
+
     protected properties: Dictionary<ViewProperty> = {};
     protected _key: string;
     instance: ReactView<ReactViewProps, ReactViewState>|null = null;
@@ -145,8 +145,6 @@ export class Container extends View {
     addManagedView(view: View): void {
         view.parent = this;
         this._views.push(view);
-        if (view.interactive)
-            this.interactive = true;
     }
 
     instantiate(): this {

@@ -404,6 +404,81 @@ describe("lists", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it("should support tappable items inside hierarchy", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: "Denis"}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        engine!.registerListButton('itemTapped', async item => console.log('item', item, 'tapped'));
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+  bindings {
+      itemTapped: listButton
+  }
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          verticalList {
+              padding { left: 10 right: 10 top: 10 bottom: 10 }
+              model: items
+  
+              user {
+                  fixedSize { height: 44 }
+                  label {
+                      text: name
+                  }
+                  absolute {
+                      itemTapped {
+                      }
+                  }
+              }
+              newUser {
+                  label {
+                      text: "add new"
+                  }
+              }
+          }
+      }
+  }`}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
     it("should support external views", async function () {
         engine!.registerList("MyItems", {
             user: {

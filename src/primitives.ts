@@ -92,7 +92,6 @@ export class Progress extends View {
 export class ButtonBase extends RoundRect {
     constructor() {
         super();
-        this.interactive = true;
         this.registerProperty(new ViewProperty('enabled', 'Bool'));
         this.registerProperty(new ViewProperty('text', 'String'));
         this.registerProperty(new ViewProperty('textColor', 'Color'));

@@ -799,8 +799,8 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
             if (this.match('{')) {
                 let view = this.viewForContext(container, name.content);
                 if (view) {
-                    this.setupView(view, name, container);
                     container.addManagedView(view!);
+                    this.setupView(view, name, container);
                     this.matchOrFail('}');
                     return true;
                 } else if (isListMember(container)) {
