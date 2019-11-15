@@ -86,7 +86,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
         // @ts-ignore
         const extra: Dictionary<any> = _.pick(this.state, 'id');
         return (<div style={this.style()}
-                     className={'vlayout_'+this.props.parentView.viewType()}
+                     className={this.className}
                      ref={this.viewRef} onClick={e => this.handleClick(e)} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
@@ -161,7 +161,7 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
+        return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
             {this.state.childItems.flatMap( (v, index) => {
                 const result = [v.target];
                 if (index > 0 && this.state.spacing)
@@ -236,7 +236,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
+        return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
             <div style={{...this.state.scrollerStyle,
                 position: 'absolute',
                 display: 'flex',

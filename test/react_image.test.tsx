@@ -51,6 +51,40 @@ describe("image", () => {
     `);
   });
 
+  it("should contain class if set", async function() {
+    const wrapper = mount(
+      <Layout
+        engine={engine!}
+        content={`
+     layout {
+         layer {
+             image {
+                 class: "custom_class"
+                 center { x: 0.5 y: 0.5 }
+                 
+                 image: Image("/test.png")                 
+             }
+         }
+     }`}
+      />
+    );
+
+    const node = wrapper.find(".vlayout_image");
+
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_image custom_class"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
+      >
+        <img
+          alt=""
+          src="/test.png"
+          style="width: 100%; height: 100%; object-fit: fill;"
+        />
+      </div>
+    `);
+  });
+
   it("should switch scale mode", async function() {
     const input = new Subject<number>();
     engine!.registerInput("counter", engine!.numberType(), input);

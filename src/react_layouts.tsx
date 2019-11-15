@@ -1,4 +1,4 @@
-import {ReactContainer, ReactContainerState} from "./react_views";
+import {ReactContainer, ReactContainerState, ReactViewProps} from "./react_views";
 import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
 import _ from "lodash";
@@ -7,15 +7,16 @@ import {combineLatest, Observable, Subscription} from "rxjs";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 
-class ReactLinearLayout extends ReactContainer<ReactContainerState> {
-    state = {
-        spacing: 0,
-        aspect: null,
-        style: {} as CSSProperties,
-        childrenVisible: []
-    };
 
+class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: number}> {
     protected subviewSubscription: Subscription = new Subscription();
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state,
+            spacing: 0
+        }
+    }
 
     componentDidMount(): void {
         super.componentDidMount();
@@ -28,7 +29,7 @@ class ReactLinearLayout extends ReactContainer<ReactContainerState> {
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef}>
+        return (<div style={this.style()} className={this.className} ref={this.viewRef}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .flatMap( (v, index) => {
@@ -180,15 +181,17 @@ export class ReactVerticalLayout extends ReactLinearLayout {
 }
 
 export class ReactLayer extends ReactContainer<ReactContainerState> {
-    state: ReactContainerState = {
-        aspect: null,
-        childrenVisible: [],
-        style: {
-            width: '100%',
-            height: '100%',
-            position: 'absolute'
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state,
+            style: {
+                width: '100%',
+                height: '100%',
+                position: 'absolute'
+            }
         }
-    };
+    }
 
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('z_order'));

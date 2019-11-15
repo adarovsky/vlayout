@@ -231,7 +231,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
             </>) : text;
 
         return (<div style={this.currentStyle()}
-                     className={'vlayout_'+this.props.parentView.viewType()}
+                     className={this.className}
                      ref={this.viewRef}
         onClick={(e) => this.handleClick(e)}>
             {this.state.image.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}

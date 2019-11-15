@@ -15,14 +15,15 @@ interface ReactLabelState extends ReactViewState {
 }
 
 export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
-    state: ReactLabelState = {
-        style: {},
-        aspect: null,
-        text: '',
-        maxLines: 0
-    };
-
     readonly shadowRef = React.createRef<HTMLDivElement>();
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state,
+            text: '',
+            maxLines: 0
+        }
+    }
 
     componentDidMount(): void {
         super.componentDidMount();
@@ -31,11 +32,12 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     }
 
     styleProperties(): ViewProperty[] {
-        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('textColor', 'font', 'textAlignment'));
+        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('maxLines', 'textColor', 'font', 'textAlignment'));
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
+        let maxLines = 0;
         _.forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'textColor':
@@ -75,21 +77,26 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
                         r.fontSize = `${c.size}px`;
                     }
                     break;
+                case 'maxLines':
+                    maxLines = +val;
+                    break;
             }
         });
 
+        r.overflow = 'hidden';
+        r.textOverflow = 'ellipsis';
         return r;
     }
 
-
-
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        const content = this.state.text.split('\n').map(function (item, key) {
+        const content = this.state.maxLines === 1 ?
+            <span style={{whiteSpace: 'nowrap'}}>{this.state.text}</span>
+            : this.state.text.split('\n').map(function (item, key) {
             return <span key={key}>{item}<br/></span>;
         });
         const extra = _.pick(this.state, 'id');
 
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef as RefObject<HTMLDivElement>} {...extra}>
+        return (<div style={this.style()} className={this.className} ref={this.viewRef as RefObject<HTMLDivElement>} {...extra}>
             {content}
             <div style={this.shadowStyle()} className={'vlayout_'+this.props.parentView.viewType()+'_shadow'} ref={this.shadowRef}>
                 {content}
@@ -126,12 +133,14 @@ interface ReactImageState extends ReactViewState {
 }
 
 export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
-    state: ReactImageState = {
-        style: {},
-        aspect: null,
-        image: new ImageContainer(''),
-        innerStyle: { width: '100%', height: '100%', objectFit: 'fill' }
-    };
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state,
+            image: new ImageContainer(''),
+            innerStyle: { width: '100%', height: '100%', objectFit: 'fill' }
+        }
+    }
 
     componentDidMount(): void {
         super.componentDidMount();
@@ -159,7 +168,7 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} ref={this.viewRef} className={'vlayout_'+this.props.parentView.viewType()} {...extra}>
+        return (<div style={this.style()} ref={this.viewRef} className={this.className} {...extra}>
             <img style={this.state.innerStyle}
                  src={this.state.image.src}
                  alt=""/>
@@ -289,11 +298,13 @@ interface ReactProgressState extends ReactViewState{
 }
 
 export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState> {
-    state: ReactProgressState = {
-        aspect: null,
-        style: {},
-        progressColor: '#ffffff'
-    };
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {...this.state,
+            progressColor: '#ffffff'
+        }
+    }
 
     componentDidMount(): void {
         super.componentDidMount();
@@ -310,7 +321,7 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} ref={this.viewRef} className={'vlayout_'+this.props.parentView.viewType()} {...extra}>
+        return (<div style={this.style()} ref={this.viewRef} className={this.className} {...extra}>
             <svg className="vlayout_spinner" viewBox="0 0 50 50">
                 <circle className="path" cx="50%" cy="50%" r="40%" fill="none" strokeWidth="2" stroke={this.state.progressColor}/>
             </svg>

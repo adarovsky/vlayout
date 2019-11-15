@@ -71,6 +71,7 @@ export class View {
         this.registerProperty(new ViewProperty('aspect', 'Number'));
         this.registerProperty(new ViewProperty('alpha', 'Number'));
         this.registerProperty(new ViewProperty('sizePolicy', 'SizePolicy'));
+        this.registerProperty(new ViewProperty('class', 'String'));
         this._key = uuid.v1();
     }
 

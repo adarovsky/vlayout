@@ -15,6 +15,7 @@ export interface ReactViewState {
     style: CSSProperties;
     aspect: number|null;
     id?: string;
+    className: string;
 }
 
 export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
@@ -50,6 +51,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         }
 
         this.wire('id', 'id', _.identity);
+        this.wire('class', 'className', _.identity);
     }
 
     componentWillUnmount(): void {
@@ -59,7 +61,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     constructor(props: P) {
         super(props);
         // @ts-ignore
-        this.state = {style: {}, aspect: null, id: null};
+        this.state = {style: {}, aspect: null, id: null, className: ''};
     }
 
     wire(name: string, field: string, mapper: (v: any) => any) {
@@ -234,9 +236,18 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         }
     }
 
+    get className(): string {
+        if (this.state.className) {
+            return 'vlayout_'+this.props.parentView.viewType() + ' ' + this.state.className;
+        }
+        else {
+            return 'vlayout_'+this.props.parentView.viewType();
+        }
+    }
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} id={this.state.id} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}/>);
+        return (<div style={this.style()} id={this.state.id} className={this.className} ref={this.viewRef} {...extra}/>);
     }
 
     protected isWidthDefined(): boolean {
@@ -339,7 +350,7 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={'vlayout_'+this.props.parentView.viewType()} ref={this.viewRef} {...extra}>
+        return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .map( v => v.target )}
