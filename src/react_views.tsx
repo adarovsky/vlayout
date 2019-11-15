@@ -209,6 +209,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
                 r.minWidth = '100%';
                 r.minHeight = '100%';
+                r.maxWidth = '100%';
+                r.maxHeight = '100%';
             }
             else if (this.props.parentView.parent instanceof AbsoluteLayout) {
                 const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
