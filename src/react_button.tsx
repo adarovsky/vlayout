@@ -13,6 +13,7 @@ export interface ReactButtonState extends ReactViewState {
     image: ImageContainer;
     text: string;
     imageStyle: CSSProperties,
+    imagePosition: string,
     running: boolean,
     enabled: boolean
 }
@@ -28,6 +29,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                 maxWidth: '100%',
                 objectFit: 'scale-down'
             },
+            imagePosition: 'leftToText',
             running: false,
             enabled: true
         };
@@ -50,6 +52,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
 
     componentDidMount(): void {
         super.componentDidMount();
+
         this.wire('text', 'text', x => x);
         this.wire('image', 'image', x => x);
         this.wire('enabled', 'enabled', x => x);
@@ -89,8 +92,12 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                     r.objectFit = 'scale-down';
                     return r;
                 })
-            ).subscribe( x => this.setState(s => Object.assign(s, {imageStyle: x}))));
+            ).subscribe( x => this.setState(s => ({...s, imageStyle: x}))));
         }
+
+        this.subscription.add(imagePositionProp.value!.sink.subscribe(pos => {
+            this.setState(s => ({...s, imagePosition: pos}));
+        }));
 
         const paddings = this.props.parentView.activePropertiesNamed('contentPadding.left', 'contentPadding.top',
             'contentPadding.right', 'contentPadding.bottom');
@@ -161,7 +168,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         switch (imagePosition) {
             case 'left':
                 r.flexDirection = 'row';
-                r.justifyContent = 'space-between';
+                r.justifyContent = 'stretch';
                 break;
             case 'leftToText':
                 r.flexDirection = 'row';
@@ -169,7 +176,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                 break;
             case 'right':
                 r.flexDirection = 'row-reverse';
-                r.justifyContent = 'space-between';
+                r.justifyContent = 'stretch';
                 break;
             case 'rightToText':
                 r.flexDirection = 'row-reverse';
@@ -211,16 +218,24 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
 
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+        const pos = this.state.imagePosition;
+        const text = this.state.text && this.state.text.split('\n').map(function(item, key) {
+            return (
+                <span key={key}>{item}<br/></span>
+            )
+        });
+        const decorated = this.state.text && (pos === 'left' || pos === 'right') ?
+            (<>
+                <span style={{textAlign: 'center', flexGrow: 1}}>{text}</span>
+                {this.state.image.src && <img src={this.state.image.src} style={{...this.state.imageStyle, opacity: 0}} alt={this.state.text}/>}
+            </>) : text;
+
         return (<div style={this.currentStyle()}
                      className={'vlayout_'+this.props.parentView.viewType()}
                      ref={this.viewRef}
         onClick={(e) => this.handleClick(e)}>
             {this.state.image.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
-            {this.state.text && this.state.text.split('\n').map(function(item, key) {
-                return (
-                    <span key={key}>{item}<br/></span>
-                )
-            })}
+            {decorated}
         </div>);
     }
 }

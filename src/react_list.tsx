@@ -150,7 +150,6 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
             );
     }
 
-
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         r.pointerEvents = 'auto';
