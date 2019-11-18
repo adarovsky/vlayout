@@ -3,7 +3,7 @@ import {Dictionary, TypeDefinition} from "./types";
 import {Expression} from "./expression";
 import {Observable} from "rxjs";
 import {LinkError} from "./errors";
-import {distinctUntilChanged, shareReplay, switchMap, tap} from "rxjs/operators";
+import {distinctUntilChanged, filter, shareReplay, switchMap, tap} from "rxjs/operators";
 import {pauseObserving, resumeObserving} from "./resize_sensor";
 
 export class Input extends Expression {
@@ -31,6 +31,14 @@ export class Inputs {
         inp.sink = sink.pipe(
             distinctUntilChanged(),
             tap( x => this.engine.logInputValue(name, x)),
+            filter(x => {
+                const correct = type.isTypeCorrect(x);
+                if (!correct) {
+                    console.error(`wrong type for input ${name}: expected value of type ${type.typeName}, got ${x}`);
+                }
+
+                return correct;
+            }),
             switchMap( x => {
                 return new Observable<typeof x>(subscriber => {
                     pauseObserving();

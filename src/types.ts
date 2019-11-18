@@ -1,4 +1,6 @@
 import {Engine} from "./engine";
+import {Color} from "./index";
+import {includes} from "lodash";
 
 export class TypeDefinition {
     readonly  engine: Engine;
@@ -7,6 +9,26 @@ export class TypeDefinition {
     constructor(engine: Engine, typeName: string) {
         this.engine = engine;
         this.typeName = typeName;
+    }
+
+    isTypeCorrect(value: any): boolean {
+        switch (this.typeName) {
+            case 'String':
+                return typeof (value) === 'string';
+            case 'Number':
+                return value === null || typeof (value) === 'number' || typeof (value) === 'bigint';
+            case 'Bool':
+                return typeof (value) === 'boolean';
+            case 'Font':
+                return value instanceof FontContainer;
+            case 'Color':
+                return value instanceof ColorContainer;
+            case 'Image':
+                return value instanceof ImageContainer;
+            default:
+                return true;
+        }
+
     }
 
     toString(): string {
@@ -24,6 +46,11 @@ export class EnumDefinition extends TypeDefinition {
         super(engine, typeName);
         this.values = values;
     }
+
+    isTypeCorrect(value: any): boolean {
+        return includes(this.values, value);
+    }
+
     valueFor(key: string): any {
         return this.values[key];
     }

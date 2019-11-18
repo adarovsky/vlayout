@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`types should allow null to number inputs 1`] = `
+<div
+  class="vlayout_label"
+  id="label1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+>
+  <span>
+    null
+    <br />
+  </span>
+  <div
+    class="vlayout_label_shadow"
+    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+  >
+    <span>
+      null
+      <br />
+    </span>
+  </div>
+</div>
+`;
+
+exports[`types should allow null to number inputs 2`] = `
+<div
+  class="vlayout_label"
+  id="label1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+>
+  <span>
+    10
+    <br />
+  </span>
+  <div
+    class="vlayout_label_shadow"
+    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+  >
+    <span>
+      10
+      <br />
+    </span>
+  </div>
+</div>
+`;
+
+exports[`types should throw if invalid enum value is sent to input 1`] = `
+<div
+  class="vlayout_label"
+  id="label1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+>
+  <span>
+    
+    <br />
+  </span>
+  <div
+    class="vlayout_label_shadow"
+    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+  >
+    <span>
+      
+      <br />
+    </span>
+  </div>
+</div>
+`;
+
+exports[`types should throw if invalid enum value is sent to input 2`] = `
+<div
+  class="vlayout_label"
+  id="label1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+>
+  <span>
+    a
+    <br />
+  </span>
+  <div
+    class="vlayout_label_shadow"
+    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+  >
+    <span>
+      a
+      <br />
+    </span>
+  </div>
+</div>
+`;
+
+exports[`types should throw if invalid value is sent to input 1`] = `
+<div
+  class="vlayout_label"
+  id="label1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+>
+  <span>
+    
+    <br />
+  </span>
+  <div
+    class="vlayout_label_shadow"
+    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+  >
+    <span>
+      
+      <br />
+    </span>
+  </div>
+</div>
+`;
+
+exports[`types should throw if invalid value is sent to input 2`] = `
+<div
+  class="vlayout_label"
+  id="label1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+>
+  <span>
+    abcde
+    <br />
+  </span>
+  <div
+    class="vlayout_label_shadow"
+    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+  >
+    <span>
+      abcde
+      <br />
+    </span>
+  </div>
+</div>
+`;

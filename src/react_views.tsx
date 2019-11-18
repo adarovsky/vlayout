@@ -42,9 +42,9 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(([size, aspect]) => {
                     this.setState({aspect: aspect});
                     if (self &&  this.state.style.width && !this.state.style.height) {
-                        self.style.height = aspect !== null ? `${size.width / aspect}px` : null;
+                        self.style.height = aspect !== null ? `${size.width / aspect}px` : 'unset';
                     } else if (self && !this.state.style.width && this.state.style.height) {
-                        self.style.width = aspect !== null ? `${size.height * aspect}px` : null;
+                        self.style.width = aspect !== null ? `${size.height * aspect}px` : 'unset';
                     }
                 }));
             }
@@ -330,14 +330,14 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
                         self.style.minWidth = size.width + 'px';
                     }
                     else {
-                        self.style.minWidth = isInStack ? '100%' : null;
+                        self.style.minWidth = isInStack ? '100%' : 'unset';
                     }
 
                     if (size.height > 0 && !this.isHeightDefined()) {
                         self.style.minHeight = size.height + 'px';
                     }
                     else {
-                        self.style.minHeight = isInStack ? '100%' : null;
+                        self.style.minHeight = isInStack ? '100%' : 'unset';
                     }
                 }
             );
