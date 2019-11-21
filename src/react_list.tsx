@@ -137,14 +137,22 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
                         self.style.minWidth = size.width + 'px';
                     }
                     else {
-                        self.style.minWidth = isInStack ? '100%' : '';
+                        if (isInStack) {
+                            self.style.minWidth = '100%';
+                        } else {
+                            delete self.style.minWidth;
+                        }
                     }
 
                     if (size.height > 0 && !this.isHeightDefined()) {
                         self.style.minHeight = size.height + 'px';
                     }
                     else {
-                        self.style.minHeight = isInStack ? '100%' : '';
+                        if (isInStack) {
+                            self.style.minHeight = '100%';
+                        } else {
+                            delete self.style.minHeight;
+                        }
                     }
                 }
             );
