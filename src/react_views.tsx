@@ -42,16 +42,16 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(([size, aspect]) => {
                     this.setState({aspect: aspect});
                     if (self &&  this.state.style.width && !this.state.style.height) {
-                        if (aspect !== null) {
-                            self.style.height = `${size.width / aspect}px`;
-                        } else {
-                            delete self.style.height;
-                        }
+                        self.style.height = aspect !== null ? `${size.width / aspect}px` : '';
                     } else if (self && !this.state.style.width && this.state.style.height) {
-                        if (aspect !== null) {
-                            self.style.width = `${size.height * aspect}px`;
-                        } else {
-                            delete self.style.width;
+                        self.style.width = aspect !== null ? `${size.height * aspect}px` : '';
+                    }
+                    else {
+                        if (!this.state.style.width && self?.style.width) {
+                            self.style.width = '';
+                        }
+                        if (!this.state.style.height && self?.style.height) {
+                            self.style.height = '';
                         }
                     }
                 }));
@@ -338,22 +338,14 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
                         self.style.minWidth = size.width + 'px';
                     }
                     else {
-                        if (isInStack) {
-                            self.style.minWidth = '100%';
-                        } else {
-                            delete self.style.minWidth;
-                        }
+                        self.style.minWidth = isInStack ? '100%' : '';
                     }
 
                     if (size.height > 0 && !this.isHeightDefined()) {
                         self.style.minHeight = size.height + 'px';
                     }
                     else {
-                        if (isInStack) {
-                            self.style.minHeight = '100%';
-                        } else {
-                            delete self.style.minHeight;
-                        }
+                        self.style.minHeight = isInStack ? '100%' : '';
                     }
                 }
             );
