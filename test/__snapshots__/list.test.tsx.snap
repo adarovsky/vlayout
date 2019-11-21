@@ -100,6 +100,136 @@ exports[`lists model description should support multiple properties 1`] = `
 </div>
 `;
 
+exports[`lists should allow nested absolutes and stacks 1`] = `
+<div
+  class="vlayout_verticalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_absolute"
+      style="position: absolute; z-index: 1; pointer-events: none;"
+    >
+      <div
+        class="vlayout_stack"
+        style="position: absolute; z-index: 1; pointer-events: none;"
+      >
+        <div
+          class="vlayout_label"
+          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+        >
+          <span>
+            Alex
+            <br />
+          </span>
+          <div
+            class="vlayout_label_shadow"
+            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+          >
+            <span>
+              Alex
+              <br />
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_absolute"
+      style="position: absolute; z-index: 1; pointer-events: none;"
+    >
+      <div
+        class="vlayout_stack"
+        style="position: absolute; z-index: 1; pointer-events: none;"
+      >
+        <div
+          class="vlayout_label"
+          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+        >
+          <span>
+            Anton
+            <br />
+          </span>
+          <div
+            class="vlayout_label_shadow"
+            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+          >
+            <span>
+              Anton
+              <br />
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_absolute"
+      style="position: absolute; z-index: 1; pointer-events: none;"
+    >
+      <div
+        class="vlayout_stack"
+        style="position: absolute; z-index: 1; pointer-events: none;"
+      >
+        <div
+          class="vlayout_label"
+          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+        >
+          <span>
+            Denis
+            <br />
+          </span>
+          <div
+            class="vlayout_label_shadow"
+            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+          >
+            <span>
+              Denis
+              <br />
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should allow setting fixed width or height for items 1`] = `
 <div
   class="vlayout_verticalList"

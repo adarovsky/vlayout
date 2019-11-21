@@ -261,6 +261,7 @@ export class StackLayout extends Container {
 
     instantiate(): this {
         const v = new (this.constructor as typeof StackLayout)();
+        v.copyFrom(this);
         return v as this;
     }
 
@@ -291,6 +292,7 @@ export class Layer extends AbsoluteLayout {
     }
     instantiate(): this {
         const v = new (this.constructor as typeof Layer)();
+        v.copyFrom(this);
         return v as this;
     }
 
