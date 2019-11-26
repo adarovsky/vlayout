@@ -16,7 +16,9 @@ export class TypeDefinition {
             case 'String':
                 return typeof (value) === 'string';
             case 'Number':
-                return value === null || typeof (value) === 'number' || typeof (value) === 'bigint';
+                return value === null ||
+                    typeof (value) === 'number' ||
+                    typeof (value) === 'bigint';
             case 'Bool':
                 return typeof (value) === 'boolean';
             case 'Font':
@@ -57,7 +59,9 @@ export class EnumDefinition extends TypeDefinition {
 }
 
 export type SimpleListDefinitionItem = Dictionary<TypeDefinition>;
-export type ListDefinitionItem = SimpleListDefinitionItem|Dictionary<any>;
+export type ListDefinitionItem = SimpleListDefinitionItem|ComplexDefinitionItem;
+interface ComplexDefinitionItem extends Dictionary<ListDefinitionItem>{
+}
 
 export class ListDefinition extends TypeDefinition {
     constructor(engine: Engine, typeName: string, readonly values:Dictionary<ListDefinitionItem>) {

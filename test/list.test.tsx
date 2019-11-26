@@ -1,7 +1,7 @@
 import {mount} from "enzyme";
 import {Engine, Layout} from "../src";
 import React from "react";
-import {BehaviorSubject, of, Subject} from "rxjs";
+import {BehaviorSubject, of, ReplaySubject, Subject} from "rxjs";
 import {List} from "../src/list";
 import sinon from "sinon";
 import {SampleListView} from "./sample_list_view";
@@ -621,4 +621,151 @@ describe("lists", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it("should support filtering", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: "Denis"}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        engine!.registerListView('myView', (x, item) => <SampleListView parentView={x} key={'123'} color={'#aa99cc'} user={item}/>);
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+  bindings {
+      myView: listView
+  }
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          verticalList {
+              padding { left: 10 right: 10 top: 10 bottom: 10 }
+              model: items
+  
+              user {
+                  filter: name != "Denis"
+                  fixedSize { height: 44 }
+                  myView {                      
+                  }
+                  label {
+                      text: name
+                  }
+              }
+              newUser {
+                  label {
+                      text: "add new"
+                  }
+              }
+          }
+      }
+  }`}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
+    it("should support dynamic filtering", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+
+        const s = new ReplaySubject<string>(1);
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: s}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          verticalList {
+              padding { left: 10 right: 10 top: 10 bottom: 10 }
+              model: items
+  
+              user {
+                  filter: name != "Denis"
+                  fixedSize { height: 44 }
+                  label {
+                      text: name
+                  }
+              }
+              newUser {
+                  label {
+                      text: "add new"
+                  }
+              }
+          }
+      }
+  }`}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+
+        s.next("Michael");
+        expect(node.getDOMNode()).toMatchSnapshot();
+
+        s.next("Denis");
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
 });

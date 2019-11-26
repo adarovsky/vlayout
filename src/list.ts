@@ -2,13 +2,13 @@ import {AbsoluteLayout, LinearLayoutAxis, View, ViewProperty} from "./view";
 import {Layout, Scope} from "./layout";
 import {LexIdentifier} from "./lexer";
 import {Expression, Variable} from "./expression";
-import {Dictionary, ListDefinition, TypeDefinition} from "./types";
+import {Dictionary, ListDefinition, ListDefinitionItem, TypeDefinition} from "./types";
 import {Engine} from "./engine";
 import {FunctionImplementationI} from "./builtin_functions";
 import {LinkError} from "./errors";
-import {EMPTY, Observable, of, ReplaySubject} from "rxjs";
+import {combineLatest, EMPTY, Observable, of, ReplaySubject} from "rxjs";
 import _ from "lodash";
-import {switchMap} from "rxjs/operators";
+import {map, switchMap, tap} from "rxjs/operators";
 import {createElement} from "react";
 import {ReactHorizontalList, ReactListItemPrototype, ReactVerticalList} from "./react_list";
 import uuid from "uuid";
@@ -19,6 +19,7 @@ export interface ListModelItem extends Dictionary<any> {
 }
 
 class ListItemAccessor extends Expression {
+
     constructor(readonly keyPath: string, type: TypeDefinition) {
         super(0, 0);
         this.typeDefinition = type;
@@ -32,8 +33,7 @@ class ListItemAccessor extends Expression {
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         if (scope instanceof  ListItemPrototype) {
-            const item = scope as ListItemPrototype;
-            this.sink = item.modelItem.pipe(
+            this.sink = scope.modelItem.pipe(
                 switchMap(m => {
                     if (m === null) {
                         return EMPTY;
@@ -49,7 +49,7 @@ class ListItemAccessor extends Expression {
 
                     return of(prop);
                 })
-            )
+            );
         }
         else {
             throw new LinkError(this.line, this.column, `accessor should be in list prototype item, but got ${scope}`);
@@ -71,9 +71,10 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         super();
         this.line = name.line;
         this.column = name.column;
+        this.registerProperty(new ViewProperty('filter', 'Bool'));
     }
 
-    private buildAccessors(source: Observable<any>, structure: Dictionary<any>, prefix: string): void {
+    private buildAccessors(source: Observable<any>, structure: ListDefinitionItem, prefix: string): void {
         _.forIn(structure, (value, key) => {
             const path = prefix.length > 0 ? prefix + '.' + key : key;
             if (value instanceof TypeDefinition) {
@@ -190,6 +191,10 @@ export class List extends View {
                 throw new LinkError(this.line, this.column, `model should be set for list to work`);
             }
         }
+        else {
+            throw new LinkError(this.line, this.column, `model should be set for list to work`);
+        }
+
         if (this.tapHandler) {
             if (scope.engine.listButtonForKey(this.tapHandler.keyPath)) {
                 this.tapCallback = scope.engine.listButtonForKey(this.tapHandler.keyPath);
@@ -198,10 +203,37 @@ export class List extends View {
                 throw new LinkError(this.line, this.column, `list button '${this.tapHandler.keyPath}' is not found`);
             }
         }
+
+        const hasFilter = this.prototypes.reduce(((previousValue, currentValue) =>
+            previousValue || !!currentValue.property('filter')?.value), false);
+        if (hasFilter) {
+            const protos : ListItemPrototype[] = [];
+            this.model.sink = this.model.sink.pipe(
+                switchMap((arr: Dictionary<ListModelItem>[]) =>
+                    combineLatest(_.map(arr, modelItem => {
+                        const [key, value] = _.toPairs(modelItem)[0];
+                        const prop = this.prototypes.find(p => p.name.content === key);
+                        if (prop) {
+                            const p = this.requestReusableItem(modelItem);
+                            protos.push(p);
+                            const filter = p.property('filter')?.value?.sink ?? null;
+
+                            if (filter) {
+                                p.setModelItem(value);
+                                return filter;
+                            }
+                        }
+                        return of(true);
+                    })).pipe(
+                        map(filtered => arr.filter((value, index) => filtered[index])),
+                        tap(() => protos.forEach(p => this.returnReusableItem(p)))
+                    ))
+            );
+        }
     }
 
-    private createNewReusableItem(modelItem: ListModelItem): ListItemPrototype {
-        const [key, value] = _.toPairs(modelItem)[0];
+    private createNewReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
+        const [key] = _.toPairs(modelItem)[0];
         const proto = this.prototypes.find(p => p.name.content === key);
         if (!proto) {
             throw new LinkError(this.line, this.column, `model item ${key} not found`);
@@ -213,7 +245,7 @@ export class List extends View {
         return real;
     }
 
-    requestReusableItem(modelItem: ListModelItem): ListItemPrototype {
+    requestReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
         const [key, value] = _.toPairs(modelItem)[0];
         let item: ListItemPrototype|null = null;
         if (this.reusableItems[key] &&  this.reusableItems[key].length > 0) {
