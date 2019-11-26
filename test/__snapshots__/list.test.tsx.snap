@@ -1118,6 +1118,93 @@ exports[`lists should support external views 1`] = `
 </div>
 `;
 
+exports[`lists should support filtering 1`] = `
+<div
+  class="vlayout_verticalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      style="background-color: rgb(170, 153, 204); position: absolute; z-index: 1; pointer-events: auto;"
+    >
+      Alex
+    </div>
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Alex
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Alex
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      style="background-color: rgb(170, 153, 204); position: absolute; z-index: 1; pointer-events: auto;"
+    >
+      Anton
+    </div>
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Anton
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Anton
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should support tappable items 1`] = `
 <div
   class="vlayout_verticalList"
