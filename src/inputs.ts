@@ -1,9 +1,9 @@
 import {Engine} from "./engine";
-import {Dictionary, TypeDefinition} from "./types";
+import {Dictionary, ListDefinition, TypeDefinition} from "./types";
 import {Expression} from "./expression";
 import {Observable} from "rxjs";
 import {LinkError} from "./errors";
-import {distinctUntilChanged, filter, shareReplay, switchMap, tap} from "rxjs/operators";
+import {distinctUntilChanged, filter, map, shareReplay, switchMap, tap} from "rxjs/operators";
 import {pauseObserving, resumeObserving} from "./resize_sensor";
 
 export class Input extends Expression {
@@ -22,7 +22,7 @@ export class Inputs {
     }
 
     registerInput(name: string, type: TypeDefinition, sink: Observable<any>): void {
-        if (this.input(name)) {
+        if (this.input(name, 0, 0)) {
             throw new Error(`input ${name} is already registered`);
         }
 
@@ -54,7 +54,7 @@ export class Inputs {
     }
 
     registerInputReference(keyPath: string, type: string, line: number, column: number) {
-        const inp = this.input(keyPath);
+        const inp = this.input(keyPath, line, column);
         if (!inp) throw new LinkError(line, column, `property ${keyPath} is not defined`);
         const def = this.engine.type(type);
         if (!def) throw new LinkError(line, column, `type ${type} is not defined`);
@@ -68,7 +68,27 @@ export class Inputs {
         inp.column = column;
     }
 
-    input(name: string): Input|null {
-        return this.inputs[name];
+    input(name: string, line: number, column: number): Input | null {
+        const input = this.inputs[name];
+        if (input) return input;
+
+        const match = name.match(/^(.*)\.count$/);
+        if (match) {
+            const source = match[1];
+            const collection = this.inputs[source];
+            if (collection) {
+                if (collection.typeDefinition instanceof ListDefinition) {
+                    const i = new Input(name);
+                    i.typeDefinition = this.engine.numberType();
+                    i.sink = collection.sink.pipe(map(arr => arr.length));
+                    return i;
+                }
+                else {
+                    throw new LinkError(line, column, `type for ${name} is not list: got ${collection.typeDefinition} instead`);
+                }
+            }
+        }
+
+        return null;
     }
 }

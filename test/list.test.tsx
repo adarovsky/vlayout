@@ -768,4 +768,56 @@ describe("lists", () => {
         s.next("Denis");
         expect(node.getDOMNode()).toMatchSnapshot();
     });
+
+    it("should support collection count", async function () {
+        engine!.registerList("MyItems", {
+            user: {
+                name: engine!.stringType()
+            },
+            newUser: {}
+        });
+
+        const s = new ReplaySubject<string>(1);
+        engine!.registerInput(
+            "items",
+            engine!.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: s}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          label {
+              text: String(items.count)
+          }
+      }
+  }`}
+            />
+        );
+
+        expect(wrapper.find('.vlayout_label > span').text()).toBe("4");
+    });
 });

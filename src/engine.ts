@@ -85,7 +85,7 @@ export class Engine {
             }
         }
 
-        return this.inputs.input(keyPath);
+        return this.inputs.input(keyPath, 0, 0);
     }
 
     functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI {
