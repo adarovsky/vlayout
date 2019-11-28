@@ -8,7 +8,7 @@ import {FunctionImplementationI} from "./builtin_functions";
 import {LinkError} from "./errors";
 import {combineLatest, EMPTY, Observable, of, ReplaySubject} from "rxjs";
 import _ from "lodash";
-import {map, switchMap, tap} from "rxjs/operators";
+import {finalize, map, switchMap, tap} from "rxjs/operators";
 import {createElement} from "react";
 import {ReactHorizontalList, ReactListItemPrototype, ReactVerticalList} from "./react_list";
 import uuid from "uuid";
@@ -207,26 +207,26 @@ export class List extends View {
         const hasFilter = this.prototypes.reduce(((previousValue, currentValue) =>
             previousValue || !!currentValue.property('filter')?.value), false);
         if (hasFilter) {
-            const protos : ListItemPrototype[] = [];
             this.model.sink = this.model.sink.pipe(
                 switchMap((arr: Dictionary<ListModelItem>[]) =>
                     combineLatest(_.map(arr, modelItem => {
-                        const [key, value] = _.toPairs(modelItem)[0];
+                        const [key] = _.toPairs(modelItem)[0];
                         const prop = this.prototypes.find(p => p.name.content === key);
                         if (prop) {
                             const p = this.requestReusableItem(modelItem);
-                            protos.push(p);
                             const filter = p.property('filter')?.value?.sink ?? null;
 
                             if (filter) {
-                                p.setModelItem(value);
-                                return filter;
+                                return filter.pipe(finalize(() => this.returnReusableItem(p)));
+                            }
+                            else {
+                                this.returnReusableItem(p);
                             }
                         }
                         return of(true);
                     })).pipe(
                         map(filtered => arr.filter((value, index) => filtered[index])),
-                        tap(() => protos.forEach(p => this.returnReusableItem(p)))
+                        tap(console.log)
                     ))
             );
         }
@@ -247,7 +247,7 @@ export class List extends View {
 
     requestReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
         const [key, value] = _.toPairs(modelItem)[0];
-        let item: ListItemPrototype|null = null;
+        let item: ListItemPrototype;
         if (this.reusableItems[key] &&  this.reusableItems[key].length > 0) {
             item = this.reusableItems[key].splice(0, 1)[0];
         }
