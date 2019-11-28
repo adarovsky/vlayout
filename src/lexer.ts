@@ -80,7 +80,10 @@ export class Lexer implements VLScannerFSMDelegate {
     }
 
     current(): LexToken {
-        return this._currentLex!;
+        if (this._currentLex === null) {
+            throw new Error(`${this.currentLine}:${this.currentColumn}: unexpected end of file`);
+        }
+        return this._currentLex;
     }
 
     next(): LexToken|null {
@@ -224,7 +227,7 @@ export class Lexer implements VLScannerFSMDelegate {
     }
 
     isSymbol(x: any): boolean {
-        return /^[{}(),.:?+-=|*/%<>]$/.test(this._currentChar);
+        return /^[{}(),.:?+-=|&*/%<>]$/.test(this._currentChar);
     }
 
     isValidColorChar(x: any): boolean {

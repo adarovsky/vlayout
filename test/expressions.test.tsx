@@ -54,6 +54,39 @@ it('expression 1 + 2 * 3 should give 7', async () => {
     expect(wrapper.find('.vlayout_label > span').text()).toBe("7");
 });
 
+it('expression 1+2*3 should give 7', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(1+2*3)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("7");
+});
+
+it('expression a>1&&(b==c) should give true', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     properties {
+        a: 2
+        b: 4
+        c: 4
+     }
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : a>1&&(b==c) ? "true" : "false"
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+});
+
 it('expression 10 - 6 / 3 should give 8', async () => {
     const wrapper = mount(<Layout engine={engine!} content={`
      layout {
