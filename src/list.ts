@@ -248,7 +248,7 @@ export class List extends View {
     requestReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
         const [key, value] = _.toPairs(modelItem)[0];
         const item = this.reusableItems[key] && this.reusableItems[key].length > 0 ?
-            this.reusableItems[key].splice(0, 1)[0] :
+            this.reusableItems[key].shift()! :
             this.createNewReusableItem(modelItem);
         item.setModelItem(value);
         return item;
