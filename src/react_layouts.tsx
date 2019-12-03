@@ -6,6 +6,7 @@ import {ReactStackLayout} from "./react_stack";
 import {combineLatest, Observable, Subscription} from "rxjs";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
+import ReactDOM from "react-dom";
 
 
 class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: number}> {
@@ -180,7 +181,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
     }
 }
 
-export class ReactLayer extends ReactContainer<ReactContainerState> {
+export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen: boolean}> {
 
     constructor(props: ReactViewProps) {
         super(props);
@@ -189,7 +190,21 @@ export class ReactLayer extends ReactContainer<ReactContainerState> {
                 width: '100%',
                 height: '100%',
                 position: 'absolute'
-            }
+            },
+            fullscreen: false
+        }
+    }
+
+    private static ensureModalExists(): HTMLElement {
+        const e = document.getElementById('vlayout_modal');
+        if (e) {
+            return e;
+        }
+        else {
+            const modal = document.createElement('div');
+            modal.setAttribute('id', 'vlayout_modal');
+            document.body.appendChild(modal);
+            return modal;
         }
     }
 
@@ -208,6 +223,15 @@ export class ReactLayer extends ReactContainer<ReactContainerState> {
         return r;
     }
 
+    componentDidMount(): void {
+        super.componentDidMount();
+        const value = this.props.parentView.property('fullscreen').value;
+        if (value) {
+            this.subscription.add(value.sink.subscribe((fs: boolean) => {
+                this.setState(s => ({...s, fullscreen: fs}));
+            }));
+        }
+    }
 
     protected isWidthDefined(): boolean {
         return true;
@@ -215,6 +239,17 @@ export class ReactLayer extends ReactContainer<ReactContainerState> {
 
     protected isHeightDefined(): boolean {
         return true;
+    }
+
+
+    render() {
+        const extra = _.pick(this.state, 'id');
+        const content = (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
+            {(this.props.parentView as Container).views
+                .filter((v, index) => this.state.childrenVisible[index])
+                .map( v => v.target )}
+        </div>);
+        return this.state.fullscreen ? ReactDOM.createPortal(content, ReactLayer.ensureModalExists()) : content;
     }
 }
 

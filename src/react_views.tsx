@@ -358,7 +358,6 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        // @ts-ignore
         const extra = _.pick(this.state, 'id');
         return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
             {(this.props.parentView as Container).views
