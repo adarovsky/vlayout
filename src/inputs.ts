@@ -5,6 +5,7 @@ import {Observable} from "rxjs";
 import {LinkError} from "./errors";
 import {distinctUntilChanged, filter, map, shareReplay, switchMap, tap} from "rxjs/operators";
 import {pauseObserving, resumeObserving} from "./resize_sensor";
+import {isEqual} from "lodash";
 
 export class Input extends Expression {
     line: number = 0;
@@ -29,7 +30,7 @@ export class Inputs {
         const inp = new Input(name);
         inp.typeDefinition = type;
         inp.sink = sink.pipe(
-            distinctUntilChanged(),
+            distinctUntilChanged(isEqual),
             tap( x => this.engine.logInputValue(name, x)),
             filter(x => {
                 const correct = type.isTypeCorrect(x);

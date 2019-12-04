@@ -1,5 +1,5 @@
 import React, {Component, CSSProperties} from "react";
-import {AbsoluteLayout, Container, LinearLayout, StackLayout, View, ViewProperty} from "./view";
+import {AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty} from "./view";
 import {Dictionary} from "./types";
 import {BehaviorSubject, combineLatest, Observable, of, Subscription} from "rxjs";
 import {map} from "rxjs/operators";
@@ -199,7 +199,17 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
                 case 'sizePolicy':
                     if (val === 'stretched') {
-                        r.flex = 1;
+                        r.flexGrow = 1;
+                        if (this.props.parentView.parent instanceof LinearLayout) {
+                            // Workaround to make item shrink work properly. Otherwise it pushes
+                            // out another content
+                            if (this.props.parentView.parent.axis == LinearLayoutAxis.Horizontal) {
+                                r.width = '1px';
+                            }
+                            else {
+                                r.height = '1px';
+                            }
+                        }
                     }
                     break;
 
