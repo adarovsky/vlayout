@@ -40,7 +40,7 @@ describe("label", () => {
       <div
         class="vlayout_label"
         id="label1"
-        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           test label
@@ -48,7 +48,7 @@ describe("label", () => {
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             test label
@@ -82,7 +82,7 @@ describe("label", () => {
     expect(node.getDOMNode()).toMatchInlineSnapshot(`
       <div
         class="vlayout_label custom_class"
-        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           test label
@@ -90,7 +90,7 @@ describe("label", () => {
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             test label
@@ -125,7 +125,7 @@ describe("label", () => {
       <div
         class="vlayout_label"
         id="label1"
-        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           test label
@@ -133,7 +133,7 @@ describe("label", () => {
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             test label
@@ -173,7 +173,7 @@ describe("label", () => {
       <div
         class="vlayout_label"
         id="label1"
-        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           
@@ -181,7 +181,7 @@ describe("label", () => {
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             
@@ -196,7 +196,7 @@ describe("label", () => {
       <div
         class="vlayout_label"
         id="label1"
-        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           test label string 1
@@ -204,7 +204,7 @@ describe("label", () => {
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             test label string 1
@@ -219,7 +219,7 @@ describe("label", () => {
       <div
         class="vlayout_label"
         id="label1"
-        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           test label string 2
@@ -227,7 +227,7 @@ describe("label", () => {
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             test label string 2
