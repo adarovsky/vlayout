@@ -11,7 +11,7 @@ exports[`lists model description should support multiple properties 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex - bad
@@ -19,7 +19,7 @@ exports[`lists model description should support multiple properties 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex - bad
@@ -34,7 +34,7 @@ exports[`lists model description should support multiple properties 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton - good
@@ -42,7 +42,7 @@ exports[`lists model description should support multiple properties 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton - good
@@ -57,7 +57,7 @@ exports[`lists model description should support multiple properties 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Denis - bad
@@ -65,7 +65,7 @@ exports[`lists model description should support multiple properties 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis - bad
@@ -80,7 +80,7 @@ exports[`lists model description should support multiple properties 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -88,7 +88,7 @@ exports[`lists model description should support multiple properties 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -119,7 +119,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
       >
         <div
           class="vlayout_label"
-          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             Alex
@@ -127,7 +127,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
           </span>
           <div
             class="vlayout_label_shadow"
-            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
           >
             <span>
               Alex
@@ -152,7 +152,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
       >
         <div
           class="vlayout_label"
-          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             Anton
@@ -160,7 +160,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
           </span>
           <div
             class="vlayout_label_shadow"
-            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
           >
             <span>
               Anton
@@ -185,7 +185,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
       >
         <div
           class="vlayout_label"
-          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             Denis
@@ -193,7 +193,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
           </span>
           <div
             class="vlayout_label_shadow"
-            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; overflow: hidden; text-overflow: ellipsis;"
+            style="position: absolute; white-space: pre; opacity: 0; z-index: 1; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
           >
             <span>
               Denis
@@ -210,7 +210,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -218,7 +218,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -241,7 +241,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -249,7 +249,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -264,7 +264,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -272,7 +272,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -287,7 +287,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Denis
@@ -295,7 +295,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis
@@ -310,7 +310,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -318,7 +318,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -341,7 +341,7 @@ exports[`lists should fetch values which are observables 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -349,7 +349,7 @@ exports[`lists should fetch values which are observables 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -364,7 +364,7 @@ exports[`lists should fetch values which are observables 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -372,7 +372,7 @@ exports[`lists should fetch values which are observables 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -387,7 +387,7 @@ exports[`lists should fetch values which are observables 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Denis
@@ -395,7 +395,7 @@ exports[`lists should fetch values which are observables 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis
@@ -410,7 +410,7 @@ exports[`lists should fetch values which are observables 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -418,7 +418,7 @@ exports[`lists should fetch values which are observables 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -441,7 +441,7 @@ exports[`lists should fetch values which are observables 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -449,7 +449,7 @@ exports[`lists should fetch values which are observables 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -464,7 +464,7 @@ exports[`lists should fetch values which are observables 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Michael
@@ -472,7 +472,7 @@ exports[`lists should fetch values which are observables 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Michael
@@ -487,7 +487,7 @@ exports[`lists should fetch values which are observables 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Denis
@@ -495,7 +495,7 @@ exports[`lists should fetch values which are observables 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis
@@ -510,7 +510,7 @@ exports[`lists should fetch values which are observables 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -518,7 +518,7 @@ exports[`lists should fetch values which are observables 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -544,7 +544,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
     >
       <div
         class="vlayout_label"
-        style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -552,7 +552,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             Alex
@@ -567,7 +567,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
     >
       <div
         class="vlayout_label"
-        style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -575,7 +575,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             Anton
@@ -590,7 +590,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
     >
       <div
         class="vlayout_label"
-        style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis
@@ -598,7 +598,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             Denis
@@ -613,7 +613,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
     >
       <div
         class="vlayout_label"
-        style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -621,7 +621,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
         </span>
         <div
           class="vlayout_label_shadow"
-          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+          style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
         >
           <span>
             add new
@@ -645,7 +645,7 @@ exports[`lists should initialize and render vertical list 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -653,7 +653,7 @@ exports[`lists should initialize and render vertical list 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -668,7 +668,7 @@ exports[`lists should initialize and render vertical list 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -676,7 +676,7 @@ exports[`lists should initialize and render vertical list 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -691,7 +691,7 @@ exports[`lists should initialize and render vertical list 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Denis
@@ -699,7 +699,7 @@ exports[`lists should initialize and render vertical list 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis
@@ -714,7 +714,7 @@ exports[`lists should initialize and render vertical list 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -722,7 +722,7 @@ exports[`lists should initialize and render vertical list 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -745,7 +745,7 @@ exports[`lists should reuse items on updates 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -753,7 +753,7 @@ exports[`lists should reuse items on updates 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -776,7 +776,7 @@ exports[`lists should reuse items on updates 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -784,7 +784,7 @@ exports[`lists should reuse items on updates 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -799,7 +799,7 @@ exports[`lists should reuse items on updates 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -807,7 +807,7 @@ exports[`lists should reuse items on updates 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -837,7 +837,7 @@ exports[`lists should support dynamic filtering 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -845,7 +845,7 @@ exports[`lists should support dynamic filtering 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -860,7 +860,7 @@ exports[`lists should support dynamic filtering 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -868,7 +868,7 @@ exports[`lists should support dynamic filtering 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -883,7 +883,7 @@ exports[`lists should support dynamic filtering 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Michael
@@ -891,7 +891,7 @@ exports[`lists should support dynamic filtering 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Michael
@@ -906,7 +906,7 @@ exports[`lists should support dynamic filtering 2`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -914,7 +914,7 @@ exports[`lists should support dynamic filtering 2`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -937,7 +937,7 @@ exports[`lists should support dynamic filtering 3`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -945,7 +945,7 @@ exports[`lists should support dynamic filtering 3`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -960,7 +960,7 @@ exports[`lists should support dynamic filtering 3`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -968,7 +968,7 @@ exports[`lists should support dynamic filtering 3`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -983,7 +983,7 @@ exports[`lists should support dynamic filtering 3`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -991,7 +991,7 @@ exports[`lists should support dynamic filtering 3`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -1019,7 +1019,7 @@ exports[`lists should support external views 1`] = `
     </div>
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -1027,7 +1027,7 @@ exports[`lists should support external views 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -1047,7 +1047,7 @@ exports[`lists should support external views 1`] = `
     </div>
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -1055,7 +1055,7 @@ exports[`lists should support external views 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -1075,7 +1075,7 @@ exports[`lists should support external views 1`] = `
     </div>
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Denis
@@ -1083,7 +1083,7 @@ exports[`lists should support external views 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis
@@ -1098,7 +1098,7 @@ exports[`lists should support external views 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -1106,7 +1106,7 @@ exports[`lists should support external views 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -1134,7 +1134,7 @@ exports[`lists should support filtering 1`] = `
     </div>
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -1142,7 +1142,7 @@ exports[`lists should support filtering 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -1162,7 +1162,7 @@ exports[`lists should support filtering 1`] = `
     </div>
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -1170,7 +1170,7 @@ exports[`lists should support filtering 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -1185,7 +1185,7 @@ exports[`lists should support filtering 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -1193,7 +1193,7 @@ exports[`lists should support filtering 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new
@@ -1216,7 +1216,7 @@ exports[`lists should support tappable items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Alex
@@ -1224,7 +1224,7 @@ exports[`lists should support tappable items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Alex
@@ -1239,7 +1239,7 @@ exports[`lists should support tappable items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Anton
@@ -1247,7 +1247,7 @@ exports[`lists should support tappable items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Anton
@@ -1262,7 +1262,7 @@ exports[`lists should support tappable items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         Denis
@@ -1270,7 +1270,7 @@ exports[`lists should support tappable items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           Denis
@@ -1285,7 +1285,7 @@ exports[`lists should support tappable items 1`] = `
   >
     <div
       class="vlayout_label"
-      style="position: absolute; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
     >
       <span>
         add new
@@ -1293,7 +1293,7 @@ exports[`lists should support tappable items 1`] = `
       </span>
       <div
         class="vlayout_label_shadow"
-        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; overflow: hidden; text-overflow: ellipsis;"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
       >
         <span>
           add new

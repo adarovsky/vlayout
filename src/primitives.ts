@@ -23,6 +23,13 @@ export class Label extends View {
         return 'label';
     }
 
+    link(scope: Scope): void {
+        if (!this.property('textAlignment').value) {
+            this.property('textAlignment').value = new EnumValue('left', 0, 0);
+        }
+        super.link(scope);
+    }
+
     get target(): React.ReactElement {
         return createElement(ReactLabel, {parentView: this, key: this.key});
     }

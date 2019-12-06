@@ -3,8 +3,7 @@ import {Dictionary, ListDefinition, TypeDefinition} from "./types";
 import {Expression} from "./expression";
 import {Observable} from "rxjs";
 import {LinkError} from "./errors";
-import {distinctUntilChanged, filter, map, shareReplay, switchMap, tap} from "rxjs/operators";
-import {pauseObserving, resumeObserving} from "./resize_sensor";
+import {distinctUntilChanged, filter, map, shareReplay, tap} from "rxjs/operators";
 import {isEqual} from "lodash";
 
 export class Input extends Expression {
@@ -40,14 +39,14 @@ export class Inputs {
 
                 return correct;
             }),
-            switchMap( x => {
-                return new Observable<typeof x>(subscriber => {
-                    pauseObserving();
-                    subscriber.next(x);
-                    resumeObserving();
-                    subscriber.complete();
-                });
-            }),
+            // switchMap( x => {
+            //     return new Observable<typeof x>(subscriber => {
+            //         pauseObserving();
+            //         subscriber.next(x);
+            //         resumeObserving();
+            //         subscriber.complete();
+            //     });
+            // }),
             shareReplay({bufferSize: 1, refCount: true} )
         );
 
