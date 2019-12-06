@@ -1,6 +1,6 @@
 {
   "name": "@adarovsky/vlayout",
-  "version": "1.2.20",
+  "version": "1.2.21",
   "description": "A port of simple reactive layout engine running in browsers",
   "main": "lib/index.js",
   "types": "lib",
