@@ -141,7 +141,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactListItemPrototype, {parentView: this, key: this.key});
+        return createElement(ReactListItemPrototype, {parentView: this, key: this.name.content + '-' + this.key});
     }
 
     viewForKey(key: string): View | null {

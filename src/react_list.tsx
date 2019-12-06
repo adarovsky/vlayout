@@ -7,7 +7,6 @@ import {Container, LinearLayoutAxis, StackLayout, ViewProperty} from "./view";
 import {BehaviorSubject, combineLatest, Observable, Subscription} from "rxjs";
 import {ElementSize, resizeObserver} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
-import {Dictionary} from "./types";
 import {fromPromise} from "rxjs/internal-compatibility";
 import {ListButton} from "./primitives";
 import {ReactButtonBase, ReactButtonState} from "./react_button";
@@ -84,10 +83,9 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         // @ts-ignore
-        const extra: Dictionary<any> = _.pick(this.state, 'id');
         return (<div style={this.style()}
                      className={this.className}
-                     ref={this.viewRef} onClick={e => this.handleClick(e)} {...extra}>
+                     ref={this.viewRef} onClick={e => this.handleClick(e)}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .map( v => v.target )}
