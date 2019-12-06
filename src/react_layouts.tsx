@@ -3,14 +3,13 @@ import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
 import _ from "lodash";
 import {ReactStackLayout} from "./react_stack";
-import {combineLatest, Observable, Subscription} from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 import ReactDOM from "react-dom";
 
 
 class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: number}> {
-    protected subviewSubscription: Subscription = new Subscription();
 
     constructor(props: ReactViewProps) {
         super(props);
@@ -44,11 +43,6 @@ class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: n
 }
 
 export class ReactHorizontalLayout extends ReactLinearLayout {
-
-    componentWillUnmount(): void {
-        super.componentWillUnmount();
-        this.subviewSubscription.unsubscribe();
-    }
 
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));
@@ -112,13 +106,6 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
 }
 
 export class ReactVerticalLayout extends ReactLinearLayout {
-
-    protected subviewSubscription: Subscription = new Subscription();
-
-    componentWillUnmount(): void {
-        super.componentWillUnmount();
-        this.subviewSubscription.unsubscribe();
-    }
 
     styleProperties(): ViewProperty[] {
         return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));

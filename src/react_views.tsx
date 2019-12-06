@@ -68,8 +68,13 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
     constructor(props: P) {
         super(props);
+
+        let id = null;
+        const sink = props.parentView.property('id').value?.sink;
+        sink?.subscribe(x => id = x);
+
         // @ts-ignore
-        this.state = {style: {}, aspect: null, id: null, className: ''};
+        this.state = {style: {}, aspect: null, id: id, className: ''};
     }
 
     wire(name: string, field: string, mapper: (v: any) => any) {
@@ -324,16 +329,18 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
     }
 
     componentWillUnmount(): void {
-        super.componentWillUnmount();
         this.subviewSubscription.unsubscribe();
+        super.componentWillUnmount();
     }
 
     componentDidUpdate(prevProps: Readonly<ReactViewProps>, prevState: Readonly<ReactContainerState>, snapshot?: any): void {
         const children = (this.props.parentView as Container).views
             .map(v => v.instance)
             .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
-        this.children.next(children);
-        this.updateSubviewPositions();
+        if (!_.isEqual(this.children.value, children)) {
+            this.children.next(children);
+            this.updateSubviewPositions();
+        }
     }
 
     protected updateSubviewPositions(): void {

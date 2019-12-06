@@ -8,7 +8,7 @@ import {FunctionImplementationI} from "./builtin_functions";
 import {LinkError} from "./errors";
 import {combineLatest, EMPTY, Observable, of, ReplaySubject} from "rxjs";
 import _ from "lodash";
-import {finalize, map, switchMap, tap} from "rxjs/operators";
+import {finalize, map, switchMap} from "rxjs/operators";
 import {createElement} from "react";
 import {ReactHorizontalList, ReactListItemPrototype, ReactVerticalList} from "./react_list";
 import uuid from "uuid";
@@ -225,8 +225,7 @@ export class List extends View {
                         }
                         return of(true);
                     })).pipe(
-                        map(filtered => arr.filter((value, index) => filtered[index])),
-                        tap(console.log)
+                        map(filtered => arr.filter((value, index) => filtered[index]))
                     ))
             );
         }

@@ -1,18 +1,11 @@
 import {ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {combineLatest, Observable, Subscription} from "rxjs";
+import {combineLatest, Observable} from "rxjs";
 import React from "react";
 import {ViewProperty} from "./view";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 
 export class ReactAbsoluteLayout<S extends ReactContainerState> extends ReactContainer<S> {
-    protected subviewSubscription: Subscription = new Subscription();
-
-    componentWillUnmount(): void {
-        super.componentWillUnmount();
-        this.subviewSubscription.unsubscribe();
-    }
-
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);

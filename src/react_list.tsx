@@ -117,12 +117,20 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
         }));
     }
 
+
+    componentWillUnmount(): void {
+        this.subviewSubscription.unsubscribe();
+        super.componentWillUnmount();
+    }
+
     componentDidUpdate(prevProps: Readonly<ReactViewProps>, prevState: Readonly<ReactListState>, snapshot?: any): void {
         const children = this.state.childItems
             .map(v => v.instance)
             .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
-        this.children.next(children);
-        this.updateSubviewPositions();
+        if (!_.isEqual(this.children.value, children)) {
+            this.children.next(children);
+            this.updateSubviewPositions();
+        }
     }
 
     protected updateSubviewPositions(): void {

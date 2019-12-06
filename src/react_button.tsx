@@ -1,7 +1,7 @@
 import {ViewProperty} from "./view";
 import {combineLatest} from "rxjs";
 import React, {CSSProperties} from "react";
-import {cloneDeep} from "lodash";
+import _, {cloneDeep} from "lodash";
 import {ReactRoundRect} from "./react_primitives";
 import {FontContainer, ImageContainer} from "./types";
 import {map} from "rxjs/operators";
@@ -38,14 +38,6 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
 
     public styleProperties(): ViewProperty[] {
         const sup = super.styleProperties();
-        // const enabled = new ViewProperty('enabled', 'Bool');
-        // let sink =
-        // enabled.value = {sink: EMPTY,
-        //     line: 0,
-        //     column: 0,
-        //     typeDefinition: null,
-        //     link(layout: Layout, hint: TypeDefinition | null): void {
-        //     }};
         return sup.concat(this.props.parentView.activePropertiesNamed('textColor', 'font', 'imagePosition',
             'contentPadding.left', 'contentPadding.top', 'contentPadding.right', 'contentPadding.bottom'));
     }
@@ -230,7 +222,9 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                 {this.state.image.src && <img src={this.state.image.src} style={{...this.state.imageStyle, opacity: 0}} alt={this.state.text}/>}
             </>) : text;
 
-        return (<div style={this.currentStyle()}
+        const extra = _.pick(this.state, 'id');
+        return (<div {...extra}
+                     style={this.currentStyle()}
                      className={this.className}
                      ref={this.viewRef}
         onClick={(e) => this.handleClick(e)}>
