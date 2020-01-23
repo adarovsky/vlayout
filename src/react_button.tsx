@@ -72,9 +72,13 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                                 break;
                             case 'top':
                                 r.marginBottom = padding;
+                                r.minHeight = '0px';
+                                r.flexShrink = 1;
                                 break;
                             case 'bottom':
                                 r.marginTop = padding;
+                                r.minHeight = '0px';
+                                r.flexShrink = 1;
                                 break;
                         }
 
