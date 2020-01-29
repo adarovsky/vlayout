@@ -1,5 +1,5 @@
 import {ViewProperty} from "./view";
-import {combineLatest} from "rxjs";
+import {combineLatest, of} from "rxjs";
 import React, {CSSProperties} from "react";
 import _, {cloneDeep} from "lodash";
 import {ReactRoundRect} from "./react_primitives";
@@ -54,8 +54,8 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         const image = this.props.parentView.property('image');
         const text = this.props.parentView.property('text');
 
-        if (paddingProp.value && image.value && text.value) {
-            this.subscription.add(combineLatest([paddingProp.value.sink,
+        if (image.value && text.value) {
+            this.subscription.add(combineLatest([paddingProp.value?.sink ?? of(null),
                 imagePositionProp.value!.sink,
                 image.value.sink, text.value.sink]).pipe(
                 map( ([padding, imagePosition, image, text]) => {
@@ -64,21 +64,23 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                         switch (imagePosition) {
                             case 'left':
                             case 'leftToText':
-                                r.marginRight = padding;
+                                if (padding !== null) r.marginRight = padding;
                                 break;
                             case 'right':
                             case 'rightToText':
-                                r.marginLeft = padding;
+                                if (padding !== null) r.marginLeft = padding;
                                 break;
                             case 'top':
-                                r.marginBottom = padding;
+                                if (padding !== null) r.marginBottom = padding;
                                 r.minHeight = '0px';
                                 r.flexShrink = 1;
+                                r.flexGrow = 1;
                                 break;
                             case 'bottom':
-                                r.marginTop = padding;
+                                if (padding !== null) r.marginTop = padding;
                                 r.minHeight = '0px';
                                 r.flexShrink = 1;
+                                r.flexGrow = 1;
                                 break;
                         }
 
