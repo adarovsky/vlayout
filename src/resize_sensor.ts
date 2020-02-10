@@ -1,5 +1,5 @@
 import {BehaviorSubject, EMPTY, Observable} from "rxjs";
-import {distinctUntilChanged, finalize, share, shareReplay, switchMap} from "rxjs/operators";
+import {distinctUntilChanged, finalize, shareReplay, switchMap} from "rxjs/operators";
 import _ from "lodash";
 
 const observers: [Element, Observable<ElementSize>][] = [];
@@ -123,7 +123,7 @@ export function resizeObserver(element: HTMLDivElement): Observable<ElementSize>
             const index = observers.findIndex( o => o[0] === element);
             if (index >= 0) observers.splice(index, 1);
         }),
-        share()
+        shareReplay({bufferSize: 1, refCount: true})
     );
     observers.push([element, observer]);
     return observer;
