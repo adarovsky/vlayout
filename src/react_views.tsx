@@ -345,13 +345,17 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
 
     protected updateSubviewPositions(): void {
         const self = this.viewRef.current;
-        if (!self) return;
+        if (!self) {
+            console.warn('no reference to instance for', this.props.parentView.toString());
+            return;
+        }
 
         this.subviewSubscription.unsubscribe();
         const isInStack = this.props.parentView.parent instanceof StackLayout;
         this.subviewSubscription = this.intrinsicSize()
             .subscribe(size => {
-                    if (size.width > 0 && !this.isWidthDefined()) {
+
+                if (size.width > 0 && !this.isWidthDefined()) {
                         self.style.minWidth = size.width + 'px';
                     }
                     else {

@@ -167,3 +167,21 @@ export class ListButton extends ButtonBase {
         return createElement(ReactListButton, {parentView: this, key: this.key});
     }
 }
+
+export class TextFieldBase extends RoundRect {
+    constructor() {
+        super();
+        this.registerProperty(new ViewProperty('enabled', 'Bool'));
+        this.registerProperty(new ViewProperty('text', 'String'));
+        this.registerProperty(new ViewProperty('placeholder', 'String'));
+        this.registerProperty(new ViewProperty('textColor', 'Color'));
+        this.registerProperty(new ViewProperty('font', 'Font'));
+        ['left', 'right', 'top', 'bottom'].forEach( t => {
+            this.registerProperty(new ViewProperty('contentPadding.' + t, 'Number'));
+        });
+    }
+
+    viewType(): string {
+        return 'textField';
+    }
+}

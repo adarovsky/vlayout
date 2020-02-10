@@ -214,6 +214,13 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
     protected handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
     }
 
+    protected isWidthDefined(): boolean {
+        return true;
+    }
+
+    protected isHeightDefined(): boolean {
+        return true;
+    }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const pos = this.state.imagePosition;

@@ -4,7 +4,7 @@ import {ViewProperty} from "./view";
 import {ColorContainer, FontContainer, ImageContainer} from "./types";
 import {ReactView, ReactViewProps, ReactViewState} from "./react_views";
 import {combineLatest, Observable, of} from "rxjs";
-import {shareReplay} from "rxjs/operators";
+import {map, shareReplay, switchMap} from "rxjs/operators";
 import {ElementSize, resizeObserver} from "./resize_sensor";
 import deleteProperty = Reflect.deleteProperty;
 
@@ -117,13 +117,40 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        let self = this.shadowRef.current;
-        if (self) {
-            return resizeObserver(self);
-        }
-        else {
-            return of({width: 0, height: 0});
-        }
+        return (this.props.parentView.property('alpha').value?.sink ?? of(1)).pipe(
+            switchMap(a => {
+                if (a > 0) {
+                    let self = this.shadowRef.current;
+                    if (self) {
+                        return resizeObserver(self).pipe(
+                            map( size => {
+                                return {
+                                    width: size.width,
+                                    height: size.height
+                                };
+                            })
+                        );
+                    }
+                    else {
+                        console.log('returning stub of 0, 0, because ref is not set: ', this.props.parentView.toString());
+                        return of({width: 0, height: 0});
+                    }
+                }
+                else {
+                    console.log('returning stub of 0, 0, because item is not visible: ', this.props.parentView.toString());
+                    return of({width: 0, height: 0});
+                }
+            })
+        )
+    }
+
+
+    protected isWidthDefined(): boolean {
+        return true;
+    }
+
+    protected isHeightDefined(): boolean {
+        return true;
     }
 }
 
@@ -173,6 +200,14 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
                  src={this.state.image.src}
                  alt=""/>
         </div>);
+    }
+
+    protected isWidthDefined(): boolean {
+        return true;
+    }
+
+    protected isHeightDefined(): boolean {
+        return true;
     }
 }
 
