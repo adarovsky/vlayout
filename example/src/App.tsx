@@ -1,7 +1,14 @@
 import React, {Component} from 'react';
 import './App.css';
 import {Engine, Layout} from '@adarovsky/vlayout';
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, interval} from "rxjs";
+import {scan, take} from "rxjs/operators";
+import {Dictionary} from "../../src/types";
+
+interface User {
+    id: number;
+    name: BehaviorSubject<string>;
+}
 
 class App extends Component {
     private readonly engine: Engine;
@@ -16,8 +23,26 @@ class App extends Component {
         super(props);
 
         this.engine = new Engine();
-        const s = new BehaviorSubject('');
-        this.engine.registerTextField('textField', t => s.next(t), s);
+
+        const list = interval(500).pipe(
+            scan((acc: Dictionary<any>, one) => {
+                const record = { user: {id: one, name: new BehaviorSubject(`User-${one + 1}`)} };
+                return acc.concat([record]);
+            }, [])
+        );
+
+        this.engine.registerList("MyItems", {
+            user: {
+                name: this.engine.stringType()
+            },
+            newUser: {}
+        });
+        this.engine.registerInput(
+            "items",
+            this.engine.type("MyItems")!,
+            list.pipe(take(10))
+        );
+        this.engine.registerListTextField('nameField', (i, s) => (i as unknown as User).name.next(s));
     }
 
     componentDidMount() {

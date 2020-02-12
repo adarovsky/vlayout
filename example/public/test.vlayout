@@ -1,17 +1,50 @@
 bindings {
-    textField: textField
+    nameField: listTextField
+}
+
+types {
+    MyItems: list (
+        user {
+            name: String
+        },
+        newUser {
+            // no fields required
+        }
+    )
+}
+
+inputs {
+    items: MyItems
 }
 
 layout {
     layer {
-        textField {
-            center { x: 0.5 y: 0.5 }
-            fixedSize { height: 44 width: 60 }
-            strokeWidth: 2
-            strokeColor: #ff00ff
-            textColor: #ff0000
-            font: Font(15)
-            contentPadding { left: 10 top: 10 bottom: 2 right: 2 }
+        verticalList {
+            center { x : 0.5 y : 0.5 }
+            size { width: 0.5 }
+            fixedSize { width: 200 }
+            model: items
+
+            user {
+                fixedSize { height: 44 }
+                roundRect  {
+                    padding { left: 5 right: 5 top: 5 bottom: 5 }
+                    strokeWidth: 2
+                    strokeColor: #000000
+                    cornerRadius: 5
+                }
+                nameField {
+                    center { y: 0.5 }
+                    padding { left: 40 }
+                    text: name
+                }
+
+            }
+            newUser {
+                label {
+                    text: "add new"
+                }
+            }
         }
     }
 }

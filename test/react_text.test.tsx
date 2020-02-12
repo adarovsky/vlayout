@@ -1,11 +1,15 @@
 import React from "react";
 import {Engine, Layout} from "../src";
-import {of, Subject} from "rxjs";
+import {asyncScheduler, of, scheduled, Subject} from "rxjs";
 import {mount} from "enzyme";
 import sinon from "sinon";
 import {ReactTextField} from "../src/react_text";
 
 let engine: Engine | null = null;
+function wait() {
+  return scheduled([], asyncScheduler).toPromise();
+}
+
 describe("text", () => {
   beforeEach(() => {
     engine = new Engine();
@@ -45,9 +49,7 @@ describe("text", () => {
 
     subject.next(0);
 
-    const t = new Subject<void>();
-    setTimeout(() => t.complete(), 1);
-    await t;
+    await wait();
 
     expect(spy.callCount).toBe(callCount);
     spy.restore();

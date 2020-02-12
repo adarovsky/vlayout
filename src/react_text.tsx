@@ -105,6 +105,9 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
         _.extend(r, this.state.colorStyle);
         _.extend(r, _.pick(this.state.style,
             'borderColor', 'borderStyle', 'borderRadius', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom'));
+        if (!this.state.style.borderColor && !this.state.style.borderStyle && !this.state.style.borderRadius) {
+            r.border = 'none';
+        }
         r.boxSizing = 'border-box';
         r.padding = '0 0 0 0';
         if (this.state.height > 0) {
