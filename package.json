@@ -5,11 +5,11 @@
   "main": "lib/index.js",
   "types": "lib",
   "scripts": {
-    "build": "tsc -p . && cp src/vlayout.css lib/",
+    "build": "node_modules/.bin/tsc -p . && cp src/vlayout.css lib/",
     "bump-version": "npm version patch",
-    "prepublishOnly": "jest && tsc -p . && cp src/vlayout.css lib/",
-    "test": "jest",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+    "prepublishOnly": "node_modules/.bin/jest && node_modules/.bin/tsc -p . && cp src/vlayout.css lib/",
+    "test": "node_modules/.bin/jest",
+    "coveralls": "node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
