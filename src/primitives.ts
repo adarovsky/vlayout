@@ -3,11 +3,12 @@ import React, {createElement} from "react";
 import {ReactGradient, ReactImage, ReactLabel, ReactProgress, ReactRoundRect} from "./react_primitives";
 import {ReactButton} from "./react_button";
 import {Scope} from "./layout";
-import {EnumValue} from "./expression";
-import {ListItemPrototype, ListModelItem} from "./list";
+import {EnumValue, Variable} from "./expression";
+import {ListItemPrototype, ListModelItem, ListTextChangeHandler} from "./list";
 import {ReactListButton} from "./react_list";
 import {EMPTY, Observable} from "rxjs";
 import {LinkError} from "./errors";
+import {ReactTextField} from "./react_text";
 
 export class Label extends View {
     constructor() {
@@ -169,7 +170,7 @@ export class ListButton extends ButtonBase {
 }
 
 export class TextFieldBase extends RoundRect {
-    constructor() {
+    constructor(public name: string) {
         super();
         this.registerProperty(new ViewProperty('enabled', 'Bool'));
         this.registerProperty(new ViewProperty('text', 'String'));
@@ -183,5 +184,56 @@ export class TextFieldBase extends RoundRect {
 
     viewType(): string {
         return 'textField';
+    }
+}
+
+export class TextField extends TextFieldBase {
+
+    constructor(name: string, public readonly onChange: (s: string) => void) {
+        super(name);
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof TextField)(this.name, this.onChange);
+        v.copyFrom(this);
+        return v as this;
+    }
+
+    link(scope: Scope): void {
+        this.property('text').value = new Variable(this.name, 0, 0);
+        super.link(scope);
+    }
+
+    get target(): React.ReactElement {
+        return createElement(ReactTextField, {parentView: this, key: this.key});
+    }
+}
+
+export class ListTextField extends TextFieldBase {
+    modelItem: Observable<ListModelItem> = EMPTY;
+    constructor(name: string, public readonly onChange: ListTextChangeHandler) {
+        super(name);
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof ListTextField)(this.name, this.onChange);
+        v.copyFrom(this);
+        return v as this;
+    }
+
+    link(scope: Scope): void {
+        this.property('text').value = new Variable(this.name, 0, 0);
+        super.link(scope);
+
+        if (scope instanceof ListItemPrototype) {
+            this.modelItem = scope.modelItem;
+        }
+        else {
+            throw new LinkError(this.line, this.column, `list button should be declared only in list item prototype. Got ${scope} instead`);
+        }
+    }
+
+    get target(): React.ReactElement {
+        return createElement(ReactListButton, {parentView: this, key: this.key});
     }
 }

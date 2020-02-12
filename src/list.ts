@@ -154,6 +154,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
 }
 
 export type ListClickHandler = (i: ListModelItem) => Promise<void>;
+export type ListTextChangeHandler = (i: ListModelItem, s: string) => void;
 
 export class List extends View {
     model: Variable|null = null;

@@ -1,74 +1,17 @@
 bindings {
-    itemTapped: listButton
-    buttonTapped: listButton
-    myView: listView
-}
-
-types {
-    MyItems: list (
-        user {
-            name: String
-        },
-        newUser {
-            // no fields required
-        }
-    )
-}
-
-inputs {
-    items: MyItems
+    textField: textField
 }
 
 layout {
     layer {
-        horizontalList {
-            center { x : 0.5 y : 0.5 }
-            size { width: 0.5 }
-            fixedSize { height: 80 }
-            model: items
-            itemTapped: itemTapped
-            alignment: .center
-
-            user {
-                fixedSize { width: 140 }
-                roundRect  {
-                    padding { left: 5 right: 5 top: 5 bottom: 5 }
-                    strokeWidth: 2
-                    strokeColor: #000000
-                    cornerRadius: 5
-                }
-                myView {
-                    center { y: 0.5 }
-                    padding { left: 10 }
-                    fixedSize {
-                        width: 24
-                        height: 24
-                    }
-                }
-                label {
-                    center { y: 0.5 }
-                    padding { left: 40 }
-                    text: name
-                }
-
-                buttonTapped {
-                    center { y: 0.5 }
-                    padding { right: 10 }
-                    backgroundColor: #cccccc
-                    cornerRadius: 10
-                    text: "..."
-                    enabled: name == "User-3"
-                    fixedSize {
-                        width: 30
-                        height: 30
-                    }
-                }
-            }
-            newUser {
-                label {
-                    text: "add new"
-                }
-            }
+        textField {
+            center { x: 0.5 y: 0.5 }
+            fixedSize { height: 44 }
+            strokeWidth: 2
+            strokeColor: #ff00ff
+            textColor: #ff0000
+            font: Font(15)
+            contentPadding { left: 10 top: 3 bottom: 4 right: 2 }
         }
     }
 }

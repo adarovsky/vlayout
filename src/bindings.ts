@@ -1,6 +1,6 @@
 import {Engine} from "./engine";
 import {View} from "./view";
-import {Button} from "./primitives";
+import {Button, TextField} from "./primitives";
 
 export class Bindings {
     constructor(public readonly engine: Engine) {
@@ -9,6 +9,9 @@ export class Bindings {
 
     registerSlot(name: string, type: string): void {
         if (type === 'listButton' && this.engine.listButtonForKey(name))
+            return;
+
+        if (type === 'listTextField' && this.engine.listTextFieldForKey(name))
             return;
 
         if (type === 'listView' && this.engine.listViewForKey(name))
@@ -21,6 +24,10 @@ export class Bindings {
 
         if (type === 'button' && !(v instanceof Button)) {
             throw new Error(`view ${name} is not a button, but ${v.viewType()}`);
+        }
+
+        if (type === 'textField' && !(v instanceof TextField)) {
+            throw new Error(`view ${name} is not a text field, but ${v.viewType()}`);
         }
     }
 

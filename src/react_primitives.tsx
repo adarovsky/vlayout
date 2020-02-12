@@ -363,3 +363,22 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
             </div>);
     }
 }
+
+export function fontStyle(font: FontContainer): CSSProperties {
+    const r: CSSProperties = {};
+    if (font.familyName)
+        r.fontFamily = font.familyName;
+    switch (font.type) {
+        case 'bold':
+            r.fontWeight = 'bold';
+            break;
+        case 'italic':
+            r.fontStyle = 'italic';
+            break;
+    }
+    if (font.size) {
+        r.fontSize = `${font.size}px`;
+    }
+
+    return r;
+}

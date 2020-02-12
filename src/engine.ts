@@ -17,9 +17,9 @@ import {ViewListReference, ViewReference} from "./view_reference";
 import {View} from "./view";
 import _ from "lodash";
 import {ReactViewProps} from "./react_views";
-import {Button} from "./primitives";
+import {Button, TextField} from "./primitives";
 import {Observable} from "rxjs";
-import {ListClickHandler, ListModelItem} from "./list";
+import {ListClickHandler, ListModelItem, ListTextChangeHandler} from "./list";
 
 export class Engine {
     readonly inputs = new Inputs(this);
@@ -27,7 +27,9 @@ export class Engine {
     readonly functions: FunctionImplementationI[];
     private readonly referencedViews: Dictionary<ViewReference> = {};
     private readonly buttons: Dictionary<() => Promise<void>> = {};
-    private readonly listButtons: Dictionary<(i: ListModelItem) => Promise<void>> = {};
+    private readonly textFields: Dictionary<(s: string) => void> = {};
+    private readonly listButtons: Dictionary<ListClickHandler> = {};
+    private readonly listTextFields: Dictionary<ListTextChangeHandler> = {};
     private readonly referencedListViews: Dictionary<ViewListReference> = {};
     readonly valueSnapshot: { inputs: Dictionary<any>; properties: Dictionary<any> } = {
         inputs: {},
@@ -125,6 +127,11 @@ export class Engine {
         this.buttons[key] = onClick;
     }
 
+    registerTextField(key: string, onChange: (s: string) => void, sink: Observable<string>) {
+        this.textFields[key] = onChange;
+        this.inputs.registerInput(key, this.stringType(), sink);
+    }
+
     registerEnum(name: string, values: Dictionary<any>): void {
         this.types.registerEnum(new EnumDefinition(this, name, values));
     }
@@ -137,6 +144,10 @@ export class Engine {
         this.listButtons[name] = onClick;
     }
 
+    registerListTextField(name: string, onChange: ListTextChangeHandler) {
+        this.listTextFields[name] = onChange;
+    }
+
     registerListView(name: string, createComponent: (parent: View, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
         this.referencedListViews[name] = new ViewListReference(createComponent);
     }
@@ -144,6 +155,8 @@ export class Engine {
     viewForKey(key: string): View|null {
         if (this.buttons[key])
             return new Button(this.buttons[key]);
+        else if (this.textFields[key])
+            return new TextField(key, this.textFields[key]);
         else if (this.referencedViews[key])
             return new ViewReference(this.referencedViews[key].createComponent);
         else
@@ -152,6 +165,10 @@ export class Engine {
 
     listButtonForKey(key: string) : ListClickHandler|null {
         return this.listButtons[key] || null;
+    }
+
+    listTextFieldForKey(key: string) : ListTextChangeHandler|null {
+        return this.listTextFields[key] || null;
     }
 
     listViewForKey(key: string): ViewListReference|null {

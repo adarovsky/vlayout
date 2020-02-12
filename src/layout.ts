@@ -31,7 +31,7 @@ import {
     Variable
 } from "./expression";
 import {AbsoluteLayout, Container, Layer, LayoutView, LinearLayout, LinearLayoutAxis, StackLayout, View} from "./view";
-import {Gradient, ImageView, Label, ListButton, Progress, RoundRect} from "./primitives";
+import {Gradient, ImageView, Label, ListButton, ListTextField, Progress, RoundRect} from "./primitives";
 import {LinkError} from "./errors";
 import React, {Component} from "react";
 import './vlayout.css';
@@ -800,7 +800,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 let view = this.viewForContext(container, name.content);
                 if (view) {
                     container.addManagedView(view!);
-                    this.setupView(view, name, container);
+                    this.setupView(view, name);
                     this.matchOrFail('}');
                     return true;
                 } else if (isListMember(container)) {
@@ -811,6 +811,16 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                         container.addManagedView(view!);
                         this.matchOrFail('}');
                         return true;
+                    }
+                    else {
+                        const handler = this.engine.listTextFieldForKey(name.content);
+                        if (handler) {
+                            view = new ListTextField(name.content, handler);
+                            while (this.parseViewContents(view!)) {}
+                            container.addManagedView(view!);
+                            this.matchOrFail('}');
+                            return true;
+                        }
                     }
                 }
 
@@ -836,7 +846,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         return false;
     }
 
-    private setupView(view: View, name: LexIdentifier, container: Container) {
+    private setupView(view: View, name: LexIdentifier) {
         view.line = name.line;
         view.column = name.column;
 
