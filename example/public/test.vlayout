@@ -11,7 +11,7 @@ layout {
             strokeColor: #ff00ff
             textColor: #ff0000
             font: Font(15)
-            contentPadding { left: 10 top: 10 bottom: 2c right: 2 }
+            contentPadding { left: 10 top: 10 bottom: 2 right: 2 }
         }
     }
 }

@@ -5,7 +5,7 @@ import {ReactButton} from "./react_button";
 import {Scope} from "./layout";
 import {EnumValue, Variable} from "./expression";
 import {ListItemPrototype, ListModelItem, ListTextChangeHandler} from "./list";
-import {ReactListButton} from "./react_list";
+import {ReactListButton, ReactListTextField} from "./react_list";
 import {EMPTY, Observable} from "rxjs";
 import {LinkError} from "./errors";
 import {ReactTextField} from "./react_text";
@@ -222,18 +222,17 @@ export class ListTextField extends TextFieldBase {
     }
 
     link(scope: Scope): void {
-        this.property('text').value = new Variable(this.name, 0, 0);
         super.link(scope);
 
         if (scope instanceof ListItemPrototype) {
             this.modelItem = scope.modelItem;
         }
         else {
-            throw new LinkError(this.line, this.column, `list button should be declared only in list item prototype. Got ${scope} instead`);
+            throw new LinkError(this.line, this.column, `list text field should be declared only in list item prototype. Got ${scope} instead`);
         }
     }
 
     get target(): React.ReactElement {
-        return createElement(ReactListButton, {parentView: this, key: this.key});
+        return createElement(ReactListTextField, {parentView: this, key: this.key});
     }
 }

@@ -8,9 +8,10 @@ import {BehaviorSubject, combineLatest, Observable, Subscription} from "rxjs";
 import {ElementSize, resizeObserver} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 import {fromPromise} from "rxjs/internal-compatibility";
-import {ListButton} from "./primitives";
+import {ListButton, ListTextField} from "./primitives";
 import {ReactButtonBase, ReactButtonState} from "./react_button";
 import {ViewListReference} from "./view_reference";
+import {ReactTextFieldBase, ReactTextFieldState} from "./react_text";
 
 export interface ReactListState extends ReactViewState{
     childItems: ListItemPrototype[];
@@ -328,7 +329,26 @@ export class ReactListButton extends ReactButtonBase<ReactButtonState & {modelIt
                 }));
         }
     }
+}
 
+export class ReactListTextField extends ReactTextFieldBase<ReactTextFieldState & {modelItem: ListModelItem|null}> {
+    constructor(props: ReactViewProps) {
+        super(props);
+
+        this.state = {...this.state, modelItem: null};
+    }
+
+    componentDidMount(): void {
+        super.componentDidMount();
+        this.subscription.add((this.props.parentView as ListTextField).modelItem.subscribe(x => this.setState({modelItem: x})));
+    }
+
+    protected textEntered(e: string): void {
+        const parent = this.props.parentView as ListTextField;
+        if (this.state.modelItem !== null) {
+            parent.onChange(this.state.modelItem, e);
+        }
+    }
 }
 
 export class ReactViewListReference extends ReactView<ReactViewProps, ReactListState> {
