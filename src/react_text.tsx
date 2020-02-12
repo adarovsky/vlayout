@@ -99,11 +99,12 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
     }
 
     private textFieldStyle(): CSSProperties {
-        const r: CSSProperties = {minWidth: 0};
+        const r: CSSProperties = {minWidth: 0, width: '100%'};
 
         _.extend(r, this.state.fontStyle);
         _.extend(r, this.state.colorStyle);
-        r.border = 'none';
+        _.extend(r, _.pick(this.state.style,
+            'borderColor', 'borderStyle', 'borderRadius', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom'));
         r.boxSizing = 'border-box';
         r.padding = '0 0 0 0';
         if (this.state.height > 0) {
@@ -111,6 +112,14 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
         }
         return r;
     }
+
+
+    style(): React.CSSProperties {
+        return _.omit(this.state.style,
+            'borderColor', 'borderStyle', 'borderRadius', 'paddingLeft',
+            'paddingRight', 'paddingTop', 'paddingBottom');
+    }
+
     render() {
         const extra = _.pick(this.state, 'id');
         return (<div {...extra}

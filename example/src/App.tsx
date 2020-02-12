@@ -17,7 +17,7 @@ class App extends Component {
 
         this.engine = new Engine();
         const s = new BehaviorSubject('');
-        this.engine.registerTextField('textField', t => s.next(t+t), s);
+        this.engine.registerTextField('textField', t => s.next(t), s);
     }
 
     componentDidMount() {

@@ -6,12 +6,12 @@ layout {
     layer {
         textField {
             center { x: 0.5 y: 0.5 }
-            fixedSize { height: 44 }
+            fixedSize { height: 44 width: 60 }
             strokeWidth: 2
             strokeColor: #ff00ff
             textColor: #ff0000
             font: Font(15)
-            contentPadding { left: 10 top: 3 bottom: 4 right: 2 }
+            contentPadding { left: 10 top: 10 bottom: 2c right: 2 }
         }
     }
 }
