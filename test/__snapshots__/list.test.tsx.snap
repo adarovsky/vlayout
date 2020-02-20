@@ -1304,3 +1304,155 @@ exports[`lists should support tappable items 1`] = `
   </div>
 </div>
 `;
+
+exports[`lists should support text field in items 1`] = `
+<div
+  class="vlayout_verticalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_textField"
+      style="position: absolute; z-index: 1; box-sizing: border-box; pointer-events: auto;"
+    >
+      <input
+        placeholder=""
+        style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+        value="Alex"
+      />
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_textField"
+      style="position: absolute; z-index: 1; box-sizing: border-box; pointer-events: auto;"
+    >
+      <input
+        placeholder=""
+        style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+        value="Anton"
+      />
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_textField"
+      style="position: absolute; z-index: 1; box-sizing: border-box; pointer-events: auto;"
+    >
+      <input
+        placeholder=""
+        style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+        value="Michael"
+      />
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lists should support text field in items 2`] = `
+<div
+  class="vlayout_verticalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_textField"
+      style="position: absolute; z-index: 1; box-sizing: border-box; pointer-events: auto;"
+    >
+      <input
+        placeholder=""
+        style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+        value="Alex"
+      />
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_textField"
+      style="position: absolute; z-index: 1; box-sizing: border-box; pointer-events: auto;"
+    >
+      <input
+        placeholder=""
+        style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+        value="Anton"
+      />
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_textField"
+      style="position: absolute; z-index: 1; box-sizing: border-box; pointer-events: auto;"
+    >
+      <input
+        placeholder=""
+        style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+        value="Sergey"
+      />
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

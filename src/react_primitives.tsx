@@ -89,7 +89,6 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        console.log(this.state);
         const content = this.state.maxLines === 1 ?
             <span style={{whiteSpace: 'nowrap'}}>{this.state.text}</span>
             : this.state.text.split('\n').map(function (item, key) {

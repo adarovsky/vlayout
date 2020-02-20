@@ -1,6 +1,6 @@
 import React from "react";
 import {Engine, Layout} from "../src";
-import {asyncScheduler, of, scheduled, Subject} from "rxjs";
+import {asyncScheduler, BehaviorSubject, of, scheduled, Subject} from "rxjs";
 import {mount} from "enzyme";
 import sinon from "sinon";
 import {ReactTextField} from "../src/react_text";
@@ -53,6 +53,83 @@ describe("text", () => {
 
     expect(spy.callCount).toBe(callCount);
     spy.restore();
+  });
+
+  it("should contain id if set", async function() {
+    const text = new BehaviorSubject('');
+    engine!.registerTextField("myText", async () => {}, text);
+
+    const wrapper = mount(
+        <Layout
+            engine={engine!}
+            content={`
+     layout {
+         layer {
+             myText {
+                 id: "text1"
+                 center { x: 0.5 y: 0.5 }
+             }
+         }
+     }`}
+        />
+    );
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
+  it("should change value", async function() {
+    const text = new BehaviorSubject('');
+    engine!.registerTextField("myText", async () => {}, text);
+
+    const wrapper = mount(
+        <Layout
+            engine={engine!}
+            content={`
+     layout {
+         layer {
+             myText {
+                 id: "text1"
+                 center { x: 0.5 y: 0.5 }
+             }
+         }
+     }`}
+        />
+    );
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+    text.next('new value');
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
+  it("should send changes back", async function() {
+    const text = new BehaviorSubject('');
+    engine!.registerTextField("myText", async (s: string) => text.next(s), text);
+
+    const wrapper = mount(
+        <Layout
+            engine={engine!}
+            content={`
+     layout {
+         layer {
+             myText {
+                 id: "text1"
+                 center { x: 0.5 y: 0.5 }
+             }
+         }
+     }`}
+        />
+    );
+
+    const node = wrapper.find(".vlayout_textField");
+    const input = node.find('input');
+    input.simulate('change', {target: {value: 'entered text'}});
+
+    expect(text.value).toBe('entered text');
   });
 
 });

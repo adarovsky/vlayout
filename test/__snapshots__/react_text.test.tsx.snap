@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`text should change value 1`] = `
+<div
+  class="vlayout_textField"
+  id="text1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; box-sizing: border-box; pointer-events: auto;"
+>
+  <input
+    placeholder=""
+    style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+    value=""
+  />
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
+  </div>
+</div>
+`;
+
+exports[`text should change value 2`] = `
+<div
+  class="vlayout_textField"
+  id="text1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; box-sizing: border-box; pointer-events: auto;"
+>
+  <input
+    placeholder=""
+    style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+    value="new value"
+  />
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
+  </div>
+</div>
+`;
+
+exports[`text should contain id if set 1`] = `
+<div
+  class="vlayout_textField"
+  id="text1"
+  style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; box-sizing: border-box; pointer-events: auto;"
+>
+  <input
+    placeholder=""
+    style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+    value=""
+  />
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
+  </div>
+</div>
+`;
