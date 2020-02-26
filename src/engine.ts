@@ -19,7 +19,7 @@ import _ from "lodash";
 import {ReactViewProps} from "./react_views";
 import {Button, TextField} from "./primitives";
 import {Observable} from "rxjs";
-import {ListClickHandler, ListModelItem, ListTextChangeHandler} from "./list";
+import {ListClickHandler, ListEnterHandler, ListModelItem, ListTextChangeHandler} from "./list";
 
 export class Engine {
     readonly inputs = new Inputs(this);
@@ -27,9 +27,9 @@ export class Engine {
     readonly functions: FunctionImplementationI[];
     private readonly referencedViews: Dictionary<ViewReference> = {};
     private readonly buttons: Dictionary<() => Promise<void>> = {};
-    private readonly textFields: Dictionary<(s: string) => void> = {};
+    private readonly textFields: Dictionary<{onChange: (s: string) => void; onEnter: () => void; }> = {};
     private readonly listButtons: Dictionary<ListClickHandler> = {};
-    private readonly listTextFields: Dictionary<ListTextChangeHandler> = {};
+    private readonly listTextFields: Dictionary<{onChange: ListTextChangeHandler, onEnter: ListEnterHandler}> = {};
     private readonly referencedListViews: Dictionary<ViewListReference> = {};
     readonly valueSnapshot: { inputs: Dictionary<any>; properties: Dictionary<any> } = {
         inputs: {},
@@ -127,8 +127,8 @@ export class Engine {
         this.buttons[key] = onClick;
     }
 
-    registerTextField(key: string, onChange: (s: string) => void, sink: Observable<string>) {
-        this.textFields[key] = onChange;
+    registerTextField(key: string, onChange: (s: string) => void, sink: Observable<string>, onEnter: () => void = () => {}) {
+        this.textFields[key] = {onChange, onEnter};
         this.inputs.registerInput(key, this.stringType(), sink);
     }
 
@@ -144,8 +144,8 @@ export class Engine {
         this.listButtons[name] = onClick;
     }
 
-    registerListTextField(name: string, onChange: ListTextChangeHandler) {
-        this.listTextFields[name] = onChange;
+    registerListTextField(name: string, onChange: ListTextChangeHandler, onEnter: ListEnterHandler = () => {}) {
+        this.listTextFields[name] = {onChange, onEnter};
     }
 
     registerListView(name: string, createComponent: (parent: View, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
@@ -156,7 +156,7 @@ export class Engine {
         if (this.buttons[key])
             return new Button(this.buttons[key]);
         else if (this.textFields[key])
-            return new TextField(key, this.textFields[key]);
+            return new TextField(key, this.textFields[key].onChange, this.textFields[key].onEnter);
         else if (this.referencedViews[key])
             return new ViewReference(this.referencedViews[key].createComponent);
         else
@@ -167,7 +167,7 @@ export class Engine {
         return this.listButtons[key] || null;
     }
 
-    listTextFieldForKey(key: string) : ListTextChangeHandler|null {
+    listTextFieldForKey(key: string) : {onChange: ListTextChangeHandler, onEnter: ListEnterHandler}|null {
         return this.listTextFields[key] || null;
     }
 

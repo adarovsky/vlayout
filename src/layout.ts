@@ -815,7 +815,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                     else {
                         const handler = this.engine.listTextFieldForKey(name.content);
                         if (handler) {
-                            view = new ListTextField(name.content, handler);
+                            view = new ListTextField(name.content, handler.onChange, handler.onEnter);
                             while (this.parseViewContents(view!)) {}
                             container.addManagedView(view!);
                             this.matchOrFail('}');

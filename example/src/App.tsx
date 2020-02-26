@@ -26,7 +26,7 @@ class App extends Component {
 
         const list = interval(500).pipe(
             scan((acc: Dictionary<any>, one) => {
-                const record = { user: {id: one, name: new BehaviorSubject(`User-${one + 1}`)} };
+                const record = { user: {id: one, name: `User-${one + 1}`} };
                 return acc.concat([record]);
             }, [])
         );

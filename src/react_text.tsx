@@ -94,6 +94,9 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
     protected textEntered(e: string): void {
     }
 
+    protected enterPressed(): void {
+    }
+
     protected isHeightDefined(): boolean {
         return true;
     }
@@ -133,6 +136,7 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
                    placeholder={this.state.placeholder}
                    value={this.state.text}
                    onChange={e => this.textEntered(e.target.value)}
+                   onKeyPress={e => {if (e.key === 'Enter') this.enterPressed();}}
                    ref={this.inputRef}/>
         </div>);
     }
@@ -141,5 +145,9 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
 export class ReactTextField extends ReactTextFieldBase {
     protected textEntered(e: string): void {
         (this.props.parentView as TextField).onChange(e);
+    }
+
+    protected enterPressed(): void {
+        (this.props.parentView as TextField).onEnter();
     }
 }

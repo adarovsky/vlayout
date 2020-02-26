@@ -13,6 +13,8 @@ import {ReactButtonBase, ReactButtonState} from "./react_button";
 import {ViewListReference} from "./view_reference";
 import {ReactTextFieldBase, ReactTextFieldState} from "./react_text";
 
+//import FlipMove from "react-flip-move";
+
 export interface ReactListState extends ReactViewState{
     childItems: ListItemPrototype[];
     spacing: number;
@@ -177,12 +179,14 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
         return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
+            {/*<FlipMove key={'flip'} duration={250} easing="ease-in-out" enterAnimation="fade" leaveAnimation="fade">*/}
             {this.state.childItems.flatMap( (v, index) => {
                 const result = [v.target];
                 if (index > 0 && this.state.spacing)
-                    result.unshift(<div style={{height: this.state.spacing + 'px'}} key={index}/>);
+                    result.unshift(<div style={{height: this.state.spacing + 'px'}} key={`spacer-${index}`}/>);
                 return result;
             })}
+            {/*</FlipMove>*/}
         </div>);
     }
 }
@@ -347,6 +351,14 @@ export class ReactListTextField extends ReactTextFieldBase<ReactTextFieldState &
         const parent = this.props.parentView as ListTextField;
         if (this.state.modelItem !== null) {
             parent.onChange(this.state.modelItem, e);
+        }
+    }
+
+
+    protected enterPressed(): void {
+        const parent = this.props.parentView as ListTextField;
+        if (this.state.modelItem !== null) {
+            parent.onEnter(this.state.modelItem);
         }
     }
 }

@@ -107,7 +107,7 @@ export class View {
     }
 
     get target(): React.ReactElement {
-        return createElement('div', {}, []);
+        return createElement('div', {key: this.key}, []);
     }
 
     registerProperty(prop: ViewProperty): void {

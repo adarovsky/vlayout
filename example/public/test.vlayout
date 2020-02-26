@@ -22,7 +22,7 @@ layout {
         verticalList {
             center { x : 0.5 y : 0.5 }
             size { width: 0.5 }
-            fixedSize { width: 200 }
+            fixedSize { width: 200 height: 400 }
             model: items
 
             user {
@@ -33,7 +33,7 @@ layout {
                     strokeColor: #000000
                     cornerRadius: 5
                 }
-                nameField {
+                label {
                     center { y: 0.5 }
                     padding { left: 40 }
                     text: name

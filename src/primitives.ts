@@ -4,7 +4,7 @@ import {ReactGradient, ReactImage, ReactLabel, ReactProgress, ReactRoundRect} fr
 import {ReactButton} from "./react_button";
 import {Scope} from "./layout";
 import {EnumValue, Variable} from "./expression";
-import {ListItemPrototype, ListModelItem, ListTextChangeHandler} from "./list";
+import {ListEnterHandler, ListItemPrototype, ListModelItem, ListTextChangeHandler} from "./list";
 import {ReactListButton, ReactListTextField} from "./react_list";
 import {EMPTY, Observable} from "rxjs";
 import {LinkError} from "./errors";
@@ -189,12 +189,12 @@ export class TextFieldBase extends RoundRect {
 
 export class TextField extends TextFieldBase {
 
-    constructor(name: string, public readonly onChange: (s: string) => void) {
+    constructor(name: string, public readonly onChange: (s: string) => void, public readonly onEnter: () => void) {
         super(name);
     }
 
     instantiate(): this {
-        const v = new (this.constructor as typeof TextField)(this.name, this.onChange);
+        const v = new (this.constructor as typeof TextField)(this.name, this.onChange, this.onEnter);
         v.copyFrom(this);
         return v as this;
     }
@@ -211,12 +211,12 @@ export class TextField extends TextFieldBase {
 
 export class ListTextField extends TextFieldBase {
     modelItem: Observable<ListModelItem> = EMPTY;
-    constructor(name: string, public readonly onChange: ListTextChangeHandler) {
+    constructor(name: string, public readonly onChange: ListTextChangeHandler, public readonly onEnter: ListEnterHandler) {
         super(name);
     }
 
     instantiate(): this {
-        const v = new (this.constructor as typeof ListTextField)(this.name, this.onChange);
+        const v = new (this.constructor as typeof ListTextField)(this.name, this.onChange, this.onEnter);
         v.copyFrom(this);
         return v as this;
     }
