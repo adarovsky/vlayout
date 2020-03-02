@@ -90,13 +90,6 @@ exports[`text should set input mode to go 1`] = `
   id="text1"
   style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; box-sizing: border-box; pointer-events: auto;"
 >
-  <input
-    inputmode="search"
-    placeholder=""
-    style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
-    type="text"
-    value=""
-  />
   <div
     style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
   >
@@ -111,6 +104,17 @@ exports[`text should set input mode to go 1`] = `
       style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
     />
   </div>
+  <form
+    action="#"
+  >
+    <input
+      placeholder=""
+      style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+      title="go"
+      type="text"
+      value=""
+    />
+  </form>
 </div>
 `;
 

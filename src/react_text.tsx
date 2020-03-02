@@ -130,16 +130,13 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
     }
 
     render() {
-        let inputMode: {
-            inputMode?: string;
-            type?: string;
-        } = {};
+        let inputMode: Dictionary<string> = {};
         switch (this.state.type) {
             case 'regular':
                 break;
             case 'go':
                 inputMode.type='text';
-                inputMode.inputMode = 'search';
+                inputMode.title = 'go';
                 break;
             case 'numeric':
                 inputMode.type='text';
@@ -160,18 +157,22 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
                 break;
         }
 
+        let input = <input style={this.textFieldStyle()}
+                           {...inputMode as Dictionary<string>}
+                           placeholder={this.state.placeholder}
+                           value={this.state.text}
+                           onChange={e => this.textEntered(e.target.value)}
+                           onKeyPress={e => {if (e.key === 'Enter') this.enterPressed();}}
+                           ref={this.inputRef}/>;
+        if (this.state.type === 'go') {
+            input = <form action={'#'}>{input}</form>;
+        }
         const extra = _.pick(this.state, 'id');
         return (<div {...extra}
                      style={this.style()}
                      className={this.className}
                      ref={this.viewRef}>
-            <input style={this.textFieldStyle()}
-                   {...inputMode as Dictionary<string>}
-                   placeholder={this.state.placeholder}
-                   value={this.state.text}
-                   onChange={e => this.textEntered(e.target.value)}
-                   onKeyPress={e => {if (e.key === 'Enter') this.enterPressed();}}
-                   ref={this.inputRef}/>
+            {input}
         </div>);
     }
 }

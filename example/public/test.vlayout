@@ -21,7 +21,7 @@ inputs {
 layout {
     layer {
         textField {
-            type: .url
+            type: .go
             center { x: 0.5 y: 0.5 }
             strokeColor: #cccccc
             strokeWidth: 5
