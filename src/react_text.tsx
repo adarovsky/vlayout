@@ -14,6 +14,7 @@ export interface ReactTextFieldState extends ReactViewState {
     fontStyle: CSSProperties;
     colorStyle: CSSProperties;
     height: number;
+    enterTitle: string|null;
 }
 
 export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldState> extends ReactRoundRect<S> {
@@ -27,7 +28,8 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
             enabled: true,
             fontStyle: {},
             colorStyle: {},
-            height: 0
+            height: 0,
+            enterTitle: null
         };
     }
 
@@ -45,6 +47,7 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
         this.wire('enabled', 'enabled', x => x);
         this.wire('font', 'fontStyle', fontStyle);
         this.wire('textColor', 'colorStyle', x => ({color: x.toString()}));
+        this.wire('enterTitle', 'enterTitle', x => x);
         const props = [this.intrinsicSize(),
             this.props.parentView.property('contentPadding.top').value?.sink ?? of(0),
             this.props.parentView.property('contentPadding.bottom').value?.sink ?? of(0),
@@ -127,17 +130,33 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
     }
 
     render() {
+        let input;
+        if (this.state.enterTitle) {
+            input = <form action='#'>
+                <input style={this.textFieldStyle()}
+                       type={'text'}
+                       title={this.state.enterTitle!}
+                       placeholder={this.state.placeholder}
+                       value={this.state.text}
+                       onChange={e => this.textEntered(e.target.value)}
+                       onKeyPress={e => {if (e.key === 'Enter') this.enterPressed();}}
+                       ref={this.inputRef}/>
+            </form>;
+        }
+        else {
+            input = <input style={this.textFieldStyle()}
+                           placeholder={this.state.placeholder}
+                           value={this.state.text}
+                           onChange={e => this.textEntered(e.target.value)}
+                           onKeyPress={e => {if (e.key === 'Enter') this.enterPressed();}}
+                           ref={this.inputRef}/>;
+        }
         const extra = _.pick(this.state, 'id');
         return (<div {...extra}
                      style={this.style()}
                      className={this.className}
                      ref={this.viewRef}>
-            <input style={this.textFieldStyle()}
-                   placeholder={this.state.placeholder}
-                   value={this.state.text}
-                   onChange={e => this.textEntered(e.target.value)}
-                   onKeyPress={e => {if (e.key === 'Enter') this.enterPressed();}}
-                   ref={this.inputRef}/>
+            {input}
         </div>);
     }
 }

@@ -177,6 +177,7 @@ export class TextFieldBase extends RoundRect {
         this.registerProperty(new ViewProperty('placeholder', 'String'));
         this.registerProperty(new ViewProperty('textColor', 'Color'));
         this.registerProperty(new ViewProperty('font', 'Font'));
+        this.registerProperty(new ViewProperty('enterTitle', 'String'));
         ['left', 'right', 'top', 'bottom'].forEach( t => {
             this.registerProperty(new ViewProperty('contentPadding.' + t, 'Number'));
         });

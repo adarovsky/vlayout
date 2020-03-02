@@ -43,6 +43,9 @@ class App extends Component {
             list.pipe(take(10))
         );
         this.engine.registerListTextField('nameField', (i, s) => (i as unknown as User).name.next(s));
+        const cnt = new BehaviorSubject('');
+        this.engine.registerTextField('textField', x => cnt.next(x), cnt, () => cnt.next(''));
+
     }
 
     componentDidMount() {

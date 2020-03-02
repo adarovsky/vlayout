@@ -1,5 +1,6 @@
 bindings {
     nameField: listTextField
+    textField: textField
 }
 
 types {
@@ -19,32 +20,13 @@ inputs {
 
 layout {
     layer {
-        verticalList {
-            center { x : 0.5 y : 0.5 }
-            size { width: 0.5 }
-            fixedSize { width: 200 height: 400 }
-            model: items
-
-            user {
-                fixedSize { height: 44 }
-                roundRect  {
-                    padding { left: 5 right: 5 top: 5 bottom: 5 }
-                    strokeWidth: 2
-                    strokeColor: #000000
-                    cornerRadius: 5
-                }
-                label {
-                    center { y: 0.5 }
-                    padding { left: 40 }
-                    text: name
-                }
-
-            }
-            newUser {
-                label {
-                    text: "add new"
-                }
-            }
+        textField {
+            enterTitle: "go"
+            center { x: 0.5 y: 0.5 }
+            strokeColor: #cccccc
+            strokeWidth: 5
+            cornerRadius: 0.5
+            font: Font(18)
         }
     }
 }
