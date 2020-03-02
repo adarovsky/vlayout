@@ -132,4 +132,73 @@ describe("text", () => {
     expect(text.value).toBe('entered text');
   });
 
+  function prepareTextField(type: string) {
+    engine!.registerTextField("myText", async () => {
+    }, of(''));
+    const wrapper = mount(
+        <Layout
+            engine={engine!}
+            content={`
+     layout {
+         layer {
+             myText {
+                 id: "text1"
+                 type: .${type}
+                 center { x: 0.5 y: 0.5 }
+             }
+         }
+     }`}
+        />
+    );
+    return wrapper;
+  }
+
+  it("should set input mode to regular", async function() {
+    const wrapper = prepareTextField('regular');
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
+  it("should set input mode to go", async function() {
+    const wrapper = prepareTextField('go');
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
+  it("should set input mode to numeric", async function() {
+    const wrapper = prepareTextField('numeric');
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
+  it("should set input mode to search", async function() {
+    const wrapper = prepareTextField('search');
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
+  it("should set input mode to phone", async function() {
+    const wrapper = prepareTextField('phone');
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
+  it("should set input mode to url", async function() {
+    const wrapper = prepareTextField('url');
+
+    const node = wrapper.find(".vlayout_textField");
+
+    expect(node.getDOMNode()).toMatchSnapshot();
+  });
+
 });
