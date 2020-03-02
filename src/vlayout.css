@@ -38,6 +38,6 @@
     }
 }
 
-.vlayout_textField input {
+.vlayout_textField input[type=text] {
     -webkit-appearance: none;
 }

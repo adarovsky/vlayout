@@ -151,6 +151,15 @@ export class Types {
             'leftToRight',
             'rightToLeft'
         )));
+
+        this.registerEnum(new EnumDefinition(engine, 'TextFieldType', this._straightValues(
+            'regular',
+            'go',
+            'numeric',
+            'search',
+            'phone',
+            'url'
+        )));
     }
 
     registerEnum(e: EnumDefinition): void {
