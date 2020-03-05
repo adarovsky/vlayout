@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`layout should center view when paddings explicitly set to nil 1`] = `
+<div
+  class="vlayout_roundRect"
+  style="position: absolute; left: 20px; z-index: 1; right: 20px; top: 20px; bottom: 20px; background-color: rgb(255, 204, 204); box-sizing: border-box;"
+/>
+`;
+
+exports[`layout should center view when paddings explicitly set to nil 2`] = `
+<div
+  class="vlayout_roundRect"
+  style="position: absolute; z-index: 1; background-color: rgb(255, 204, 204); box-sizing: border-box; left: 50%; transform: translateX(-50%) translateY(-50%); top: 50%; width: 120px; height: 80px;"
+/>
+`;

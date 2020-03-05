@@ -138,12 +138,12 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     if (view.parent instanceof AbsoluteLayout && val !== null) {
                         // adjust width
                         let index = propNames.findIndex(x => x === 'padding.left');
-                        if (index >= 0) {
+                        if (index >= 0 && value[index] !== null) {
                             r.width = `calc(2*(${val*100}% - ${value[index]}px))`
                         }
                         else {
                             index = propNames.findIndex(x => x === 'padding.right');
-                            if (index >= 0) {
+                            if (index >= 0 && value[index] !== null) {
                                 r.width = `calc(2*(${(1-val)*100}% - ${value[index]}px))`
                             }
                             else {
@@ -160,12 +160,12 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     if (view.parent instanceof AbsoluteLayout && val !== null) {
                         // adjust width
                         let index = propNames.findIndex(x => x === 'padding.top');
-                        if (index >= 0) {
+                        if (index >= 0 && value[index] !== null) {
                             r.height = `calc(2*(${val*100}% - ${value[index]}px))`
                         }
                         else {
                             index = propNames.findIndex(x => x === 'padding.bottom');
-                            if (index >= 0) {
+                            if (index >= 0 && value[index] !== null) {
                                 r.height = `calc(2*(${(1-val)*100}% - ${value[index]}px))`
                             }
                             else {

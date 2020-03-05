@@ -42,6 +42,11 @@ class App extends Component {
             this.engine.type("MyItems")!,
             list.pipe(take(10))
         );
+        this.engine.registerInput(
+            "test",
+            this.engine.numberType(),
+            interval(1000).pipe(take(2))
+        );
         this.engine.registerListTextField('nameField', (i, s) => (i as unknown as User).name.next(s));
         const cnt = new BehaviorSubject('');
         this.engine.registerTextField('textField', x => cnt.next(x), cnt, () => cnt.next(''));

@@ -216,6 +216,7 @@ exports[`text should set input mode to search 1`] = `
     inputmode="search"
     placeholder=""
     style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+    title="search"
     type="search"
     value=""
   />

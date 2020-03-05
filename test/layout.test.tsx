@@ -141,4 +141,45 @@ describe("layout", () => {
         expect(observers).toHaveLength(0);
     });
 
+    it("should center view when paddings explicitly set to nil", async function() {
+        const test1 = new BehaviorSubject(0);
+        engine.registerInput('test', engine.numberType(), test1);
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={`
+                inputs {
+                    test: Number
+                }        
+                layout {
+                    layer {
+                        roundRect {
+                            padding {
+                                left: test % 2 == 0 ? 20 : nil
+                                right: test % 2 == 0 ? 20 : nil
+                                top: test % 2 == 0 ? 20 : nil
+                                bottom: test % 2 == 0 ? 20 : nil
+                            }
+                            center {
+                                x : test % 2 == 0 ? nil : 0.5
+                                y : test % 2 == 0 ? nil : 0.5
+                            }
+                            fixedSize {
+                                width: test % 2 == 0 ? nil : 120
+                                height: test % 2 == 0 ? nil : 80
+                            }
+                            backgroundColor: #ffcccc
+                        }
+                    }
+                }`}
+            />
+        );
+
+        let node = wrapper.find(".vlayout_roundRect");
+        expect(node.getDOMNode()).toMatchSnapshot();
+
+        test1.next(1);
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
 });

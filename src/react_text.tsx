@@ -145,6 +145,7 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
             case 'search':
                 inputMode.type='search';
                 inputMode.inputMode = 'search';
+                inputMode.title = 'search';
                 break;
             case 'phone':
                 inputMode.type='text';
