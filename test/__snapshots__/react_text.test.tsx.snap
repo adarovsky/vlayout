@@ -104,9 +104,7 @@ exports[`text should set input mode to go 1`] = `
       style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
     />
   </div>
-  <form
-    action="#"
-  >
+  <form>
     <input
       placeholder=""
       style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"

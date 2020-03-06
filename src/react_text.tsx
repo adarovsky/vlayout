@@ -166,7 +166,7 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
                            onKeyPress={e => {if (e.key === 'Enter') this.enterPressed();}}
                            ref={this.inputRef}/>;
         if (this.state.type === 'go') {
-            input = <form action={'#'}>{input}</form>;
+            input = <form>{input}</form>;
         }
         const extra = _.pick(this.state, 'id');
         return (<div {...extra}
