@@ -41,3 +41,16 @@
 .vlayout_textField input[type=text] {
     -webkit-appearance: none;
 }
+
+.vlayout_layout {
+    user-select: none;
+}
+
+.vlayout_layout input {
+    user-select: text;
+}
+
+.vlayout_label span {
+    pointer-events: auto;
+    user-select: text;
+}
