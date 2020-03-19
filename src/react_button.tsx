@@ -1,5 +1,5 @@
 import {ViewProperty} from "./view";
-import {combineLatest, of} from "rxjs";
+import {combineLatest, Observable, of} from "rxjs";
 import React, {CSSProperties} from "react";
 import _, {cloneDeep} from "lodash";
 import {ReactRoundRect} from "./react_primitives";
@@ -10,7 +10,7 @@ import {fromPromise} from "rxjs/internal-compatibility";
 import {ReactViewProps, ReactViewState} from "./react_views";
 
 export interface ReactButtonState extends ReactViewState {
-    image: ImageContainer;
+    image: ImageContainer|null;
     text: string;
     imageStyle: CSSProperties,
     imagePosition: string,
@@ -23,7 +23,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
     constructor(props: ReactViewProps) {
         super(props);
         this.state = {...this.state, text: '',
-            image: new ImageContainer(''),
+            image: null,
             imageStyle: {
                 maxHeight: '100%',
                 maxWidth: '100%',
@@ -57,10 +57,10 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         if (image.value && text.value) {
             this.subscription.add(combineLatest([paddingProp.value?.sink ?? of(null),
                 imagePositionProp.value!.sink,
-                image.value.sink, text.value.sink]).pipe(
+                image.value.sink as Observable<ImageContainer|null>, text.value.sink as Observable<string>]).pipe(
                 map( ([padding, imagePosition, image, text]) => {
                     const r: CSSProperties = {};
-                    if (!!image && !!text) {
+                    if (!!image?.src && !!text) {
                         switch (imagePosition) {
                             case 'left':
                             case 'leftToText':
@@ -232,7 +232,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         const decorated = this.state.text && (pos === 'left' || pos === 'right') ?
             (<>
                 <span style={{textAlign: 'center', flexGrow: 1}}>{text}</span>
-                {this.state.image.src && <img src={this.state.image.src} style={{...this.state.imageStyle, opacity: 0}} alt={this.state.text}/>}
+                {this.state.image?.src && <img src={this.state.image.src} style={{...this.state.imageStyle, opacity: 0}} alt={this.state.text}/>}
             </>) : text;
 
         const extra = _.pick(this.state, 'id');
@@ -241,7 +241,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                      className={this.className}
                      ref={this.viewRef}
         onClick={(e) => this.handleClick(e)}>
-            {this.state.image.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
+            {this.state.image?.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
             {decorated}
         </div>);
     }
