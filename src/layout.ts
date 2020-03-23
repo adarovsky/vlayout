@@ -227,14 +227,14 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 this.raiseError(`${name} is not a list definition`);
             }
 
-            this.compareTypes(r, model.values);
+            this.compareTypes(name, r, model.values);
             return r;
         }
 
         return null;
     }
 
-    private compareTypes(item1: ListDefinitionItem|TypeDefinition, item2: ListDefinitionItem|TypeDefinition) {
+    private compareTypes(context: string, item1: ListDefinitionItem|TypeDefinition, item2: ListDefinitionItem|TypeDefinition) {
         if (item1 instanceof TypeDefinition) {
             if (item2 !== item1) {
                 this.raiseError(`types ${item1} and ${item2} do not match`);
@@ -246,10 +246,10 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         }
 
         _.forIn(item1, (v, k) => {
-            if (!item2[k]) {
-                this.raiseError(`type ${k} is missing in declaration`);
-            }
-            this.compareTypes(item2[k], v);
+            // if (!item2[k]) {
+            //     this.raiseError(`type ${k} is missing in declaration`);
+            // }
+            this.compareTypes(k, item2[k], v);
         });
 
         _.forIn(item2, (v, k) => {
