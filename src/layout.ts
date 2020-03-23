@@ -247,17 +247,16 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
 
         _.forIn(item1, (v, k) => {
             if (!item2[k]) {
-                return;
-                //this.raiseError(`type ${k} is missing in declaration`);
+                this.raiseError(`type ${k} is missing in engine`);
             }
-            this.compareTypes(k, item2[k], v);
+            this.compareTypes(k, v, item2[k]);
         });
 
-        _.forIn(item2, (v, k) => {
-            if (!item1[k]) {
-                this.raiseError(`${k} is missing in engine`);
-            }
-        });
+        // _.forIn(item2, (v, k) => {
+        //     if (!item1[k]) {
+        //         this.raiseError(`${context}: ${k} is missing in engine`);
+        //     }
+        // });
     }
 
     private parseListItem(): ListDefinitionItem {

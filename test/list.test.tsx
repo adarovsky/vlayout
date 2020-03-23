@@ -1105,4 +1105,41 @@ describe("lists", () => {
             />
         );
     });
+
+    it("should allow missing prototype in definition", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.stringType()
+            },
+            newUser: {}
+        });
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            of([
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          }
+      )
+  }
+
+  inputs {
+      items: MyItems
+  }
+
+  layout {
+  }`}
+            />
+        );
+    });
 });
