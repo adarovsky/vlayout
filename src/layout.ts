@@ -246,9 +246,10 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         }
 
         _.forIn(item1, (v, k) => {
-            // if (!item2[k]) {
-            //     this.raiseError(`type ${k} is missing in declaration`);
-            // }
+            if (!item2[k]) {
+                return;
+                //this.raiseError(`type ${k} is missing in declaration`);
+            }
             this.compareTypes(k, item2[k], v);
         });
 

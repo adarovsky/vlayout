@@ -1065,46 +1065,44 @@ describe("lists", () => {
         expect(wrapper).toThrowError(/extraField is missing in engine/);
     });
 
-  //   it("should check for missing type in definition", async function () {
-  //       engine.registerList("MyItems", {
-  //           user: {
-  //               name: engine.stringType(),
-  //               extraField: engine.stringType()
-  //           },
-  //           newUser: {}
-  //       });
-  //       engine.registerInput(
-  //           "items",
-  //           engine.type("MyItems")!,
-  //           of([
-  //               {newUser: {id: "new"}}
-  //           ])
-  //       );
-  //
-  //       const wrapper = () => shallow(
-  //           <Layout
-  //               engine={engine}
-  //               content={`
-  // types {
-  //     MyItems: list (
-  //         user {
-  //             name: String
-  //         },
-  //         newUser {
-  //             // no fields required
-  //         }
-  //     )
-  // }
-  //
-  // inputs {
-  //     items: MyItems
-  // }
-  //
-  // layout {
-  // }`}
-  //           />
-  //       );
-  //
-  //       expect(wrapper).toThrowError(/extraField is missing in declaration/);
-  //   });
+    it("should check for missing type in definition", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.stringType(),
+                extraField: engine.stringType()
+            },
+            newUser: {}
+        });
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            of([
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+
+  inputs {
+      items: MyItems
+  }
+
+  layout {
+  }`}
+            />
+        );
+    });
 });
