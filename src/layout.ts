@@ -36,10 +36,10 @@ import {LinkError} from "./errors";
 import React, {Component} from "react";
 import './vlayout.css';
 import {FunctionDeclaration, Functions} from "./functions";
-import {Dictionary, ListDefinitionItem, TypeDefinition} from "./types";
+import {Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition} from "./types";
 import {FunctionImplementationI} from "./builtin_functions";
 import {List, ListItemPrototype} from "./list";
-import {extend, isEmpty} from "lodash"
+import _, {extend, isEmpty} from "lodash"
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {
@@ -149,9 +149,10 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
     }
 
     private parseTypePair() : boolean {
-        if (this.matchIdentifier()) {
+        let name;
+        if ((name = this.matchIdentifier())) {
             this.matchOrFail(":");
-            if (!this.parseEnum() && !this.parseList()) {
+            if (!this.parseEnum(name.content) && !this.parseList(name.content)) {
                 this.raiseError("enum or list declaration expected");
             }
             return true;
@@ -160,7 +161,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
         return false;
     }
 
-    private parseEnum(): Array<string>|null {
+    private parseEnum(name: string): Array<string>|null {
 
         if (this.match("enum")) {
             let r = new Array<string>();
@@ -178,16 +179,24 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
 
             this.matchOrFail(')');
 
+            const e = this.engine.type(name);
+            if (!e) {
+                this.raiseError(`enum ${name} is not registered`);
+            }
+            if (!(e instanceof EnumDefinition)) {
+                this.raiseError(`${name} is not a enum definition`);
+            }
+
             return r;
         }
 
         return null;
     }
 
-    private parseList(): Dictionary<any>[]|null {
+    private parseList(name: string): Dictionary<ListDefinitionItem> | null {
 
         if (this.match("list")) {
-            let r: Dictionary<any>[] = [];
+            let r: Dictionary<ListDefinitionItem> = {};
 
             this.matchOrFail('(');
 
@@ -201,7 +210,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                         extend(item, i);
                     }
                     this.matchOrFail('}');
-                    r.push(item);
+                    r[v.content] = item;
                 }
                 else {
                     this.raiseError(`model item identifier expected`)
@@ -210,10 +219,44 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
 
             this.matchOrFail(')');
 
+            const model = this.engine.type(name);
+            if (!model) {
+                this.raiseError(`list ${name} is not registered`);
+            }
+            if (!(model instanceof ListDefinition)) {
+                this.raiseError(`${name} is not a list definition`);
+            }
+
+            this.compareTypes(r, model.values);
             return r;
         }
 
         return null;
+    }
+
+    private compareTypes(item1: ListDefinitionItem|TypeDefinition, item2: ListDefinitionItem|TypeDefinition) {
+        if (item1 instanceof TypeDefinition) {
+            if (item2 !== item1) {
+                this.raiseError(`types ${item1} and ${item2} do not match`);
+            }
+            return;
+        }
+        else if (item2 instanceof TypeDefinition) {
+            this.raiseError(`types ${item1} and ${item2} do not match`);
+        }
+
+        _.forIn(item1, (v, k) => {
+            if (!item2[k]) {
+                this.raiseError(`type ${k} is missing in declaration`);
+            }
+            this.compareTypes(item2[k], v);
+        });
+
+        _.forIn(item2, (v, k) => {
+            if (!item1[k]) {
+                this.raiseError(`${k} is missing in engine`);
+            }
+        });
     }
 
     private parseListItem(): ListDefinitionItem {

@@ -1,4 +1,4 @@
-import {mount} from "enzyme";
+import {mount, shallow} from "enzyme";
 import {Engine, Layout} from "../src";
 import React from "react";
 import {BehaviorSubject, of, ReplaySubject, Subject} from "rxjs";
@@ -898,5 +898,213 @@ describe("lists", () => {
         input.simulate('change', {target: {value: 'entered text'}});
 
         expect(spy.callCount).toBe(1);
+    });
+
+    it("should check for model inconsistencies", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.numberType()
+            },
+            newUser: {}
+        });
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            of([
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = () => shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+  }`}
+            />
+        );
+
+        expect(wrapper).toThrowError(/String and Number do not match/);
+    });
+
+    it("should check for missing model", async function () {
+        const wrapper = () => shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+    
+  layout {
+      layer {
+      }
+  }`}
+            />
+        );
+
+        expect(wrapper).toThrowError(/list MyItems is not registered/);
+    });
+
+    it("should check for wrong model type", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.numberType()
+            },
+            newUser: {}
+        });
+        const wrapper = () => shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: enum(first, second)
+  }
+    
+  layout {
+      layer {
+      }
+  }`}
+            />
+        );
+
+        expect(wrapper).toThrowError(/MyItems is not a enum definition/);
+    });
+
+    it("should check for wrong engine model type", async function () {
+        engine.registerEnum("MyItems", {
+            key1: 1, key2: 2
+        });
+        const wrapper = () => shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+    
+  layout {
+      layer {
+      }
+  }`}
+            />
+        );
+
+        expect(wrapper).toThrowError(/MyItems is not a list definition/);
+    });
+
+    it("should check for missing type in engine model", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.stringType()
+            },
+            newUser: {}
+        });
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            of([
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = () => shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+              extraField: Number
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+  }`}
+            />
+        );
+
+        expect(wrapper).toThrowError(/extraField is missing in engine/);
+    });
+
+    it("should check for missing type in definition", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.stringType(),
+                extraField: engine.stringType()
+            },
+            newUser: {}
+        });
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            of([
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = () => shallow(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+  }`}
+            />
+        );
+
+        expect(wrapper).toThrowError(/extraField is missing in declaration/);
     });
 });
