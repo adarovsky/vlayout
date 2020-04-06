@@ -1,5 +1,5 @@
 import {Inputs} from "./inputs";
-import {Dictionary, EnumDefinition, ListDefinition, TypeDefinition, Types} from "./types";
+import {Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition, Types} from "./types";
 import {EnumValue, Expression} from "./expression";
 import {
     ColorAlpha,
@@ -136,7 +136,7 @@ export class Engine {
         this.types.registerEnum(new EnumDefinition(this, name, values));
     }
 
-    registerList(name: string, fields: Dictionary<any>): void {
+    registerList(name: string, fields: Dictionary<ListDefinitionItem>): void {
         this.types.registerList(new ListDefinition(this, name, fields));
     }
 
