@@ -66,8 +66,9 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         this.arguments.forEach(a => a.link(scope, null));
-        this.expression!.link(this, hint);
-        this.returnType = this.expression!.typeDefinition!;
+        const e = this.expression!.instantiate();
+        e.link(this, hint);
+        this.returnType = e.typeDefinition!;
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
@@ -75,11 +76,12 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
             throw new Error(`${this.line}:${this.column}: wrong parameter count: ${this.arguments.length} expected, but got ${parameters.length}`);
         }
 
+        const e = this.expression!.instantiate();
         this.arguments.forEach((a, index) => a.sink = parameters[index]);
-        this.expression!.typeDefinition = null;
-        this.expression!.link(this, this.returnType);
-        return this.expression!.sink;
+        e.link(this, this.returnType);
+        return e.sink;
     }
+
 
     viewForKey(key: string): View | null {
         return this.layout.viewForKey(key);

@@ -2,6 +2,7 @@ import {mount, shallow} from "enzyme";
 import {Engine, Layout} from "../src";
 import {Subject} from "rxjs";
 import React from "react";
+import {ReactLabel} from "../src/react_primitives";
 
 let engine: Engine|null = null;
 
@@ -205,6 +206,51 @@ it('function calls should be independent', async () => {
     expect(wrapper.find('#label1 > span').text()).toBe("3");
     expect(wrapper.find('#label2 > span').text()).toBe("12");
 
+});
+
+it('function calls should be independent 1', async () => {
+    const test1 = new Subject<number>();
+    engine!.registerInput('test1', engine!.numberType(), test1);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     inputs {
+        test1: Number
+     }
+     
+     functions {
+         fanCenterY(index: Number) => test1 == 4 ? (index == 3|4 ? 0.5+0.25 : 0.25) : 0.5
+     }
+
+     layout {
+         layer {            
+             label {
+                 id: "label1"
+                 center { x : 0.5 y : fanCenterY(1) }
+                 text : "label1"
+             }
+             label {
+                 id: "label2"
+                 center { x : 0.5 y : fanCenterY(2) }
+                 text : "label2"
+             }
+             label {
+                 id: "label3"
+                 center { x : 0.5 y : fanCenterY(3) }
+                 text : "label3"
+             }
+             label {
+                 id: "label4"
+                 center { x : 0.5 y : fanCenterY(4) }
+                 text : "label4"
+             }
+         }
+     }`}/>);
+
+    test1.next(4);
+
+    expect(wrapper.find(ReactLabel).at(0).state().style.top).toBe('25%');
+    expect(wrapper.find(ReactLabel).at(1).state().style.top).toBe('25%');
+    expect(wrapper.find(ReactLabel).at(2).state().style.top).toBe('75%');
+    expect(wrapper.find(ReactLabel).at(3).state().style.top).toBe('75%');
 });
 
 it('function call should work with variadic functions', async () => {
