@@ -19,7 +19,6 @@ import {ReactAbsoluteList} from "./react_absolute_list";
 
 export interface ListModelItem extends Dictionary<any> {
     id: string;
-    index: number;
 }
 
 class ListItemAccessor extends Expression {
