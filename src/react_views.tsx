@@ -18,6 +18,11 @@ export interface ReactViewState {
     className: string;
 }
 
+function isAbsolute(view: View|null) {
+    // @ts-ignore
+    return view instanceof AbsoluteLayout || (view?.hasOwnProperty('axis') && view.axis === null);
+}
+
 export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
     protected readonly  subscription: Subscription = new Subscription();
     readonly viewRef = React.createRef<HTMLDivElement>();
@@ -112,30 +117,30 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         const propNames = props.map(p => p.name);
         const r: CSSProperties = {};
         const view = this.props.parentView;
-        if (view.parent instanceof AbsoluteLayout) {
+        if (isAbsolute(view.parent)) {
             r.position = 'absolute';
         }
 
         _.forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'padding.left':
-                    if (view.parent instanceof AbsoluteLayout && val !== null)
+                    if (isAbsolute(view.parent) && val !== null)
                         r.left = `${val}px`;
                     break;
                 case 'padding.right':
-                    if (view.parent instanceof AbsoluteLayout && val !== null)
+                    if (isAbsolute(view.parent) && val !== null)
                         r.right = `${val}px`;
                     break;
                 case 'padding.top':
-                    if (view.parent instanceof AbsoluteLayout && val !== null)
+                    if (isAbsolute(view.parent) && val !== null)
                         r.top = `${val}px`;
                     break;
                 case 'padding.bottom':
-                    if (view.parent instanceof AbsoluteLayout && val !== null)
+                    if (isAbsolute(view.parent) && val !== null)
                         r.bottom = `${val}px`;
                     break;
                 case 'center.x':
-                    if (view.parent instanceof AbsoluteLayout && val !== null) {
+                    if (isAbsolute(view.parent) && val !== null) {
                         // adjust width
                         let index = propNames.findIndex(x => x === 'padding.left');
                         if (index >= 0 && value[index] !== null) {
@@ -157,7 +162,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     }
                     break;
                 case 'center.y':
-                    if (view.parent instanceof AbsoluteLayout && val !== null) {
+                    if (isAbsolute(view.parent) && val !== null) {
                         // adjust width
                         let index = propNames.findIndex(x => x === 'padding.top');
                         if (index >= 0 && value[index] !== null) {
@@ -187,13 +192,13 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     break;
 
                 case 'size.width':
-                    if (view.parent instanceof AbsoluteLayout && val !== null) {
+                    if (isAbsolute(view.parent) && val !== null) {
                         r.width = `${val * 100}%`;
                     }
                     break;
 
                 case 'size.height':
-                    if (view.parent instanceof AbsoluteLayout && val !== null) {
+                    if (isAbsolute(view.parent) && val !== null) {
                         r.height = `${val * 100}%`;
                     }
                     break;

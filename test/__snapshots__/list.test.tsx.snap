@@ -530,6 +530,106 @@ exports[`lists should fetch values which are observables 2`] = `
 </div>
 `;
 
+exports[`lists should initialize and render absolute list 1`] = `
+<div
+  class="vlayout_absoluteList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="position: absolute; pointer-events: none;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Alex
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Alex
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="position: absolute; pointer-events: none;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Anton
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Anton
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="position: absolute; pointer-events: none;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Denis
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Denis
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="position: absolute; pointer-events: none;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should initialize and render horizontal list 1`] = `
 <div
   class="vlayout_horizontalList"

@@ -991,6 +991,8 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 return new RoundRect();
             case 'progress':
                 return new Progress();
+            case 'absoluteList':
+                return new List(null);
             case 'verticalList':
                 return new List(LinearLayoutAxis.Vertical);
             case 'horizontalList':

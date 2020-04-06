@@ -24,7 +24,7 @@ class App extends Component {
 
         this.engine = new Engine();
 
-        const list = interval(500).pipe(
+        const list = interval(1000).pipe(
             scan((acc: Dictionary<any>, one) => {
                 const record = { user: {id: one, name: `User-${one + 1}`} };
                 return acc.concat([record]);
@@ -40,7 +40,7 @@ class App extends Component {
         this.engine.registerInput(
             "items",
             this.engine.type("MyItems")!,
-            list.pipe(take(10))
+            list.pipe(take(4))
         );
         this.engine.registerInput(
             "test",

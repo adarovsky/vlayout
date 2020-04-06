@@ -9,13 +9,17 @@ import {LinkError} from "./errors";
 import {combineLatest, EMPTY, Observable, of, ReplaySubject} from "rxjs";
 import _ from "lodash";
 import {finalize, map, switchMap} from "rxjs/operators";
-import {createElement} from "react";
-import {ReactHorizontalList, ReactListItemPrototype, ReactVerticalList} from "./react_list";
+import React, {createElement} from "react";
+import {ReactListItemPrototype} from "./react_list";
 import uuid from "uuid";
 import {ListButton} from "./primitives";
+import {ReactHorizontalList} from "./react_horizontal_list";
+import {ReactVerticalList} from "./react_vertical_list";
+import {ReactAbsoluteList} from "./react_absolute_list";
 
 export interface ListModelItem extends Dictionary<any> {
     id: string;
+    index: number;
 }
 
 class ListItemAccessor extends Expression {
@@ -72,6 +76,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         this.line = name.line;
         this.column = name.column;
         this.registerProperty(new ViewProperty('filter', 'Bool'));
+        this.registerProperty(new ViewProperty('index', 'Number'));
     }
 
     private buildAccessors(source: Observable<any>, structure: ListDefinitionItem, prefix: string): void {
@@ -84,6 +89,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
                 this.buildAccessors(source, value, path);
             }
         });
+        this.accessors['index'] = new ListItemAccessor('index', this.engine.numberType());
     }
 
     linkPrototype(scope: Scope, model: Variable): void {
@@ -164,10 +170,12 @@ export class List extends View {
     prototypes: ListItemPrototype[] = [];
     private readonly reusableItems: Dictionary<ListItemPrototype[]> = {};
 
-    constructor(readonly axis: LinearLayoutAxis) {
+    constructor(readonly axis: LinearLayoutAxis|null) {
         super();
-        this.registerProperty(new ViewProperty('spacing', 'Number'));
         this.registerProperty(new ViewProperty('backgroundColor', 'Color'));
+        if (this.axis !== null) {
+            this.registerProperty(new ViewProperty('spacing', 'Number'));
+        }
         if (this.axis === LinearLayoutAxis.Horizontal) {
             this.registerProperty(new ViewProperty('alignment', 'LayoutAlignment'));
         }
@@ -192,6 +200,17 @@ export class List extends View {
             else {
                 throw new LinkError(this.line, this.column, `model should be set for list to work`);
             }
+
+            this.model.sink = this.model.sink.pipe(
+                map((value: Dictionary<ListModelItem>[]) => value.map(
+                    (modelItem, index) => {
+                        const [key, value] = _.toPairs(modelItem)[0];
+                        const ret: { [x: string]: { index: number; id: string; }; } = {};
+                        ret[key] = {...value, index};
+                        return ret;
+                    }
+                ))
+            );
         }
         else {
             throw new LinkError(this.line, this.column, `model should be set for list to work`);
@@ -265,10 +284,23 @@ export class List extends View {
 
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(this.axis == LinearLayoutAxis.Horizontal ? ReactHorizontalList : ReactVerticalList, {parentView: this, key: this.key});
+        let cls;
+        switch (this.axis) {
+            case null:
+                cls = ReactAbsoluteList;
+                break;
+            case LinearLayoutAxis.Horizontal:
+                cls = ReactHorizontalList;
+                break;
+            case LinearLayoutAxis.Vertical:
+                cls = ReactVerticalList;
+                break;
+
+        }
+        return createElement(cls, {parentView: this, key: this.key});
     }
 
     viewType(): string {
-        return (this.axis == LinearLayoutAxis.Horizontal ? 'horizontal' : 'vertical') + 'List';
+        return (this.axis === null ? 'absolute' : this.axis === LinearLayoutAxis.Horizontal ? 'horizontal' : 'vertical') + 'List';
     }
 }

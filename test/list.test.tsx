@@ -92,6 +92,36 @@ describe("lists", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it("should initialize and render absolute list", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.stringType()
+            },
+            newUser: {}
+        });
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            of([
+                {user: {id: 1, name: "Alex"}},
+                {user: {id: 2, name: "Anton"}},
+                {user: {id: 3, name: "Denis"}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={getContent('absoluteList')}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_absoluteList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
     it("model description should support multiple properties", async function () {
         engine.registerList("MyItems", {
             user: {

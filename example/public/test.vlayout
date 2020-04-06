@@ -18,22 +18,38 @@ inputs {
     items: MyItems
 }
 
+properties {
+    celebrityWidth: 0
+    fanWidth: items.count == 0 ? 1 : items.count == 4 ? 0.5 : 1 / items.count
+    fanHeight: items.count == 4 ? 0.5 : 1
+}
+
+functions {
+    fanCenterX(index: Number) => celebrityWidth + fanWidth * ((items.count == 4 && index == 3|4 ? index - 2 : index) - 0.5)
+    fanCenterY(index: Number) => items.count == 4 ? (index == 3|4 ? 0.5+0.25 : 0.25) : 0.5
+    fanColor(index: Number) => switch(index) {
+        case 1 => #00ff00
+        case 2 => #00ffff
+        case 3 => #ffff00
+        case 4 => #cccccc
+        case _ => #000000
+    }
+}
+
 layout {
     layer {
-        roundRect {
-            padding {
-                left: test % 2 == 0 ? 20 : nil
-                right: test % 2 == 0 ? 20 : nil
+        absoluteList {
+            padding { left: 0 right: 0 top: 0 bottom: 0 }
+            model: items
+            user {
+                size { width: fanWidth height: fanHeight }
+                center { x: fanCenterX(index + 1) y: fanCenterY(index + 1) }
+                label {
+                    center { x: 0.5 y: 0.5 }
+                    text: String(index)
+                }
+                backgroundColor: fanColor(index + 1)
             }
-            center {
-                x : test % 2 == 0 ? nil : 0.5
-                y: 0.5
-            }
-            fixedSize {
-                width: test % 2 == 0 ? nil : 120
-                height: 80
-            }
-            backgroundColor: #ffcccc
         }
     }
 }
