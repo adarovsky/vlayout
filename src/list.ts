@@ -98,7 +98,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
             super.link(this);
         }
         else {
-            throw new LinkError(this.line, this.column, `cannot find prototype ${this.name} in model ${model.typeDefinition!.typeName}`);
+            throw new LinkError(this.line, this.column, `cannot find prototype ${this.name.content} in model ${model.typeDefinition!.typeName}`);
         }
     }
 

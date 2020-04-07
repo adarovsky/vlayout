@@ -405,4 +405,66 @@ describe("button", () => {
       </div>
     `);
   });
+
+  it("button should include id", async () => {
+    engine!.registerButton("myButton", async () => {});
+    const wrapper = mount(
+      <Layout
+        engine={engine!}
+        content={`
+            bindings {
+                myButton: button
+            }
+            
+            layout {
+                layer {            
+                    myButton {
+                        id: "my_button"
+                        center { x: 0.5 y: 0.5 }
+                        fixedSize { height: 50 }
+                        imagePosition: .left
+                        image: Image("/logo512.png")
+                        text: "sample"
+                        strokeColor: #ccddee
+                        strokeWidth: 3
+                        contentPadding {
+                            left: 10
+                            right: 10
+                            top: 15
+                            bottom: 10
+                        }
+                    }         
+                }
+             }`}
+      />
+    );
+
+    const node = wrapper.find(".vlayout_button");
+    expect(node.getDOMNode()).toMatchInlineSnapshot(`
+      <div
+        class="vlayout_button"
+        id="my_button"
+        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
+      >
+        <img
+          alt="sample"
+          src="/logo512.png"
+          style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
+        />
+        <span
+          style="text-align: center; flex-grow: 1;"
+        >
+          <span>
+            sample
+            <br />
+          </span>
+        </span>
+        <img
+          alt="sample"
+          src="/logo512.png"
+          style="max-height: 100%; max-width: 100%; object-fit: scale-down; opacity: 0;"
+        />
+      </div>
+    `);
+  });
 });

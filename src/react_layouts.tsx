@@ -27,9 +27,9 @@ class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: n
         return {width: this.state.spacing + 'px'}
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        // @ts-ignore
-        return (<div style={this.style()} className={this.className} ref={this.viewRef}>
+    render() {
+        const extra = _.pick(this.state, 'id');
+        return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .flatMap( (v, index) => {

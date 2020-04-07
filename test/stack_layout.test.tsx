@@ -73,5 +73,25 @@ layout {
         expect(node.getDOMNode()).toHaveProperty('style.min-width', '100%');
         expect(node.getDOMNode()).toHaveProperty('style.min-height', '100%');
     });
+
+    it('should include id', async function () {
+
+        const wrapper = mount(<Layout engine={engine!} content={`
+layout {
+    layer {    
+        stack {
+            id: "stack_id"
+
+            label {
+                text: "text"
+            }
+        }
+    }
+}
+`}/>);
+
+        const node = wrapper.find('#stack_id');
+        expect(node.exists()).toBe(true);
+    });
 });
 
