@@ -324,8 +324,8 @@ describe("button", () => {
     enable.next(false);
     expect(node.getDOMNode()).toMatchInlineSnapshot(`
       <div
-        class="vlayout_button"
-        style="pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: not-allowed; align-items: center; text-decoration: none; flex-direction: row; justify-content: center; opacity: 0.6;"
+        class="vlayout_button disabled"
+        style="pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: not-allowed; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
       >
         <span>
           sample

@@ -197,12 +197,10 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         const s = cloneDeep(this.state.style);
         if (this.state.running) {
             s.cursor = 'progress';
-            s.opacity = 0.6;
             s.pointerEvents = 'none';
         }
         else if (!this.state.enabled) {
             s.cursor = 'not-allowed';
-            s.opacity = 0.6;
             s.pointerEvents = 'none';
         }
         else {
@@ -220,6 +218,12 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
 
     protected isHeightDefined(): boolean {
         return true;
+    }
+
+
+    getClassName(): string {
+        let name = super.getClassName();
+        return name + ((this.state.running || !this.state.enabled) ? ' disabled' : '');
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {

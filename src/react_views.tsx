@@ -266,13 +266,16 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         }
     }
 
-    get className(): string {
+    getClassName(): string {
         if (this.state.className) {
             return 'vlayout_'+this.props.parentView.viewType() + ' ' + this.state.className;
         }
         else {
             return 'vlayout_'+this.props.parentView.viewType();
         }
+    }
+    get className(): string {
+        return this.getClassName();
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {

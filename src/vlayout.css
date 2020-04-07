@@ -9,6 +9,10 @@
     filter: brightness(80%);
 }
 
+.vlayout_button.disabled {
+    opacity: 0.6;
+}
+
 .vlayout_spinner {
     animation: rotate 2s linear infinite;
 }
