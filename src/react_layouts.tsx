@@ -5,7 +5,7 @@ import _ from "lodash";
 import {ReactStackLayout} from "./react_stack";
 import {combineLatest, fromEvent, Observable} from "rxjs";
 import {ElementSize} from "./resize_sensor";
-import {map, switchMap} from "rxjs/operators";
+import {map, startWith, switchMap} from "rxjs/operators";
 import ReactDOM from "react-dom";
 
 
@@ -192,6 +192,7 @@ export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen
             modal.setAttribute('id', 'vlayout_modal');
             document.body.appendChild(modal);
             fromEvent(window, 'resize').pipe(
+                startWith(null),
                 map(() => (document &&
                     document.documentElement &&
                     document.documentElement.clientHeight) ||
