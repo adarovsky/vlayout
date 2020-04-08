@@ -3,7 +3,7 @@ import {Container, ViewProperty} from "./view";
 import React, {CSSProperties} from "react";
 import _ from "lodash";
 import {ReactStackLayout} from "./react_stack";
-import {combineLatest, Observable} from "rxjs";
+import {combineLatest, fromEvent, Observable} from "rxjs";
 import {ElementSize} from "./resize_sensor";
 import {map, switchMap} from "rxjs/operators";
 import ReactDOM from "react-dom";
@@ -191,6 +191,12 @@ export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen
             const modal = document.createElement('div');
             modal.setAttribute('id', 'vlayout_modal');
             document.body.appendChild(modal);
+            fromEvent(window, 'resize').pipe(
+                map(() => (document &&
+                    document.documentElement &&
+                    document.documentElement.clientHeight) ||
+                    window.innerHeight)
+            ).subscribe(height => modal.style.height = `${height}px`);
             return modal;
         }
     }
