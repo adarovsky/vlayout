@@ -25,7 +25,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
         if (!r.position) {
             r.position = 'relative';
         }
-        r.overflowX = 'scroll';
+        r.overflowX = 'auto';
         return r;
     }
 

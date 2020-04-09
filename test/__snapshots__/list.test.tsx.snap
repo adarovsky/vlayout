@@ -3,7 +3,7 @@
 exports[`lists model description should support multiple properties 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -103,7 +103,7 @@ exports[`lists model description should support multiple properties 1`] = `
 exports[`lists should allow nested absolutes and stacks 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -233,7 +233,7 @@ exports[`lists should allow nested absolutes and stacks 1`] = `
 exports[`lists should allow setting fixed width or height for items 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -333,7 +333,7 @@ exports[`lists should allow setting fixed width or height for items 1`] = `
 exports[`lists should fetch values which are observables 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -433,7 +433,7 @@ exports[`lists should fetch values which are observables 1`] = `
 exports[`lists should fetch values which are observables 2`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -633,7 +633,7 @@ exports[`lists should initialize and render absolute list 1`] = `
 exports[`lists should initialize and render horizontal list 1`] = `
 <div
   class="vlayout_horizontalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-x: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-x: auto;"
 >
   <div
     style="position: absolute; display: flex; flex-direction: row; height: 100%; justify-content: unsafe start; align-items: stretch;"
@@ -737,7 +737,7 @@ exports[`lists should initialize and render horizontal list 1`] = `
 exports[`lists should initialize and render vertical list 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -837,7 +837,7 @@ exports[`lists should initialize and render vertical list 1`] = `
 exports[`lists should reuse items on updates 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -868,7 +868,7 @@ exports[`lists should reuse items on updates 1`] = `
 exports[`lists should reuse items on updates 2`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -1007,14 +1007,14 @@ exports[`lists should reuse items properly 2`] = `
 exports[`lists should support dynamic filtering 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 />
 `;
 
 exports[`lists should support dynamic filtering 2`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -1114,7 +1114,7 @@ exports[`lists should support dynamic filtering 2`] = `
 exports[`lists should support dynamic filtering 3`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -1191,7 +1191,7 @@ exports[`lists should support dynamic filtering 3`] = `
 exports[`lists should support external views 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -1306,7 +1306,7 @@ exports[`lists should support external views 1`] = `
 exports[`lists should support filtering 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -1393,7 +1393,7 @@ exports[`lists should support filtering 1`] = `
 exports[`lists should support tappable items 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -1493,7 +1493,7 @@ exports[`lists should support tappable items 1`] = `
 exports[`lists should support text field in items 1`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"
@@ -1569,7 +1569,7 @@ exports[`lists should support text field in items 1`] = `
 exports[`lists should support text field in items 2`] = `
 <div
   class="vlayout_verticalList"
-  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: scroll;"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
 >
   <div
     class="vlayout_listPrototype_user"

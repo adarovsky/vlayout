@@ -14,7 +14,7 @@ export class ReactVerticalList extends ReactList<ReactListState> {
         if (!r.position) {
             r.position = 'relative';
         }
-        r.overflowY = 'scroll';
+        r.overflowY = 'auto';
 
         return r;
     }
