@@ -43,6 +43,7 @@ layout {
             padding { left: 0 right: 0 top: 0 bottom: 0 }
             model: items
             user {
+                class: name
                 size { width: fanWidth height: fanHeight }
                 center { x: fanCenterX(index + 1) y: fanCenterY(index + 1) }
                 label {

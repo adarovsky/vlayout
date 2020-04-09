@@ -1,5 +1,5 @@
 import {ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {List, ListItemPrototype, ListModelItem} from "./list";
+import {List, ListItemPrototype, ListModelItem, prototypeMatch} from "./list";
 import {ReactAbsoluteLayout} from "./react_absolute";
 import _ from "lodash";
 import React from "react";
@@ -10,6 +10,7 @@ import {ListButton, ListTextField} from "./primitives";
 import {ReactButtonBase, ReactButtonState} from "./react_button";
 import {ViewListReference} from "./view_reference";
 import {ReactTextFieldBase, ReactTextFieldState} from "./react_text";
+import {Dictionary} from "./types";
 
 //import FlipMove from "react-flip-move";
 
@@ -20,6 +21,7 @@ export interface ReactListState extends ReactViewState{
 
 export interface ReactListItemState extends ReactContainerState {
     running: boolean;
+    snapshot?: ListModelItem;
 }
 
 export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemState> {
@@ -27,6 +29,12 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
     constructor(props: ReactViewProps) {
         super(props);
         this.state = {...this.state, running: false};
+    }
+
+    componentDidMount(): void {
+        super.componentDidMount();
+        const self = this.props.parentView as ListItemPrototype;
+        this.subscription.add(self.modelItem.subscribe(s => this.setState({snapshot: s})));
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -110,9 +118,22 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
             this.wire('spacing', 'spacing', _.identity);
         }
         this.subscription.add(parentList.model!.sink.subscribe(arr => {
-            const current = this.state.childItems;
-            current.forEach(v => parentList.returnReusableItem(v));
-            const newItems = arr.map( (m: any) => parentList.requestReusableItem(m));
+            const newModelItems = arr as Dictionary<ListModelItem>[];
+            const [reuse, extra] = _.partition(this.state.childItems, x =>
+                newModelItems.findIndex(y => prototypeMatch(x, y)) >= 0);
+
+            extra.forEach(p => parentList.returnReusableItem(p));
+
+            const newItems = newModelItems.map( (m) => {
+                let item = reuse.find(proto => prototypeMatch(proto, m));
+                if (!item) {
+                    item = parentList.requestReusableItem(m)
+                }
+                const [key, v] = _.toPairs(m)[0];
+                item.setModelItem(v as ListModelItem);
+
+                return item;
+            });
             this.setState({childItems: newItems});
         }));
     }

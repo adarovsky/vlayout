@@ -11,11 +11,11 @@ import _ from "lodash";
 import {finalize, map, switchMap} from "rxjs/operators";
 import React, {createElement} from "react";
 import {ReactListItemPrototype} from "./react_list";
-import uuid from "uuid";
 import {ListButton} from "./primitives";
 import {ReactHorizontalList} from "./react_horizontal_list";
 import {ReactVerticalList} from "./react_vertical_list";
 import {ReactAbsoluteList} from "./react_absolute_list";
+import {PrototypeCache} from "./prototype_cache";
 
 export interface ListModelItem extends Dictionary<any> {
     id: string;
@@ -133,7 +133,8 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     }
 
     setModelItem(modelItem: ListModelItem): void {
-        this._key = uuid.v1();
+        // this._key = uuid.v1();
+        this._key = modelItem.id;
         this.modelItem.next(modelItem);
         this.modelItemSnapshot = modelItem;
     }
@@ -164,7 +165,7 @@ export class List extends View {
     tapHandler: Variable|null = null;
     tapCallback: ListClickHandler|null = null;
     prototypes: ListItemPrototype[] = [];
-    private readonly reusableItems: Dictionary<ListItemPrototype[]> = {};
+    private readonly reusableItems = new PrototypeCache(100);
 
     constructor(readonly axis: LinearLayoutAxis|null) {
         super();
@@ -261,29 +262,24 @@ export class List extends View {
         return real;
     }
 
+    availableItems() {
+        return this.reusableItems.keys();
+    }
+
     requestReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
         const [key, value] = _.toPairs(modelItem)[0];
-        let item: ListItemPrototype;
-        if (this.reusableItems[key] && this.reusableItems[key].length > 0) {
-            const f = this.reusableItems[key].findIndex(x => x.modelItemSnapshot?.id === value.id);
-            if (f >= 0) {
-                item = this.reusableItems[key].splice(f, 1)[0];
-            }
-            else {
-                item = this.reusableItems[key].shift()!;
-            }
-        } else {
+        let item = this.reusableItems.take(value.id);
+
+        if (!item || item.name.content != key) {
             item = this.createNewReusableItem(modelItem);
         }
+
         item.setModelItem(value);
         return item;
     }
 
     returnReusableItem(proto: ListItemPrototype) {
-        if (!this.reusableItems[proto.name.content]) {
-            this.reusableItems[proto.name.content] = [];
-        }
-        this.reusableItems[proto.name.content].push(proto);
+        this.reusableItems.put(proto);
     }
 
 
@@ -307,4 +303,9 @@ export class List extends View {
     viewType(): string {
         return (this.axis === null ? 'absolute' : this.axis === LinearLayoutAxis.Horizontal ? 'horizontal' : 'vertical') + 'List';
     }
+}
+
+export function prototypeMatch(proto: ListItemPrototype, modelItem: Dictionary<ListModelItem>) {
+    const [key, value] = _.toPairs(modelItem)[0];
+    return key === proto.name.content && value.id === proto.modelItemSnapshot?.id;
 }
