@@ -88,7 +88,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
             this.subscription.add(prop.value.sink.subscribe( value => {
                 let x: Dictionary<any> = {};
                 x[field] = mapper ? mapper(value) : value;
-                this.setState(s => _.extend(s, x));
+                this.setState(s => _.extend({...s}, x));
             }));
         }
     }

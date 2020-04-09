@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
 import {Engine, Layout} from '@adarovsky/vlayout';
-import {BehaviorSubject, interval} from "rxjs";
-import {scan, take} from "rxjs/operators";
-import {Dictionary} from "../../src/types";
+import {BehaviorSubject, from, interval, timer} from "rxjs";
+import {delayWhen, take} from "rxjs/operators";
 
 interface User {
     id: number;
@@ -24,11 +23,18 @@ class App extends Component {
 
         this.engine = new Engine();
 
-        const list = interval(1000).pipe(
-            scan((acc: Dictionary<any>, one) => {
-                const record = { user: {id: one, name: `User-${one + 1}`} };
-                return acc.concat([record]);
-            }, [])
+        const item = (index: number) => ({
+            user: {
+                id: `user-${index}`,
+                name: `User-${index + 1}`
+            }
+        })
+        const data = [[0], [0, 1], [1], [0, 1], [0, 1, 2], [0, 1, 2, 3], [1, 2, 3], [0, 1, 2, 3]].map(
+            value => value.map(item)
+        )
+
+        const list = from(data).pipe(
+            delayWhen((value, index) => timer(index * 3000))
         );
 
         this.engine.registerList("MyItems", {
@@ -40,7 +46,7 @@ class App extends Component {
         this.engine.registerInput(
             "items",
             this.engine.type("MyItems")!,
-            list.pipe(take(4))
+            list
         );
         this.engine.registerInput(
             "test",

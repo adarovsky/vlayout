@@ -122,6 +122,74 @@ describe("lists", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it("should reuse items properly", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: engine.stringType()
+            }
+        });
+
+        const item = (index: number) => ({
+            user: {
+                id: `user-${index}`,
+                name: `User-${index + 1}`
+            }
+        });
+        const data = [[1], [0, 1]].map(
+            value => value.map(item)
+        );
+
+        const input = new BehaviorSubject(data[0]);
+
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            input
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          absoluteList {
+              padding { left: 10 right: 10 top: 10 bottom: 10 }
+              model: items
+  
+              user {
+                  class: name
+                  label {
+                      text: name
+                  }
+              }
+          }
+      }
+  }`}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_absoluteList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+
+        input.next(data[1]);
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
     it("model description should support multiple properties", async function () {
         engine.registerList("MyItems", {
             user: {

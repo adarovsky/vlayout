@@ -82,8 +82,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
         }
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        // @ts-ignore
+    render() {
         return (<div style={this.style()}
                      className={this.className}
                      ref={this.viewRef} onClick={e => this.handleClick(e)}>

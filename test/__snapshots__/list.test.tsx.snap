@@ -919,6 +919,91 @@ exports[`lists should reuse items on updates 2`] = `
 </div>
 `;
 
+exports[`lists should reuse items properly 1`] = `
+<div
+  class="vlayout_absoluteList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px;"
+>
+  <div
+    class="vlayout_listPrototype_user User-2"
+    style="position: absolute; pointer-events: none;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        User-2
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          User-2
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lists should reuse items properly 2`] = `
+<div
+  class="vlayout_absoluteList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px;"
+>
+  <div
+    class="vlayout_listPrototype_user User-1"
+    style="position: absolute; pointer-events: none;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        User-1
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          User-1
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user User-2"
+    style="position: absolute; pointer-events: none;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        User-2
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          User-2
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should support dynamic filtering 1`] = `
 <div
   class="vlayout_verticalList"

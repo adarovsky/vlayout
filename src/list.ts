@@ -75,7 +75,6 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         this.line = name.line;
         this.column = name.column;
         this.registerProperty(new ViewProperty('filter', 'Bool'));
-        this.registerProperty(new ViewProperty('index', 'Number'));
     }
 
     private buildAccessors(source: Observable<any>, structure: ListDefinitionItem, prefix: string): void {
@@ -95,7 +94,6 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         const modelItem = (model.typeDefinition! as ListDefinition).values[this.name.content];
         if (modelItem) {
             this.buildAccessors(model.sink, modelItem, '');
-            super.link(this);
         }
         else {
             throw new LinkError(this.line, this.column, `cannot find prototype ${this.name.content} in model ${model.typeDefinition!.typeName}`);
@@ -137,7 +135,6 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     setModelItem(modelItem: ListModelItem): void {
         this._key = uuid.v1();
         this.modelItem.next(modelItem);
-        this._key = modelItem.id;
         this.modelItemSnapshot = modelItem;
     }
 
@@ -201,11 +198,11 @@ export class List extends View {
             }
 
             this.model.sink = this.model.sink.pipe(
-                map((value: Dictionary<ListModelItem>[]) => value.map(
+                map((arr: Dictionary<ListModelItem>[]) => arr.map(
                     (modelItem, index) => {
-                        const [key, value] = _.toPairs(modelItem)[0];
+                        const [key, v] = _.toPairs(modelItem)[0];
                         const ret: { [x: string]: { index: number; id: string; }; } = {};
-                        ret[key] = {...value, index};
+                        ret[key] = {...v, index};
                         return ret;
                     }
                 ))
@@ -266,9 +263,18 @@ export class List extends View {
 
     requestReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
         const [key, value] = _.toPairs(modelItem)[0];
-        const item = this.reusableItems[key] && this.reusableItems[key].length > 0 ?
-            this.reusableItems[key].shift()! :
-            this.createNewReusableItem(modelItem);
+        let item: ListItemPrototype;
+        if (this.reusableItems[key] && this.reusableItems[key].length > 0) {
+            const f = this.reusableItems[key].findIndex(x => x.modelItemSnapshot?.id === value.id);
+            if (f >= 0) {
+                item = this.reusableItems[key].splice(f, 1)[0];
+            }
+            else {
+                item = this.reusableItems[key].shift()!;
+            }
+        } else {
+            item = this.createNewReusableItem(modelItem);
+        }
         item.setModelItem(value);
         return item;
     }
@@ -278,7 +284,6 @@ export class List extends View {
             this.reusableItems[proto.name.content] = [];
         }
         this.reusableItems[proto.name.content].push(proto);
-        proto.modelItemSnapshot = null;
     }
 
 

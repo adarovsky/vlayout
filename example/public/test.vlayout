@@ -47,7 +47,7 @@ layout {
                 center { x: fanCenterX(index + 1) y: fanCenterY(index + 1) }
                 label {
                     center { x: 0.5 y: 0.5 }
-                    text: String(index)
+                    text: @("$1 - $2", name, String(index + 1))
                 }
                 backgroundColor: fanColor(index + 1)
             }
