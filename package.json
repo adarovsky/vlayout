@@ -23,7 +23,7 @@
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
-    "coveralls": "tsdx test --coverage && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "tsdx test --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "caching-map": "^1.0.2",
