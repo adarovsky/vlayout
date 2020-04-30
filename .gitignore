@@ -1,4 +1,8 @@
-/node_modules/
 /lib/
 .idea/workspace.xml
 /coverage/
+*.log
+.DS_Store
+node_modules
+.cache
+dist

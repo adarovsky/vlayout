@@ -1,11 +1,11 @@
-import {ViewProperty} from "./view";
-import {combineLatest, of} from "rxjs";
-import React, {CSSProperties} from "react";
-import _ from "lodash";
-import {fontStyle, ReactRoundRect} from "./react_primitives";
-import {ColorContainer, Dictionary} from "./types";
-import {TextField} from "./primitives";
-import {ReactViewProps, ReactViewState} from "./react_views";
+import { ViewProperty } from './view';
+import { combineLatest, of } from 'rxjs';
+import React, { CSSProperties } from 'react';
+import _ from 'lodash';
+import { fontStyle, ReactRoundRect } from './react_primitives';
+import { ColorContainer, Dictionary } from './types';
+import { TextField } from './primitives';
+import { ReactViewProps, ReactViewState } from './react_views';
 
 export interface ReactTextFieldState extends ReactViewState {
     text: string;
@@ -168,7 +168,7 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
                                e.stopPropagation();
                                this.enterPressed();
                                return false;
-                           }}}
+                           } else return undefined;}}
                            ref={this.inputRef}/>;
         if (this.state.type === 'go') {
             input = <form action={'#'}>{input}</form>;

@@ -1,15 +1,19 @@
-import React, {Component} from 'react';
+import * as React from 'react';
 import './App.css';
-import {Engine, Layout} from '@adarovsky/vlayout';
-import {BehaviorSubject, from, interval, timer} from "rxjs";
-import {delayWhen, take} from "rxjs/operators";
+import { Engine, Layout } from '../.';
+import { BehaviorSubject, from, interval, timer } from 'rxjs';
+import { delayWhen, take } from 'rxjs/operators';
+
+import { readFileSync } from 'fs';
+
+const layout = readFileSync(__dirname + '/test.vlayout', 'utf8');
 
 interface User {
     id: number;
     name: BehaviorSubject<string>;
 }
 
-class App extends Component {
+class App extends React.Component {
     private readonly engine: Engine;
 
     state: { layout: Layout | null; error: Error | null; isLoaded: boolean } = {
@@ -59,41 +63,8 @@ class App extends Component {
 
     }
 
-    componentDidMount() {
-        fetch("/test.vlayout")
-            .then(res => res.text())
-            .then(
-                (result) => {
-                    try {
-                        this.setState({
-                            isLoaded: true,
-                            layout: <Layout engine={this.engine} content={result}/>
-                        });
-                    } catch (e) {
-                        this.setState({
-                            isLoaded: true,
-                            error: e
-                        });
-                    }
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            )
-    }
-
     render() {
-        const {error, isLoaded, layout} = this.state;
-        if (error) {
-            return <div>Ошибка: {error.message}</div>;
-        } else if (!isLoaded) {
-            return <div>Loading...</div>;
-        } else {
-            return layout;
-        }
+        return <Layout engine={this.engine} content={layout}/>;
     }
 }
 

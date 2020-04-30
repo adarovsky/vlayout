@@ -1,7 +1,7 @@
-import {Engine} from "./engine";
-import {Bindings} from "./bindings";
-import {LexColor, Lexer, LexIdentifier, LexNumber, LexString, LexToken} from "./lexer";
-import {CompoundPropertyDeclaration, ExpressionPropertyDeclaration, PropertyDeclaration} from "./properties";
+import { Engine } from './engine';
+import { Bindings } from './bindings';
+import { LexColor, Lexer, LexIdentifier, LexNumber, LexString, LexToken } from './lexer';
+import { CompoundPropertyDeclaration, ExpressionPropertyDeclaration, PropertyDeclaration } from './properties';
 import {
     Addition,
     Alternative,
@@ -28,18 +28,26 @@ import {
     SwitchCompare,
     SwitchMatcher,
     TrueMatcher,
-    Variable
-} from "./expression";
-import {AbsoluteLayout, Container, Layer, LayoutView, LinearLayout, LinearLayoutAxis, StackLayout, View} from "./view";
-import {Gradient, ImageView, Label, ListButton, ListTextField, Progress, RoundRect} from "./primitives";
-import {LinkError} from "./errors";
-import React, {Component} from "react";
-import './vlayout.css';
-import {FunctionDeclaration, Functions} from "./functions";
-import {Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition} from "./types";
-import {FunctionImplementationI} from "./builtin_functions";
-import {List, ListItemPrototype} from "./list";
-import _, {extend, isEmpty} from "lodash"
+    Variable,
+} from './expression';
+import {
+    AbsoluteLayout,
+    Container,
+    Layer,
+    LayoutView,
+    LinearLayout,
+    LinearLayoutAxis,
+    StackLayout,
+    View,
+} from './view';
+import { Gradient, ImageView, Label, ListButton, ListTextField, Progress, RoundRect } from './primitives';
+import { LinkError } from './errors';
+import React, { Component } from 'react';
+import { FunctionDeclaration, Functions } from './functions';
+import { Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition } from './types';
+import { FunctionImplementationI } from './builtin_functions';
+import { List, ListItemPrototype } from './list';
+import _, { extend, isEmpty } from 'lodash';
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {

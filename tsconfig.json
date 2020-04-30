@@ -1,32 +1,24 @@
 {
+  "include": ["src", "types"],
   "compilerOptions": {
+    "module": "esnext",
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "outDir": "lib",
+    "lib": ["dom", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
-    "esModuleInterop": true,
+    "importHelpers": true,
     "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
+    "rootDir": "./src",
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": false,
-//    "noEmit": true,
-    "jsx": "react"
-  },
-  "include": [
-    "src"
-  ],
-  "exclude": ["src/*.test.ts", "src/*.test.js", "src/*.test.tsx",
-    "test/setupEnzyme.ts"
-  ]
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*", "node_modules/*"]
+    },
+    "jsx": "react",
+    "esModuleInterop": true
+  }
 }
