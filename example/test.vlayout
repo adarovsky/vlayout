@@ -38,7 +38,8 @@ functions {
 
 layout {
     layer {
-        fullscreen: true
+        z_order: 1
+        fullscreen: false
         absoluteList {
             padding { left: 0 right: 0 top: 0 bottom: 0 }
             model: items
@@ -54,4 +55,13 @@ layout {
             }
         }
     }
+
+    layer {
+        z_order: 2
+        progress {
+            center { x: 0.5 y: 0.5 }
+            fixedSize {  width: 40 height: 40 }
+        }
+    }
+
 }
