@@ -1,15 +1,15 @@
-import {Constant, EnumValue, Expression} from "./expression";
-import {Dictionary} from "./types";
-import {Scope} from "./layout";
-import _ from "lodash";
-import React, {createElement} from "react";
-import {ReactContainer, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import uuid from "uuid";
-import {ReactHorizontalLayout, ReactLayer, ReactTopLayout, ReactVerticalLayout} from "./react_layouts";
-import {LexNumber} from "./lexer";
-import {take} from "rxjs/operators";
-import {ReactStackLayout} from "./react_stack";
-import {ReactAbsoluteLayout} from "./react_absolute";
+import { Constant, EnumValue, Expression } from './expression';
+import { Dictionary } from './types';
+import { Scope } from './layout';
+import _ from 'lodash';
+import React, { createElement } from 'react';
+import { ReactContainer, ReactView, ReactViewProps, ReactViewState } from './react_views';
+import uuid from 'uuid';
+import { ReactHorizontalLayout, ReactLayer, ReactTopLayout, ReactVerticalLayout } from './react_layouts';
+import { LexNumber } from './lexer';
+import { take } from 'rxjs/operators';
+import { ReactStackLayout } from './react_stack';
+import { ReactAbsoluteLayout } from './react_absolute';
 
 export class ViewProperty {
     line: number = 0;
@@ -275,12 +275,16 @@ export class StackLayout extends Container {
 }
 
 export class LayoutView extends Container {
+    constructor(readonly className?: string) {
+        super();
+    }
+
     viewType(): string {
         return 'layout';
     }
 
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactTopLayout, {parentView: this, key: this.key});
+        return createElement(ReactTopLayout, {parentView: this, key: this.key, className: this.className});
     }
 }
 

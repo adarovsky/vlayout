@@ -1,8 +1,8 @@
-import {mount} from "enzyme";
-import {Engine, Layout, pauseObserving, resizeObserver, resumeObserving} from "../src";
-import React from "react";
-import {BehaviorSubject, Subscription, timer} from "rxjs";
-import {observers} from "../src/resize_sensor";
+import { mount } from 'enzyme';
+import { Engine, Layout, pauseObserving, resizeObserver, resumeObserving } from '../src';
+import React from 'react';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { observers } from '../src/resize_sensor';
 
 let engine: Engine = new Engine();
 
@@ -180,6 +180,22 @@ describe("layout", () => {
 
         test1.next(1);
         expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
+    it("should pass classname from top level component to real layout element", async function() {
+        const wrapper = mount(
+          <Layout
+            className={'sample-class'}
+            engine={engine}
+            content={`
+                layout {
+                }`}
+          />
+        );
+
+        let node = wrapper.find(".vlayout_layout");
+        console.log(node.debug())
+        expect(node.hasClass('sample-class')).toBe(true);
     });
 
 });

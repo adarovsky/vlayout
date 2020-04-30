@@ -64,7 +64,7 @@ class App extends React.Component {
     }
 
     render() {
-        return <Layout engine={this.engine} content={layout}/>;
+        return <Layout engine={this.engine} content={layout} className={'asdasdasd'}/>;
     }
 }
 

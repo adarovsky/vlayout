@@ -1,14 +1,16 @@
-import React, {Component, CSSProperties} from "react";
-import {AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty} from "./view";
-import {Dictionary} from "./types";
-import {BehaviorSubject, combineLatest, Observable, of, Subscription} from "rxjs";
-import {map} from "rxjs/operators";
-import _ from "lodash";
-import {ElementSize, resizeObserver} from "./resize_sensor";
+import React, { Component, CSSProperties } from 'react';
+import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
+import { Dictionary } from './types';
+import { BehaviorSubject, combineLatest, Observable, of, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import _ from 'lodash';
+import { ElementSize, resizeObserver } from './resize_sensor';
+import clsx from 'clsx';
 
 export interface ReactViewProps {
     parentView: View;
     key?: string;
+    className?: string;
 }
 
 export interface ReactViewState {
@@ -267,13 +269,9 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     getClassName(): string {
-        if (this.state.className) {
-            return 'vlayout_'+this.props.parentView.viewType() + ' ' + this.state.className;
-        }
-        else {
-            return 'vlayout_'+this.props.parentView.viewType();
-        }
+        return clsx(['vlayout_'+this.props.parentView.viewType(), this.props.className, this.state.className]);
     }
+
     get className(): string {
         return this.getClassName();
     }

@@ -58,6 +58,7 @@ export class ParseError extends Error {
 export interface LayoutProps {
     engine: Engine;
     content: string;
+    className?: string;
 }
 
 interface LayoutState {
@@ -727,7 +728,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
 
     private parseLayout(): LayoutView|null {
         this.matchOrFail('layout');
-        const layout = new LayoutView();
+        const layout = new LayoutView(this.props.className);
         layout.line = this._lastMatched!.line;
         layout.column = this._lastMatched!.column;
 
