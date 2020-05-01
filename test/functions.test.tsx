@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import React from 'react';
 import { ReactLabel } from '../src/react_primitives';
 
-let engine: Engine|null = null;
+let engine: Engine | null = null;
 
 beforeEach(() => {
     engine = new Engine();
@@ -26,7 +26,7 @@ it('function call should give result', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("3");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('3');
 });
 
 it('function call should update', async () => {
@@ -50,10 +50,11 @@ it('function call should update', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
     test1.next(2);
     wrapper.update();
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("3");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('3');
 
 });
 
@@ -81,11 +82,12 @@ it('function call should return bool', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
     test1.next(2);
     test2.next(2);
     wrapper.update();
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("1");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('1');
 });
 
 it('function call should access properties', async () => {
@@ -113,10 +115,11 @@ it('function call should access properties', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
     test1.next(2);
     wrapper.update();
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("13");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('13');
 });
 
 it('function call should be accessible from properties', async () => {
@@ -144,10 +147,11 @@ it('function call should be accessible from properties', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
     test1.next(2);
     wrapper.update();
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("3");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('3');
 });
 
 it('function call should call other functions', async () => {
@@ -171,10 +175,11 @@ it('function call should call other functions', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
     test1.next(2);
     wrapper.update();
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("3");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('3');
 
 });
 
@@ -209,8 +214,8 @@ it('function calls should be independent', async () => {
     expect(wrapper.find('#label2').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
     test1.next(2);
     wrapper.update();
-    expect(wrapper.find('#label1 > span').text()).toBe("3");
-    expect(wrapper.find('#label2 > span').text()).toBe("12");
+    expect(wrapper.find('#label1 > span').text()).toBe('3');
+    expect(wrapper.find('#label2 > span').text()).toBe('12');
 
 });
 
@@ -280,10 +285,11 @@ it('function call should work with variadic functions', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
     test1.next(2);
     wrapper.update();
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("prefix-2");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('prefix-2');
 
 });
 

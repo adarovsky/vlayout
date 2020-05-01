@@ -1,6 +1,6 @@
-import {BehaviorSubject, EMPTY, Observable} from "rxjs";
-import {distinctUntilChanged, finalize, shareReplay, switchMap} from "rxjs/operators";
-import _ from "lodash";
+import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
+import { distinctUntilChanged, finalize, shareReplay, switchMap } from 'rxjs/operators';
+import { isEqual } from 'lodash';
 
 const observers: [Element, Observable<ElementSize>][] = [];
 export {observers};
@@ -114,7 +114,7 @@ export function resizeObserver(element: HTMLDivElement): Observable<ElementSize>
             shrink.remove();
             shrinkChild.remove();
         }
-    }).pipe(distinctUntilChanged(_.isEqual), shareReplay({bufferSize: 1, refCount: true}));
+    }).pipe(distinctUntilChanged(isEqual), shareReplay({bufferSize: 1, refCount: true}));
 
     const observer = paused.pipe(
         distinctUntilChanged(),

@@ -1,6 +1,6 @@
-import {Engine} from "./engine";
-import {View} from "./view";
-import {Button, TextField} from "./primitives";
+import { Engine } from 'engine';
+import { View } from 'view';
+import { Button, TextField } from 'primitives';
 
 export class Bindings {
     constructor(public readonly engine: Engine) {
@@ -31,7 +31,7 @@ export class Bindings {
         }
     }
 
-    viewForKey(key: string): View|null {
+    viewForKey(key: string): View | null {
         return this.engine.viewForKey(key);
     }
 

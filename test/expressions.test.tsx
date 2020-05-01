@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import React from 'react';
 import { ReactLabel } from '../src/react_primitives';
 
-let engine: Engine|null = null;
+let engine: Engine | null = null;
 
 beforeEach(() => {
     engine = new Engine();
@@ -33,14 +33,15 @@ it('expression 1 + 2 should give 3', async () => {
 
     // expect(wrapper.find('.vlayout_label > span').text()).toBe("");
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(1);
     test2.next(2);
 
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("3");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('3');
 });
 
 it('expression 1 + 2 * 3 should give 7', async () => {
@@ -54,7 +55,7 @@ it('expression 1 + 2 * 3 should give 7', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("7");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('7');
 });
 
 it('expression 1+2*3 should give 7', async () => {
@@ -68,7 +69,7 @@ it('expression 1+2*3 should give 7', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("7");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('7');
 });
 
 it('expression a>1&&(b==c) should give true', async () => {
@@ -87,7 +88,7 @@ it('expression a>1&&(b==c) should give true', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 });
 
 it('expression 10 - 6 / 3 should give 8', async () => {
@@ -101,7 +102,7 @@ it('expression 10 - 6 / 3 should give 8', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("8");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('8');
 });
 
 it('expression (10 - 6) % 3 should give 1', async () => {
@@ -115,7 +116,7 @@ it('expression (10 - 6) % 3 should give 1', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("1");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('1');
 });
 
 it('expression 2 < 3 should give true', async () => {
@@ -129,7 +130,7 @@ it('expression 2 < 3 should give true', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 });
 
 it('expression 2 > 3 should give false', async () => {
@@ -143,7 +144,7 @@ it('expression 2 > 3 should give false', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('false');
 });
 
 it('expression 2 <= 2 should give true', async () => {
@@ -157,10 +158,10 @@ it('expression 2 <= 2 should give true', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 });
 
-it('expression 2 >= 3 should give false',  () => {
+it('expression 2 >= 3 should give false', () => {
     const wrapper = mount(<Layout engine={engine!} content={`
      layout {
          layer {            
@@ -171,7 +172,7 @@ it('expression 2 >= 3 should give false',  () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('false');
 });
 
 it('expression "abc" + "def" should give "abcdef"', async () => {
@@ -194,13 +195,14 @@ it('expression "abc" + "def" should give "abcdef"', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
-    test1.next("abc");
-    test2.next("def");
+    test1.next('abc');
+    test2.next('def');
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("abcdef");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('abcdef');
 });
 
 it('expression "abc" - "def" should fail', async () => {
@@ -246,13 +248,14 @@ it('expression 5 - 3 should give 2', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(5);
     test2.next(3);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("2");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('2');
 });
 
 it('conditional expression should work', async () => {
@@ -275,19 +278,20 @@ it('conditional expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(5);
     test2.next(3);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("not equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('not equal');
 
     test1.next(5);
     test2.next(5);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('equal');
 });
 
 it('not equal expression should work', async () => {
@@ -310,20 +314,21 @@ it('not equal expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
     wrapper.update();
 
     test1.next(5);
     test2.next(3);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("not equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('not equal');
 
     test1.next(5);
     test2.next(5);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("equal");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('equal');
 });
 
 it('boolean and expression should work', async () => {
@@ -346,19 +351,20 @@ it('boolean and expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(true);
     test2.next(false);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('false');
 
     test1.next(true);
     test2.next(true);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 });
 
 it('boolean or expression should work', async () => {
@@ -381,28 +387,29 @@ it('boolean or expression should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(true);
     test2.next(false);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 
     test1.next(true);
     test2.next(true);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 
     test1.next(false);
     test2.next(false);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('false');
 });
 
 it('compare against set should work', async () => {
-    engine!.registerEnum('TestEnum', {'key1': 1, 'key2': 2, 'key3': 3});
+    engine!.registerEnum('TestEnum', { 'key1': 1, 'key2': 2, 'key3': 3 });
     const test1 = new Subject<number>();
     engine!.registerInput('test1', engine!.type('TestEnum')!, test1);
     const wrapper = mount(<Layout engine={engine!} content={`
@@ -419,26 +426,27 @@ it('compare against set should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(1);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 
     test1.next(2);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 
     test1.next(3);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('false');
 });
 
 it('compare not equal against set should work', async () => {
-    engine!.registerEnum('TestEnum', {'key1': 1, 'key2': 2, 'key3': 3});
+    engine!.registerEnum('TestEnum', { 'key1': 1, 'key2': 2, 'key3': 3 });
     const test1 = new Subject<number>();
     engine!.registerInput('test1', engine!.type('TestEnum')!, test1);
     const wrapper = mount(<Layout engine={engine!} content={`
@@ -455,26 +463,27 @@ it('compare not equal against set should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(1);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('false');
 
     test1.next(2);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("false");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('false');
 
     test1.next(3);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("true");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('true');
 });
 
 it('should raise error if enum value is not found', async () => {
-    engine!.registerEnum('TestEnum', {'key1': 1, 'key2': 2, 'key3': 3});
+    engine!.registerEnum('TestEnum', { 'key1': 1, 'key2': 2, 'key3': 3 });
     const test1 = new Subject<number>();
     engine!.registerInput('test1', engine!.type('TestEnum')!, test1);
     const wrapper = () => shallow(<Layout engine={engine!} content={`
@@ -546,7 +555,7 @@ it('should fail on unknown function', async () => {
 });
 
 it('compare with nil should work', async () => {
-    const test1 = new Subject<number|null>();
+    const test1 = new Subject<number | null>();
     engine!.registerInput('test1', engine!.numberType(), test1);
     const wrapper = mount(<Layout engine={engine!} content={`
      inputs {
@@ -562,16 +571,17 @@ it('compare with nil should work', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(5);
     wrapper.update();
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("not nil");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('not nil');
 
     test1.next(null);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("nil");
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('nil');
 });
 
 it('nil should not cast to string', async () => {

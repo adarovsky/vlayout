@@ -28,8 +28,8 @@
   "dependencies": {
     "caching-map": "^1.0.2",
     "clsx": "^1.1.0",
-    "lodash-es": "^4.17.15",
     "lodash": "^4.17.15",
+    "lodash-es": "^4.17.15",
     "uuid": "^3.4.0"
   },
   "peerDependencies": {
