@@ -1,16 +1,16 @@
-import {ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {List, ListItemPrototype, ListModelItem, prototypeMatch} from "./list";
-import {ReactAbsoluteLayout} from "./react_absolute";
-import _ from "lodash";
-import React from "react";
-import {Container, LinearLayoutAxis, StackLayout, ViewProperty} from "./view";
-import {BehaviorSubject, Subscription} from "rxjs";
-import {fromPromise} from "rxjs/internal-compatibility";
-import {ListButton, ListTextField} from "./primitives";
-import {ReactButtonBase, ReactButtonState} from "./react_button";
-import {ViewListReference} from "./view_reference";
-import {ReactTextFieldBase, ReactTextFieldState} from "./react_text";
-import {Dictionary} from "./types";
+import { ReactContainerState, ReactView, ReactViewProps, ReactViewState } from './react_views';
+import { List, ListItemPrototype, ListModelItem, prototypeMatch } from './list';
+import { ReactAbsoluteLayout } from './react_absolute';
+import _ from 'lodash';
+import React from 'react';
+import { Container, LinearLayoutAxis, ViewProperty } from './view';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { fromPromise } from 'rxjs/internal-compatibility';
+import { ListButton, ListTextField } from './primitives';
+import { ReactButtonBase, ReactButtonState } from './react_button';
+import { ViewListReference } from './view_reference';
+import { ReactTextFieldBase, ReactTextFieldState } from './react_text';
+import { Dictionary } from './types';
 
 //import FlipMove from "react-flip-move";
 
@@ -93,7 +93,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
     render() {
         return (<div style={this.style()}
                      className={this.className}
-                     ref={this.viewRef} onClick={e => this.handleClick(e)}>
+                     ref={this.setViewRef} onClick={e => this.handleClick(e)}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .map( v => v.target )}
@@ -155,36 +155,36 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
     }
 
     protected updateSubviewPositions(): void {
-        const self = this.viewRef.current;
-        if (!self) return;
-
-        this.subviewSubscription.unsubscribe();
-        const isInStack = this.props.parentView.parent instanceof StackLayout;
-        this.subviewSubscription = this.intrinsicSize()
-            .subscribe(size => {
-                    if (size.width > 0 && !this.isWidthDefined()) {
-                        self.style.minWidth = size.width + 'px';
-                    }
-                    else {
-                        if (isInStack) {
-                            self.style.minWidth = '100%';
-                        } else {
-                            delete self.style.minWidth;
-                        }
-                    }
-
-                    if (size.height > 0 && !this.isHeightDefined()) {
-                        self.style.minHeight = size.height + 'px';
-                    }
-                    else {
-                        if (isInStack) {
-                            self.style.minHeight = '100%';
-                        } else {
-                            delete self.style.minHeight;
-                        }
-                    }
-                }
-            );
+        // const self = this.viewRef.current;
+        // if (!self) return;
+        //
+        // this.subviewSubscription.unsubscribe();
+        // const isInStack = this.props.parentView.parent instanceof StackLayout;
+        // this.subviewSubscription = this.intrinsicSize()
+        //     .subscribe(size => {
+        //             if (size.width > 0 && !this.isWidthDefined()) {
+        //                 self.style.minWidth = size.width + 'px';
+        //             }
+        //             else {
+        //                 if (isInStack) {
+        //                     self.style.minWidth = '100%';
+        //                 } else {
+        //                     delete self.style.minWidth;
+        //                 }
+        //             }
+        //
+        //             if (size.height > 0 && !this.isHeightDefined()) {
+        //                 self.style.minHeight = size.height + 'px';
+        //             }
+        //             else {
+        //                 if (isInStack) {
+        //                     self.style.minHeight = '100%';
+        //                 } else {
+        //                     delete self.style.minHeight;
+        //                 }
+        //             }
+        //         }
+        //     );
     }
 }
 

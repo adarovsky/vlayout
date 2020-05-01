@@ -1,6 +1,4 @@
 bindings {
-    nameField: listTextField
-    textField: textField
 }
 
 types {
@@ -16,6 +14,7 @@ types {
 
 inputs {
     items: MyItems
+    text: String
 }
 
 properties {
@@ -41,6 +40,7 @@ layout {
         z_order: 1
         fullscreen: false
         absoluteList {
+            alpha: 0
             padding { left: 0 right: 0 top: 0 bottom: 0 }
             model: items
             user {
@@ -58,9 +58,10 @@ layout {
 
     layer {
         z_order: 2
-        progress {
+        label {
+            //class: "placeholder"
             center { x: 0.5 y: 0.5 }
-            fixedSize {  width: 40 height: 40 }
+            text: text
         }
     }
 

@@ -1,11 +1,11 @@
 import { ViewProperty } from './view';
 import { combineLatest, of } from 'rxjs';
 import React, { CSSProperties } from 'react';
-import _ from 'lodash';
 import { fontStyle, ReactRoundRect } from './react_primitives';
 import { ColorContainer, Dictionary } from './types';
 import { TextField } from './primitives';
 import { ReactViewProps, ReactViewState } from './react_views';
+import { extend, omit, pick } from 'lodash';
 
 export interface ReactTextFieldState extends ReactViewState {
     text: string;
@@ -107,9 +107,9 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
     private textFieldStyle(): CSSProperties {
         const r: CSSProperties = {minWidth: 0, width: '100%'};
 
-        _.extend(r, this.state.fontStyle);
-        _.extend(r, this.state.colorStyle);
-        _.extend(r, _.pick(this.state.style,
+        extend(r, this.state.fontStyle);
+        extend(r, this.state.colorStyle);
+        extend(r, pick(this.state.style,
             'borderColor', 'borderStyle', 'borderRadius', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom'));
         if (!this.state.style.borderColor && !this.state.style.borderStyle && !this.state.style.borderRadius) {
             r.border = 'none';
@@ -124,7 +124,7 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
 
 
     style(): React.CSSProperties {
-        return _.omit(this.state.style,
+        return omit(this.state.style,
             'borderColor', 'borderStyle', 'borderRadius', 'paddingLeft',
             'paddingRight', 'paddingTop', 'paddingBottom');
     }
@@ -173,11 +173,11 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
         if (this.state.type === 'go') {
             input = <form action={'#'}>{input}</form>;
         }
-        const extra = _.pick(this.state, 'id');
+        const extra = pick(this.state, 'id');
         return (<div {...extra}
                      style={this.style()}
                      className={this.className}
-                     ref={this.viewRef}>
+                     ref={this.setViewRef}>
             {input}
         </div>);
     }

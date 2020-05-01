@@ -1,34 +1,42 @@
-import React, {CSSProperties, RefObject} from "react";
-import _ from "lodash";
-import {ViewProperty} from "./view";
-import {ColorContainer, FontContainer, ImageContainer} from "./types";
-import {ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {combineLatest, Observable, of} from "rxjs";
-import {map, shareReplay, switchMap} from "rxjs/operators";
-import {ElementSize, resizeObserver} from "./resize_sensor";
+import React, { CSSProperties } from 'react';
+import { cloneDeep, forEach, identity, pick } from 'lodash';
+import { ViewProperty } from './view';
+import { ColorContainer, FontContainer, ImageContainer } from './types';
+import { ReactView, ReactViewProps, ReactViewState } from './react_views';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { filter, shareReplay, switchMap } from 'rxjs/operators';
+import { ElementSize, resizeObserver } from './resize_sensor';
 import deleteProperty = Reflect.deleteProperty;
 
 interface ReactLabelState extends ReactViewState {
     style: CSSProperties;
-    text: string;
+    text: string|null;
     maxLines: number;
 }
 
 export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
-    readonly shadowRef = React.createRef<HTMLDivElement>();
+    readonly _shadowRef = new BehaviorSubject<HTMLDivElement|null>(null);
+    setShadowRef(e: HTMLDivElement|null) {
+        if (e) this._shadowRef.next(e);
+    }
+    get shadowRef() {
+        return this._shadowRef.pipe(filter(x => x !== null)) as Observable<HTMLDivElement>;
+    }
 
     constructor(props: ReactViewProps) {
         super(props);
         this.state = {...this.state,
-            text: '',
+            text: null,
             maxLines: 0
         }
+
+        this.setShadowRef = this.setShadowRef.bind(this);
     }
 
     componentDidMount(): void {
         super.componentDidMount();
-        this.wire('text', 'text', _.identity);
-        this.wire('maxLines', 'maxLines', _.identity);
+        this.wire('text', 'text', identity);
+        this.wire('maxLines', 'maxLines', identity);
     }
 
     styleProperties(): ViewProperty[] {
@@ -38,7 +46,7 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         let maxLines = 0;
-        _.forEach(value, (val, index) => {
+        forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'textColor':
                     r.color = val.toString();
@@ -88,24 +96,25 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         return r;
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+    render() {
+        const extra = pick(this.state, 'id');
+        const text = this.state.text ?? 'placeholder';
         const content = this.state.maxLines === 1 ?
-            <span style={{whiteSpace: 'nowrap'}}>{this.state.text}</span>
-            : this.state.text.split('\n').map(function (item, key) {
+            <span style={{whiteSpace: 'nowrap'}}>{text}</span>
+            : text.split('\n').map(function (item, key) {
             return <span key={key}>{item}<br/></span>;
         });
-        const extra = _.pick(this.state, 'id');
 
-        return (<div style={this.style()} className={this.className} ref={this.viewRef as RefObject<HTMLDivElement>} {...extra}>
-            {content}
-            <div style={this.shadowStyle()} className={'vlayout_'+this.props.parentView.viewType()+'_shadow'} ref={this.shadowRef}>
+        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
+            {this.state.text === null ? <div className={'vlayout_placeholder'}/> : content}
+            <div style={this.shadowStyle()} key='shadow' className={'vlayout_'+this.props.parentView.viewType()+'_shadow'} ref={this.setShadowRef}>
                 {content}
             </div>
         </div>);
     }
 
     private shadowStyle(): CSSProperties {
-        const r = _.cloneDeep(this.style());
+        const r = cloneDeep(this.style());
         for (let t of ['width', 'height', 'top', 'bottom', 'left', 'right']) {
             deleteProperty(r, t);
         }
@@ -117,40 +126,17 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        return (this.props.parentView.property('alpha').value?.sink ?? of(1)).pipe(
-            switchMap(a => {
-                if (a > 0) {
-                    let self = this.shadowRef.current;
-                    if (self) {
-                        return resizeObserver(self).pipe(
-                            map( size => {
-                                return {
-                                    width: size.width,
-                                    height: size.height
-                                };
-                            })
-                        );
-                    }
-                    else {
-                        console.log('returning stub of 0, 0, because ref is not set: ', this.props.parentView.toString());
-                        return of({width: 0, height: 0});
-                    }
-                }
-                else {
-                    console.log('returning stub of 0, 0, because item is not visible: ', this.props.parentView.toString());
-                    return of({width: 0, height: 0});
-                }
-            })
-        )
+        return this.shadowRef.pipe(
+            switchMap(self => resizeObserver(self))
+        );
     }
 
-
     protected isWidthDefined(): boolean {
-        return true;
+        return false;
     }
 
     protected isHeightDefined(): boolean {
-        return true;
+        return false;
     }
 }
 
@@ -194,8 +180,8 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} ref={this.viewRef} className={this.className} {...extra}>
+        const extra = pick(this.state, 'id');
+        return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
             <img style={this.state.innerStyle}
                  src={this.state.image.src}
                  alt=""/>
@@ -223,7 +209,7 @@ export class ReactGradient extends ReactView<ReactViewProps, ReactViewState> {
         let startColor = new ColorContainer(0, 0, 0),
             endColor = new ColorContainer(0, 0, 0),
             orientation: string = '270deg';
-        _.forEach(value, (val, index) => {
+        forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'startColor':
                     startColor = val;
@@ -263,17 +249,11 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
     get cornerRadiusWatcher(): Observable<[ElementSize, number]> {
         if (!this._cornerRadiusWatcher) {
             const p = this.props.parentView.property('cornerRadius');
-            let self = this.viewRef.current;
             if (p.value) {
-                if (self) {
-                    this._cornerRadiusWatcher = combineLatest([resizeObserver(self), p.value.sink as Observable<number>]).pipe(
-                        shareReplay({refCount: true, bufferSize: 1})
-                    );
-                    return this._cornerRadiusWatcher;
-                }
-                else {
-                    return of([{width: 0, height: 0}, 0]);
-                }
+                this._cornerRadiusWatcher = combineLatest([this.intrinsicSize(), p.value.sink as Observable<number>]).pipe(
+                    shareReplay({refCount: true, bufferSize: 1})
+                );
+                return this._cornerRadiusWatcher;
             }
             else {
                 this._cornerRadiusWatcher = of([{width: 0, height: 0}, 0]);
@@ -292,8 +272,8 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
 
         const p = this.props.parentView.property('cornerRadius');
         if (p.value) {
-            let self = this.viewRef.current as HTMLElement;
-            this.subscription.add(this.cornerRadiusWatcher.subscribe(x=> {
+            this.subscription.add(combineLatest([this.cornerRadiusWatcher, this.viewRef]).subscribe(
+                ([x, self])=> {
                 if (x[1] <= 0.5) {
                     self.style.borderRadius = Math.min(x[0].width, x[0].height) * x[1] + 'px';
                 }
@@ -303,7 +283,7 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        _.forEach(value, (val, index) => {
+        forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'strokeColor':
                     r.borderColor = val.toString();
@@ -355,8 +335,8 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} ref={this.viewRef} className={this.className} {...extra}>
+        const extra = pick(this.state, 'id');
+        return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
             <svg className="vlayout_spinner" viewBox="0 0 50 50">
                 <circle className="path" cx="50%" cy="50%" r="40%" fill="none" strokeWidth="2" stroke={this.state.progressColor}/>
             </svg>

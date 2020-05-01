@@ -1,11 +1,11 @@
 import React, { Component, CSSProperties } from 'react';
 import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
 import { Dictionary } from './types';
-import { BehaviorSubject, combineLatest, Observable, of, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
-import _ from 'lodash';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
+import { extend, forEach, identity, isEqual, pick } from 'lodash';
 
 export interface ReactViewProps {
     parentView: View;
@@ -27,7 +27,14 @@ function isAbsolute(view: View|null) {
 
 export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
     protected readonly  subscription: Subscription = new Subscription();
-    readonly viewRef = React.createRef<HTMLDivElement>();
+    readonly _viewRef = new BehaviorSubject<HTMLDivElement|null>(null);
+    setViewRef(e: HTMLDivElement|null) {
+        this._viewRef.next(e);
+    }
+    get viewRef() {
+        return this._viewRef.pipe(filter(x => x !== null)) as Observable<HTMLDivElement>;
+    }
+
     componentDidMount(): void {
         this.props.parentView.instance = this;
 
@@ -42,31 +49,45 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
             }
         ));
 
+
+        const isInStack = this.props.parentView.parent instanceof StackLayout;
+        this.subscription.add(combineLatest([this.intrinsicSize(), this.viewRef])
+            .subscribe(([size, self]) => {
+                if (size.width > 0 && !this.isWidthDefined()) {
+                    self.style.minWidth = size.width + 'px';
+                } else {
+                    self.style.minWidth = isInStack ? '100%' : '';
+                }
+
+                if (size.height > 0 && !this.isHeightDefined()) {
+                    self.style.minHeight = size.height + 'px';
+                } else {
+                    self.style.minHeight = isInStack ? '100%' : '';
+                }
+            }));
+
         const p = this.props.parentView.property('aspect');
         if (p.value) {
-            let self = this.viewRef.current;
-            if (self) {
-                this.subscription.add(combineLatest([resizeObserver(self), p.value.sink]).subscribe(([size, aspect]) => {
+            this.subscription.add(combineLatest([this.intrinsicSize(), p.value.sink, this.viewRef])
+                .subscribe(([size, aspect, self]) => {
                     this.setState({aspect: aspect});
-                    if (self &&  this.state.style.width && !this.state.style.height) {
+                    if (this.state.style.width && !this.state.style.height) {
                         self.style.height = aspect !== null ? `${size.width / aspect}px` : '';
-                    } else if (self && !this.state.style.width && this.state.style.height) {
+                    } else if (!this.state.style.width && this.state.style.height) {
                         self.style.width = aspect !== null ? `${size.height * aspect}px` : '';
-                    }
-                    else {
-                        if (!this.state.style.width && self?.style.width) {
+                    } else {
+                        if (!this.state.style.width && self.style.width) {
                             self.style.width = '';
                         }
-                        if (!this.state.style.height && self?.style.height) {
+                        if (!this.state.style.height && self.style.height) {
                             self.style.height = '';
                         }
                     }
                 }));
-            }
         }
 
-        this.wire('id', 'id', _.identity);
-        this.wire('class', 'className', _.identity);
+        this.wire('id', 'id', identity);
+        this.wire('class', 'className', identity);
     }
 
     componentWillUnmount(): void {
@@ -82,6 +103,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
         // @ts-ignore
         this.state = {style: {}, aspect: null, id: id, className: ''};
+        this.setViewRef = this.setViewRef.bind(this);
     }
 
     wire(name: string, field: string, mapper: (v: any) => any) {
@@ -90,7 +112,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
             this.subscription.add(prop.value.sink.subscribe( value => {
                 let x: Dictionary<any> = {};
                 x[field] = mapper ? mapper(value) : value;
-                this.setState(s => _.extend({...s}, x));
+                this.setState(s => extend({...s}, x));
             }));
         }
     }
@@ -123,7 +145,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
             r.position = 'absolute';
         }
 
-        _.forEach(value, (val, index) => {
+        forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'padding.left':
                     if (isAbsolute(view.parent) && val !== null)
@@ -252,20 +274,16 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        let self = this.viewRef.current;
-        if (self) {
-            return resizeObserver(self).pipe(
+        return this.viewRef.pipe(
+            switchMap(self => resizeObserver(self).pipe(
                 map( size => {
                     return {
                         width: this.isWidthDefined() ? size.width : 0,
                         height: this.isHeightDefined() ? size.height : 0
                     };
-                })
-            );
-        }
-        else {
-            return of({width: 0, height: 0});
-        }
+                }))
+            )
+        );
     }
 
     getClassName(): string {
@@ -277,8 +295,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} id={this.state.id} className={this.className} ref={this.viewRef} {...extra}/>);
+        const extra = pick(this.state, 'id');
+        return (<div style={this.style()} id={this.state.id} className={this.className} ref={this.setViewRef} {...extra}/>);
     }
 
     protected isWidthDefined(): boolean {
@@ -329,7 +347,7 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
         const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink);
 
         this.subscription.add(combineLatest(props).subscribe( value => {
-            this.setState(s => _.extend(s, {childrenVisible: value}));
+            this.setState(s => extend(s, {childrenVisible: value}));
             // this.updateSubviewPositions();
         }));
     }
@@ -339,43 +357,17 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
         super.componentWillUnmount();
     }
 
-    componentDidUpdate(prevProps: Readonly<ReactViewProps>, prevState: Readonly<ReactContainerState>, snapshot?: any): void {
+    componentDidUpdate(): void {
         const children = (this.props.parentView as Container).views
             .map(v => v.instance)
             .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
-        if (!_.isEqual(this.children.value, children)) {
+        if (!isEqual(this.children.value, children)) {
             this.children.next(children);
             this.updateSubviewPositions();
         }
     }
 
     protected updateSubviewPositions(): void {
-        const self = this.viewRef.current;
-        if (!self) {
-            console.warn('no reference to instance for', this.props.parentView.toString());
-            return;
-        }
-
-        this.subviewSubscription.unsubscribe();
-        const isInStack = this.props.parentView.parent instanceof StackLayout;
-        this.subviewSubscription = this.intrinsicSize()
-            .subscribe(size => {
-
-                if (size.width > 0 && !this.isWidthDefined()) {
-                        self.style.minWidth = size.width + 'px';
-                    }
-                    else {
-                        self.style.minWidth = isInStack ? '100%' : '';
-                    }
-
-                    if (size.height > 0 && !this.isHeightDefined()) {
-                        self.style.minHeight = size.height + 'px';
-                    }
-                    else {
-                        self.style.minHeight = isInStack ? '100%' : '';
-                    }
-                }
-            );
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -384,9 +376,9 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
         return r;
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
+    render() {
+        const extra = pick(this.state, 'id');
+        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
                 .map( v => v.target )}

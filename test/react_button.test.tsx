@@ -1,31 +1,31 @@
-import React from "react";
-import {Engine, Layout} from "../src";
-import {asyncScheduler, scheduled, Subject} from "rxjs";
-import {mount} from "enzyme";
-import sinon from "sinon";
-import {ReactButton} from "../src/react_button";
+import React from 'react';
+import { Engine, Layout } from '../src';
+import { asyncScheduler, scheduled, Subject } from 'rxjs';
+import { mount } from 'enzyme';
+import sinon from 'sinon';
+import { ReactButton } from '../src/react_button';
 
 let engine: Engine | null = null;
 
 function wait() {
-  return scheduled([], asyncScheduler).toPromise();
+    return scheduled([], asyncScheduler).toPromise();
 }
 
-describe("button", () => {
-  beforeEach(() => {
-    engine = new Engine();
-  });
+describe('button', () => {
+    beforeEach(() => {
+        engine = new Engine();
+    });
 
-  it("cleans up on unmount", async () => {
-    const subject = new Subject<number>();
-    engine!.registerInput("test", engine!.numberType(), subject);
-    engine!.registerButton("myButton", async () => {});
-    const spy = sinon.spy(ReactButton.prototype, "setState");
-    subject.next(2);
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('cleans up on unmount', async () => {
+        const subject = new Subject<number>();
+        engine!.registerInput('test', engine!.numberType(), subject);
+        engine!.registerButton('myButton', async () => {});
+        const spy = sinon.spy(ReactButton.prototype, 'setState');
+        subject.next(2);
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
      bindings {
         myButton: button
      }
@@ -40,35 +40,35 @@ describe("button", () => {
              }
          }
      }`}
-      />
-    );
-    subject.next(3);
+            />
+        );
+        subject.next(3);
 
-    const callCount = spy.callCount;
+        const callCount = spy.callCount;
 
-    wrapper.unmount();
+        wrapper.unmount();
 
-    subject.next(0);
+        subject.next(0);
 
-    const t = new Subject<void>();
-    setTimeout(() => t.complete(), 1);
-    await t;
+        const t = new Subject<void>();
+        setTimeout(() => t.complete(), 1);
+        await t;
 
-    expect(spy.callCount).toBe(callCount);
-    spy.restore();
-  });
+        expect(spy.callCount).toBe(callCount);
+        spy.restore();
+    });
 
-  it("button cleans up on unmount if click is delayed", async () => {
-    let done: (() => void) | null = null;
-    engine!.registerButton(
-      "myButton",
-      () => new Promise<void>(x => (done = x))
-    );
-    const spy = sinon.spy(ReactButton.prototype, "setState");
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('button cleans up on unmount if click is delayed', async () => {
+        let done: (() => void) | null = null;
+        engine!.registerButton(
+            'myButton',
+            () => new Promise<void>(x => (done = x))
+        );
+        const spy = sinon.spy(ReactButton.prototype, 'setState');
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
      bindings {
         myButton: button
      }
@@ -81,29 +81,29 @@ describe("button", () => {
              }
          }
      }`}
-      />
-    );
+            />
+        );
 
-    wrapper.find(".vlayout_button").simulate("click");
-    // @ts-ignore
-    const callCount = spy.callCount;
+        wrapper.find('.vlayout_button').simulate('click');
+        // @ts-ignore
+        const callCount = spy.callCount;
 
-    wrapper.unmount();
-    done!();
+        wrapper.unmount();
+        done!();
 
-    // wait for async promise then completes
-    await wait();
-    // @ts-ignore
-    expect(spy.callCount).toBe(callCount);
-    spy.restore();
-  });
+        // wait for async promise then completes
+        await wait();
+        // @ts-ignore
+        expect(spy.callCount).toBe(callCount);
+        spy.restore();
+    });
 
-  it("button image fits inside", async () => {
-    engine!.registerButton("myButton", async () => {});
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('button image fits inside', async () => {
+        engine!.registerButton('myButton', async () => {});
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
             bindings {
                 myButton: button
             }
@@ -127,34 +127,48 @@ describe("button", () => {
                     }         
                 }
              }`}
-      />
-    );
+            />
+        );
 
-    const node = wrapper.find(".vlayout_button");
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
-      >
-        <img
-          alt="sample"
-          src="/logo512.png"
-          style="margin-right: 20px; max-height: 100%; max-width: 100%; object-fit: scale-down;"
-        />
-        <span>
-          sample
-          <br />
-        </span>
-      </div>
-    `);
-  });
+        const node = wrapper.find('.vlayout_button');
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <img
+                alt="sample"
+                src="/logo512.png"
+                style="margin-right: 20px; max-height: 100%; max-width: 100%; object-fit: scale-down;"
+              />
+              <span>
+                sample
+                <br />
+              </span>
+            </div>
+        `);
+    });
 
-  it("button alignment to left should work", async () => {
-    engine!.registerButton("myButton", async () => {});
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('button alignment to left should work', async () => {
+        engine!.registerButton('myButton', async () => {});
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
             bindings {
                 myButton: button
             }
@@ -178,43 +192,57 @@ describe("button", () => {
                     }         
                 }
              }`}
-      />
-    );
+            />
+        );
 
-    const node = wrapper.find(".vlayout_button");
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
-      >
-        <img
-          alt="sample"
-          src="/logo512.png"
-          style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
-        />
-        <span
-          style="text-align: center; flex-grow: 1;"
-        >
-          <span>
-            sample
-            <br />
-          </span>
-        </span>
-        <img
-          alt="sample"
-          src="/logo512.png"
-          style="max-height: 100%; max-width: 100%; object-fit: scale-down; opacity: 0;"
-        />
-      </div>
-    `);
-  });
+        const node = wrapper.find('.vlayout_button');
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <img
+                alt="sample"
+                src="/logo512.png"
+                style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
+              />
+              <span
+                style="text-align: center; flex-grow: 1;"
+              >
+                <span>
+                  sample
+                  <br />
+                </span>
+              </span>
+              <img
+                alt="sample"
+                src="/logo512.png"
+                style="max-height: 100%; max-width: 100%; object-fit: scale-down; opacity: 0;"
+              />
+            </div>
+        `);
+    });
 
-  it("button alignment to right should work", async () => {
-    engine!.registerButton("myButton", async () => {});
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('button alignment to right should work', async () => {
+        engine!.registerButton('myButton', async () => {});
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
             bindings {
                 myButton: button
             }
@@ -238,45 +266,59 @@ describe("button", () => {
                     }         
                 }
              }`}
-      />
-    );
+            />
+        );
 
-    const node = wrapper.find(".vlayout_button");
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row-reverse; justify-content: stretch;"
-      >
-        <img
-          alt="sample"
-          src="/logo512.png"
-          style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
-        />
-        <span
-          style="text-align: center; flex-grow: 1;"
-        >
-          <span>
-            sample
-            <br />
-          </span>
-        </span>
-        <img
-          alt="sample"
-          src="/logo512.png"
-          style="max-height: 100%; max-width: 100%; object-fit: scale-down; opacity: 0;"
-        />
-      </div>
-    `);
-  });
+        const node = wrapper.find('.vlayout_button');
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row-reverse; justify-content: stretch;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <img
+                alt="sample"
+                src="/logo512.png"
+                style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
+              />
+              <span
+                style="text-align: center; flex-grow: 1;"
+              >
+                <span>
+                  sample
+                  <br />
+                </span>
+              </span>
+              <img
+                alt="sample"
+                src="/logo512.png"
+                style="max-height: 100%; max-width: 100%; object-fit: scale-down; opacity: 0;"
+              />
+            </div>
+        `);
+    });
 
-  it("button enable/disable should work", async () => {
-    engine!.registerButton("myButton", async () => {});
-    const enable = new Subject<boolean>();
-    engine!.registerInput("enable", engine!.boolType(), enable);
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('button enable/disable should work', async () => {
+        engine!.registerButton('myButton', async () => {});
+        const enable = new Subject<boolean>();
+        engine!.registerInput('enable', engine!.boolType(), enable);
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
             bindings {
                 myButton: button
             }
@@ -294,55 +336,97 @@ describe("button", () => {
                     }         
                 }
              }`}
-      />
-    );
+            />
+        );
 
-    const node = wrapper.find(".vlayout_button");
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
-      >
-        <span>
-          sample
-          <br />
-        </span>
-      </div>
-    `);
-    enable.next(true);
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
-      >
-        <span>
-          sample
-          <br />
-        </span>
-      </div>
-    `);
-    enable.next(false);
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button disabled"
-        style="pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: not-allowed; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
-      >
-        <span>
-          sample
-          <br />
-        </span>
-      </div>
-    `);
-  });
+        const node = wrapper.find('.vlayout_button');
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <span>
+                sample
+                <br />
+              </span>
+            </div>
+        `);
+        enable.next(true);
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <span>
+                sample
+                <br />
+              </span>
+            </div>
+        `);
+        enable.next(false);
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button disabled"
+              style="pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: not-allowed; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <span>
+                sample
+                <br />
+              </span>
+            </div>
+        `);
+    });
 
-  it("button nil image should work", async () => {
-    engine!.registerButton("myButton", async () => {});
-    const enable = new Subject<boolean>();
-    engine!.registerInput("enable", engine!.boolType(), enable);
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('button nil image should work', async () => {
+        engine!.registerButton('myButton', async () => {});
+        const enable = new Subject<boolean>();
+        engine!.registerInput('enable', engine!.boolType(), enable);
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
             bindings {
                 myButton: button
             }
@@ -360,58 +444,100 @@ describe("button", () => {
                     }         
                 }
              }`}
-      />
-    );
+            />
+        );
 
-    const node = wrapper.find(".vlayout_button");
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
-      >
-        <span>
-          sample
-          <br />
-        </span>
-      </div>
-    `);
-    enable.next(true);
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
-      >
-        <img
-          alt="sample"
-          src="some_image.png"
-          style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
-        />
-        <span>
-          sample
-          <br />
-        </span>
-      </div>
-    `);
-    enable.next(false);
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
-      >
-        <span>
-          sample
-          <br />
-        </span>
-      </div>
-    `);
-  });
+        const node = wrapper.find('.vlayout_button');
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <span>
+                sample
+                <br />
+              </span>
+            </div>
+        `);
+        enable.next(true);
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <img
+                alt="sample"
+                src="some_image.png"
+                style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
+              />
+              <span>
+                sample
+                <br />
+              </span>
+            </div>
+        `);
+        enable.next(false);
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <span>
+                sample
+                <br />
+              </span>
+            </div>
+        `);
+    });
 
-  it("button should include id", async () => {
-    engine!.registerButton("myButton", async () => {});
-    const wrapper = mount(
-      <Layout
-        engine={engine!}
-        content={`
+    it('button should include id', async () => {
+        engine!.registerButton('myButton', async () => {});
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
             bindings {
                 myButton: button
             }
@@ -436,35 +562,49 @@ describe("button", () => {
                     }         
                 }
              }`}
-      />
-    );
+            />
+        );
 
-    const node = wrapper.find(".vlayout_button");
-    expect(node.getDOMNode()).toMatchInlineSnapshot(`
-      <div
-        class="vlayout_button"
-        id="my_button"
-        style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
-      >
-        <img
-          alt="sample"
-          src="/logo512.png"
-          style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
-        />
-        <span
-          style="text-align: center; flex-grow: 1;"
-        >
-          <span>
-            sample
-            <br />
-          </span>
-        </span>
-        <img
-          alt="sample"
-          src="/logo512.png"
-          style="max-height: 100%; max-width: 100%; object-fit: scale-down; opacity: 0;"
-        />
-      </div>
-    `);
-  });
+        const node = wrapper.find('.vlayout_button');
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_button"
+              id="my_button"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
+            >
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+              <img
+                alt="sample"
+                src="/logo512.png"
+                style="max-height: 100%; max-width: 100%; object-fit: scale-down;"
+              />
+              <span
+                style="text-align: center; flex-grow: 1;"
+              >
+                <span>
+                  sample
+                  <br />
+                </span>
+              </span>
+              <img
+                alt="sample"
+                src="/logo512.png"
+                style="max-height: 100%; max-width: 100%; object-fit: scale-down; opacity: 0;"
+              />
+            </div>
+        `);
+    });
 });

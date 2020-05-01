@@ -1,7 +1,6 @@
 import { Constant, EnumValue, Expression } from './expression';
 import { Dictionary } from './types';
 import { Scope } from './layout';
-import _ from 'lodash';
 import React, { createElement } from 'react';
 import { ReactContainer, ReactView, ReactViewProps, ReactViewState } from './react_views';
 import uuid from 'uuid';
@@ -10,6 +9,7 @@ import { LexNumber } from './lexer';
 import { take } from 'rxjs/operators';
 import { ReactStackLayout } from './react_stack';
 import { ReactAbsoluteLayout } from './react_absolute';
+import { forEach, forIn, values } from 'lodash';
 
 export class ViewProperty {
     line: number = 0;
@@ -83,7 +83,7 @@ export class View {
 
     copyFrom(that: this) {
         this.properties = {};
-        _.forIn(that.properties, p => this.registerProperty(p.instantiate()));
+        forIn(that.properties, p => this.registerProperty(p.instantiate()));
     }
 
     link(scope: Scope): void {
@@ -92,7 +92,7 @@ export class View {
             n.content = '1';
             this.property('alpha').value = new Constant(n);
         }
-        _.forEach(this.properties, p => {
+        forEach(this.properties, p => {
             p.link(scope);
         });
     }
@@ -118,7 +118,7 @@ export class View {
     }
 
     get activeProperties(): ViewProperty[] {
-        return _.values(this.properties).filter( p => !!p.value);
+        return values(this.properties).filter( p => !!p.value);
     }
 
     activePropertiesNamed(...names: string[]): ViewProperty[] {

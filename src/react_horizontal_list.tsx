@@ -1,11 +1,11 @@
-import React, {CSSProperties} from "react";
-import {ReactViewProps} from "./react_views";
-import {ViewProperty} from "./view";
-import {combineLatest, Observable} from "rxjs";
-import {ElementSize, resizeObserver} from "./resize_sensor";
-import {map, switchMap} from "rxjs/operators";
-import _ from "lodash";
-import {ReactList, ReactListState} from "./react_list";
+import React, { CSSProperties } from 'react';
+import { ReactViewProps } from './react_views';
+import { ViewProperty } from './view';
+import { combineLatest, Observable } from 'rxjs';
+import { ElementSize, resizeObserver } from './resize_sensor';
+import { map, switchMap } from 'rxjs/operators';
+import _ from 'lodash';
+import { ReactList, ReactListState } from './react_list';
 
 interface ReactHorizontalListState extends ReactListState {
     scrollerStyle: CSSProperties;
@@ -52,8 +52,10 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
     componentDidMount(): void {
         super.componentDidMount();
         const align = this.props.parentView.property('alignment');
-        if (align && align.value && this.viewRef.current && this.scrollerRef.current) {
-            this.subscription.add(combineLatest([align.value.sink, resizeObserver(this.viewRef.current), resizeObserver(this.scrollerRef.current)])
+        const currentSize = this.viewRef.pipe(switchMap(self => resizeObserver(self)));
+
+        if (align && align.value && this.scrollerRef.current) {
+            this.subscription.add(combineLatest([align.value.sink, currentSize, resizeObserver(this.scrollerRef.current)])
                 .subscribe(([align, containerSize, scrollerSize]) => {
                     if (containerSize.width > scrollerSize.width) {
                         switch (align) {
@@ -75,7 +77,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
+        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             <div style={{
                 ...this.state.scrollerStyle,
                 position: 'absolute',

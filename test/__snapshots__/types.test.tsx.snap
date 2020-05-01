@@ -18,6 +18,20 @@ exports[`types should allow null to number inputs 1`] = `
       null
       <br />
     </span>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+      />
+    </div>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+      />
+    </div>
   </div>
 </div>
 `;
@@ -40,6 +54,20 @@ exports[`types should allow null to number inputs 2`] = `
       10
       <br />
     </span>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+      />
+    </div>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+      />
+    </div>
   </div>
 </div>
 `;
@@ -50,18 +78,31 @@ exports[`types should throw if invalid enum value is sent to input 1`] = `
   id="label1"
   style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
 >
-  <span>
-    
-    <br />
-  </span>
+  <div
+    class="vlayout_placeholder"
+  />
   <div
     class="vlayout_label_shadow"
     style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
-      
+      placeholder
       <br />
     </span>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+      />
+    </div>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+      />
+    </div>
   </div>
 </div>
 `;
@@ -84,6 +125,20 @@ exports[`types should throw if invalid enum value is sent to input 2`] = `
       a
       <br />
     </span>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+      />
+    </div>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+      />
+    </div>
   </div>
 </div>
 `;
@@ -94,18 +149,31 @@ exports[`types should throw if invalid value is sent to input 1`] = `
   id="label1"
   style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
 >
-  <span>
-    
-    <br />
-  </span>
+  <div
+    class="vlayout_placeholder"
+  />
   <div
     class="vlayout_label_shadow"
     style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
-      
+      placeholder
       <br />
     </span>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+      />
+    </div>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+      />
+    </div>
   </div>
 </div>
 `;
@@ -128,6 +196,20 @@ exports[`types should throw if invalid value is sent to input 2`] = `
       abcde
       <br />
     </span>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+      />
+    </div>
+    <div
+      style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+    >
+      <div
+        style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+      />
+    </div>
   </div>
 </div>
 `;

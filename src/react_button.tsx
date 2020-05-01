@@ -1,13 +1,13 @@
-import {ViewProperty} from "./view";
-import {combineLatest, Observable, of} from "rxjs";
-import React, {CSSProperties} from "react";
-import _, {cloneDeep} from "lodash";
-import {ReactRoundRect} from "./react_primitives";
-import {FontContainer, ImageContainer} from "./types";
-import {map} from "rxjs/operators";
-import {Button} from "./primitives";
-import {fromPromise} from "rxjs/internal-compatibility";
-import {ReactViewProps, ReactViewState} from "./react_views";
+import { ViewProperty } from './view';
+import { combineLatest, Observable, of } from 'rxjs';
+import React, { CSSProperties } from 'react';
+import _, { cloneDeep } from 'lodash';
+import { ReactRoundRect } from './react_primitives';
+import { FontContainer, ImageContainer } from './types';
+import { map } from 'rxjs/operators';
+import { Button } from './primitives';
+import { fromPromise } from 'rxjs/internal-compatibility';
+import { ReactViewProps, ReactViewState } from './react_views';
 
 export interface ReactButtonState extends ReactViewState {
     image: ImageContainer|null;
@@ -101,13 +101,12 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
             'contentPadding.right', 'contentPadding.bottom');
 
         if (paddings.length === 0) {
-            let self = this.viewRef.current as HTMLElement;
-
-            this.subscription.add(this.cornerRadiusWatcher.subscribe(([size, radius]) => {
-                if (size.width > 0 && radius <= 0.5) {
-                    self.style.paddingRight = self.style.paddingLeft = `${Math.max(10, size.height * radius / 2)}px`;
-                }
-            }));
+            this.subscription.add(combineLatest([this.cornerRadiusWatcher, this.viewRef])
+                .subscribe(([[size, radius], self]) => {
+                    if (size.width > 0 && radius <= 0.5) {
+                        self.style.paddingRight = self.style.paddingLeft = `${Math.max(10, size.height * radius / 2)}px`;
+                    }
+                }));
         }
     }
 
@@ -243,7 +242,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         return (<div {...extra}
                      style={this.currentStyle()}
                      className={this.className}
-                     ref={this.viewRef}
+                     ref={this.setViewRef}
         onClick={(e) => this.handleClick(e)}>
             {this.state.image?.src && <img src={this.state.image.src} style={this.state.imageStyle} alt={this.state.text}/>}
             {decorated}

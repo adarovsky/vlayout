@@ -194,7 +194,6 @@ describe("layout", () => {
         );
 
         let node = wrapper.find(".vlayout_layout");
-        console.log(node.debug())
         expect(node.hasClass('sample-class')).toBe(true);
     });
 

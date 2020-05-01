@@ -1,10 +1,10 @@
-import {ViewProperty} from "./view";
-import React from "react";
-import {combineLatest, Observable} from "rxjs";
-import {ElementSize} from "./resize_sensor";
-import {map, switchMap} from "rxjs/operators";
-import {ReactList, ReactListState} from "./react_list";
-import _ from "lodash";
+import { ViewProperty } from './view';
+import React from 'react';
+import { combineLatest, Observable } from 'rxjs';
+import { ElementSize } from './resize_sensor';
+import { map, switchMap } from 'rxjs/operators';
+import { ReactList, ReactListState } from './react_list';
+import _ from 'lodash';
 
 export class ReactVerticalList extends ReactList<ReactListState> {
 
@@ -41,7 +41,7 @@ export class ReactVerticalList extends ReactList<ReactListState> {
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = _.pick(this.state, 'id');
-        return (<div style={this.style()} className={this.className} ref={this.viewRef} {...extra}>
+        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             {/*<FlipMove key={'flip'} duration={250} easing="ease-in-out" enterAnimation="fade" leaveAnimation="fade">*/}
             {this.state.childItems.flatMap( (v, index) => {
                 const result = [v.target];

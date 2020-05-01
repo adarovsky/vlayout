@@ -1,7 +1,7 @@
-import {mount, shallow} from "enzyme";
-import {Engine, Layout} from "../src";
-import {Subject} from "rxjs";
-import React from "react";
+import { mount, shallow } from 'enzyme';
+import { Engine, Layout } from '../src';
+import { Subject } from 'rxjs';
+import React from 'react';
 
 let engine: Engine|null = null;
 
@@ -34,10 +34,11 @@ it('switch expression should deliver value when source changes', async () => {
          }
      }`}/>);
 
-    expect(wrapper.find('.vlayout_label > span').text()).toBe("");
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div className={'vlayout_placeholder'}/>)).toBeTruthy();
 
     test1.next(1);
     test2.next(true);
+    wrapper.update();
 
     expect(wrapper.find('.vlayout_label > span').text()).toBe("1, true");
 

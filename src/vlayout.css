@@ -67,3 +67,38 @@
     left: 0;
     pointer-events: none;
 }
+
+.vlayout_placeholder {
+    background-color: rgba(0, 0, 0, 0.04);
+    position: relative;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    border-radius: 3px;
+    transform: scale(1, 0.60);
+}
+
+.vlayout_placeholder:empty:before {
+    content: "\00a0";
+}
+
+.vlayout_placeholder::after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    content: "";
+    z-index: 1;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
+    transform: translateX(-100%);
+    animation: placeholder_wave 1.6s linear 0.5s infinite;
+}
+
+@keyframes placeholder_wave {
+    0% { transform: translateX(-100%); }
+    60% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+}

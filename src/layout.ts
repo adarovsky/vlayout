@@ -47,7 +47,7 @@ import { FunctionDeclaration, Functions } from './functions';
 import { Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition } from './types';
 import { FunctionImplementationI } from './builtin_functions';
 import { List, ListItemPrototype } from './list';
-import _, { extend, isEmpty } from 'lodash';
+import { extend, forIn, isEmpty } from 'lodash';
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {
@@ -254,7 +254,7 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
             this.raiseError(`types ${item1} and ${item2} do not match`);
         }
 
-        _.forIn(item1, (v, k) => {
+        forIn(item1, (v, k) => {
             if (!item2[k]) {
                 this.raiseError(`type ${k} is missing in engine`);
             }
