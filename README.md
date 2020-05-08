@@ -172,3 +172,8 @@ layout {
     }
 ```
   
+# License
+MIT license.
+Copyright ©️ Alexander Darovsky.
+
+Credits: [Marc J. Schmidt](https://twitter.com/MarcJSchmidt) for ideas of handling element resize
