@@ -6,3 +6,4 @@ import './vlayout.css';
 export {ReactViewReference as ReactView, ReactViewProps, ReactViewState} from "./react_views";
 export {View} from "./view";
 export {ColorContainer as Color, ImageContainer as Image} from './types';
+export { ListModelItem } from './list';
