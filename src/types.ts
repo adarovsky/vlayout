@@ -1,6 +1,6 @@
-import {Engine} from "./engine";
-import {Color} from "./index";
-import {includes} from "lodash";
+import { Engine } from './engine';
+import { Color } from './index';
+import { includes } from 'lodash';
 
 export class TypeDefinition {
     readonly  engine: Engine;
@@ -60,7 +60,7 @@ export class EnumDefinition extends TypeDefinition {
 
 export type SimpleListDefinitionItem = Dictionary<TypeDefinition>;
 export type ListDefinitionItem = SimpleListDefinitionItem|ComplexDefinitionItem;
-interface ComplexDefinitionItem extends Dictionary<ListDefinitionItem>{
+export interface ComplexDefinitionItem extends Dictionary<ListDefinitionItem|TypeDefinition>{
 }
 
 export class ListDefinition extends TypeDefinition {

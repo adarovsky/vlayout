@@ -340,9 +340,8 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
 
         const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink);
 
-        this.subscription.add(combineLatest(props).subscribe(value => {
-            this.setState(s => extend(s, { childrenVisible: value }));
-            // this.updateSubviewPositions();
+        this.subscription.add(combineLatest(props).subscribe(childrenVisible => {
+            this.setState(s => ({...s,  childrenVisible }));
         }));
     }
 

@@ -8,7 +8,15 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "react-app-polyfill": "^1.0.0"
+    "@adarovsky/vlayout": "^1.5.2",
+    "bootstrap": "^4.4.1",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
+    "react": "^16.13.1",
+    "react-app-polyfill": "^1.0.0",
+    "react-bootstrap": "^1.0.1",
+    "react-dom": "^16.13.1",
+    "rxjs": "^6.5.5"
   },
   "alias": {
     "react": "../node_modules/react",
@@ -19,7 +27,7 @@
   "devDependencies": {
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.8.4",
-    "parcel": "^1.12.3",
-    "typescript": "^3.4.5"
+    "parcel": "^1.12.4",
+    "typescript": "^3.8.3"
   }
 }

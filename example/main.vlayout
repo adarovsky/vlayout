@@ -1,0 +1,2878 @@
+bindings {
+    celebrityPlayer : view
+    celebrityAvatar : view
+    fanPlayer : listView
+    prescreenPlayer : view
+    participantMinimizeButton : listButton
+    participantDisconnectButton : listButton
+    participantBlockButton : listButton
+    firstFanDisconnectButton : button
+    firstFanBlockButton : button
+    muteAllButton : button
+    unmuteAllButton : button
+    ifbAllButton : button
+    unifbAllButton : button
+    priorGuestsButton : button
+    priorGuestsDoneButton : button
+    priorGuestsInviteButton : listButton
+    introScreenSponsorship : view
+    introScreenShare : view
+    introScreenGuests : view
+    introScreenCisco : view
+    introButton1 : button
+    introButtonGuests : button
+    introButtonShare : button
+    introButtonDone : button
+    introTextUpload : view
+    mapView : view
+    sessionTitleEditor : view
+    sponsorUrlView : view
+    backgroundUpload : view
+    logoUpload : view
+    bannerUpload : view
+    textUpload : view
+    textPreview : view
+    toggleLyricsButton : button
+    videoDropZone : listView
+    sharePanel : view
+    continueButton : button
+    activateSessionButton : button
+    activateSessionButton2 : button
+    endSharingCisco : button
+    quitSessionButton : button
+    retryConnectButton : button
+    playVodButton : listButton
+    deleteVodButton : listButton
+    vodPlayer : view
+    openFloorButton : button
+    geofenceButton : button
+    closeFloorButton : button
+    guestInviteNew : listView
+    videoPreview : listView
+    participantPreview : listView
+    participantMessage : listView
+    videoDropZone : listView
+    inviteResendButton : listButton
+    inviteCancelButton : listButton
+    guestMuteButton : listButton
+    guestUnmuteButton : listButton
+    guestIFBButton : listButton
+    guestUnIFBButton : listButton
+    guestToggleButton : listButton
+    prescreenDialog : listButton
+    prescreenDisconnect : listButton
+    prescreenSelect : listButton
+    prescreenHold : listButton
+    prescreenTap : listButton
+    hostMuteButton : button
+    hostUnmuteButton : button
+    hostIFBButton : button
+    hostUnIFBButton : button
+    geofenceInviteButton : button
+    geofenceCancelButton : button
+    pauseVodButton : button
+    stopVodButton : button
+    toggleYoutubeButton : button
+    activateSoundButton : button
+    bulkInviteButton : button
+    bulkInviteButtonConfirm : button
+    bulkInviteView : view
+}
+types {
+    AppState: enum (finished, greeting, login, prepare, sessionControl, sessionEdit, started)
+    JoinStatus: enum (added, joined, disconnected, left)
+    InteractionStatus: enum (suspended, resumed, applicant, enqueued, invited, preScreen, onAir, onHold)
+    SessionPhase: enum (connecting, waitingForActivation, activated, closed, full)
+    FrameStatus: enum (minimized, maximized)
+    MediaSource: enum (self, external)
+    VODs: list (
+        loaded{
+            thumbnailUrl: String
+            ready: Bool
+            playing: Bool
+            paused: Bool
+        },
+        new{
+        }
+    )
+    Participants: list (
+        participant{
+            id: String
+            airIndex: Number
+            frameStatus: FrameStatus
+            interactionStatus: InteractionStatus
+            joinStatus: JoinStatus
+            headline: String
+            alreadyPrescreened: Bool
+            listIndex: Number
+            userIndex: Number
+            muted: Bool
+            ifb: Bool
+            name: String
+            role: String
+            poorConnection: Bool
+            audioOnly: Bool
+            location: String
+        }
+    )
+    Guests: list (
+        online{
+            id: String
+            airIndex: Number
+            frameStatus: FrameStatus
+            interactionStatus: InteractionStatus
+            joinStatus: JoinStatus
+            headline: String
+            alreadyPrescreened: Bool
+            listIndex: Number
+            userIndex: Number
+            muted: Bool
+            ifb: Bool
+            name: String
+            role: String
+            poorConnection: Bool
+            audioOnly: Bool
+            location: String
+        },
+        invited{
+            name: String
+            contact: String
+            contact_type: String
+            userId: String
+        },
+        new{
+        }
+    )
+    StoredGuests: list (
+        stored{
+            name: String
+            contact: String
+            invited: Bool
+        },
+        last{
+        }
+    )
+    OnAir: list (
+        participant{
+            airIndex: Number
+            frameStatus: FrameStatus
+            id: String
+            interactionStatus: InteractionStatus
+            joinStatus: JoinStatus
+            listIndex: Number
+            userIndex: Number
+            muted: Bool
+            name: String
+            role: String
+            poorConnection: Bool
+            audioOnly: Bool
+            isGuest: Bool
+            ifb: Bool
+        }
+    )
+}
+inputs {
+    appState: AppState
+    session {
+        phase: SessionPhase
+        floor {
+            opened: Bool
+            public: Bool
+        }
+
+        playerUrls {
+            public: String
+            broadcaster: String
+        }
+
+        userCount: Number
+        participantCount: Number
+        onHoldCount: Number
+        participants: Participants
+        guests: Guests
+        storedGuests: StoredGuests
+        muted: Bool
+        isTownhall: Bool
+        ifbAll: Bool
+    }
+
+    guests {
+        showingPriorPane: Bool
+    }
+
+    celebrity {
+        id: String
+        airIndex: Number
+        frameStatus: FrameStatus
+        id: String
+        interactionStatus: InteractionStatus
+        joinStatus: JoinStatus
+        listIndex: Number
+        muted: Bool
+        name: String
+        role: String
+        poorConnection: Bool
+        ifb: Bool
+    }
+
+    prescreen {
+        id: String
+        airIndex: Number
+        frameStatus: FrameStatus
+        id: String
+        interactionStatus: InteractionStatus
+        joinStatus: JoinStatus
+        listIndex: Number
+        muted: Bool
+        name: String
+        role: String
+    }
+
+    manager {
+        frameStatus: FrameStatus
+        id: String
+        interactionStatus: InteractionStatus
+        joinStatus: JoinStatus
+        name: String
+        poorConnection: Bool
+    }
+
+    participantsOnAir: OnAir
+    maximizedCount: Number
+    numberOfFansOnAir: Number
+    canSelectNext: Bool
+    assets {
+        backgroundUrl: String
+        logoUrl: String
+        bannerUrl: String
+        lyricsUrl: String
+    }
+
+    introScreen: Number
+    sharingCisco: Bool
+    vods {
+        content: VODs
+        supported: Bool
+        playing: Bool
+        paused: Bool
+    }
+
+    isTownhall: Bool
+    showGeofence: Bool
+    locationTitle: String
+    isLocationGlobal: Bool
+    showLyrics: Bool
+    rtmpUrl: String
+    showBulkInvite: Bool
+    bulkInviteValid: Bool
+    streaming {
+        youtube {
+            ready: Bool
+            on: Bool
+        }
+
+        periscope {
+            ready: Bool
+            on: Bool
+        }
+
+        facebook {
+            ready: Bool
+            on: Bool
+        }
+
+    }
+
+    media {
+        source: MediaSource
+        echoCancellation: Bool
+        needSoundActivation: Bool
+    }
+
+}
+properties {
+    activeCount: maximizedCount>0 ? maximizedCount : participantsOnAir.count
+    celebrityMinimized: maximizedCount==2
+    dialogActive: prescreen.id!=""
+    realUserCount: session.userCount-(celebrity.id==manager.id ? 1 : 2)
+    showVodPlayer: vods.playing
+    leftPanelWidth: 350
+    leftOffset: 20
+    rightOffset: 20
+    bottomOffset: 20
+    topOffset: 50
+    bottomPanel{
+        height: !isTownhall||session.floor.public ? 180 : 0
+        shareAssetsWidth: 300
+
+    }
+    borderColor1: #03a651
+    borderColor2: #fc9203
+    borderColor3: #05fbfb
+    borderColor4: #ff40ff
+    introScreens{
+        sponsorship: isTownhall ? -1 : 0
+        share: isTownhall ? 0 : 1
+        guests: isTownhall ? 1 : 2
+        showIntro: isTownhall ? introScreen==0|1 : introScreen==0|1|2
+
+    }
+    blockButtons{
+        width: 80
+        height: 80
+
+    }
+    celebrityWidth: celebrityMinimized ? 0 : activeCount>0 ? 0.5 : 1
+    fanHeight: maximizedCount==0&&activeCount>1 ? 0.5 : 1
+    showingFirstFanPanel: numberOfFansOnAir>0
+}
+functions {
+    fanWidth(index: Number) => celebrityMinimized ? 0.5 : switch(index, activeCount) {
+    case 1|2, 1|2 => (1-celebrityWidth)
+    case 1, 3 => (1-celebrityWidth)
+    case _ => (1-celebrityWidth)/2
+}
+    fanCenterX(index: Number) => celebrityWidth+switch(index, maximizedCount, activeCount) {
+    case 1, 1|2, _ => fanWidth(index)*0.5
+    case 2, 1|2, _ => fanWidth(index)*1.5
+    case 1, 0, _ => fanWidth(index)*0.5
+    case 2, 0, 2|3 => fanWidth(index)*0.5
+    case 2, 0, 4 => fanWidth(index)*1.5
+    case 3, 0, 3 => fanWidth(index)*1.5
+    case 3, 0, _ => fanWidth(index)*0.5
+    case 4, 0, _ => fanWidth(index)*1.5
+    case _ => fanWidth(index)*0.5
+}
+    fanCenterY(index: Number) => switch(index, maximizedCount, activeCount) {
+    case _, 1|2, _ => fanHeight*0.5
+    case 1, 0, _ => fanHeight*0.5
+    case 2, 0, 4 => fanHeight*0.5
+    case 2, 0, 2|3 => fanHeight*1.5
+    case 3|4, 0, _ => fanHeight*1.5
+    case _ => fanHeight*0.5
+}
+    participantColor(index: Number) => switch(index) {
+    case 1 => borderColor1
+    case 2 => borderColor2
+    case 3 => borderColor3
+    case 4 => borderColor4
+    case _ => #000000
+}
+}
+layout {
+    layer {
+        id: "celeb"
+        z_order: 10
+        alpha: celebrityMinimized ? 0 : 1
+        absolute {
+            aspect: dialogActive ? 16/9 : nil
+            padding {
+                left: leftPanelWidth+(dialogActive ? 40 : 0)
+                top: dialogActive ? nil : topOffset
+                right: dialogActive ? nil : 0
+                bottom: bottomPanel.height+(dialogActive ? 40 : 0)
+            }
+            size {
+                width: dialogActive ? 0.2 : nil
+            }
+            absolute {
+                padding {
+                    left: leftOffset
+                    right: rightOffset
+                    top: 0
+                    bottom: bottomOffset
+                }
+                vodPlayer {
+                    alpha: showVodPlayer ? 1 : 0
+                    padding {
+                        left: 0
+                        right: 0
+                        top: 0
+                        bottom: 0
+                    }
+                }
+                horizontal {
+                    alpha: vods.playing ? 1 : 0
+                    spacing: 10
+                    fixedSize {
+                        height: 40
+                    }
+                    padding {
+                        left: 40
+                        top: 40
+                    }
+                    pauseVodButton {
+                        image: Image("res/assets/pause.png")
+                        fixedSize {
+                            width: 40
+                        }
+                    }
+                    stopVodButton {
+                        image: Image("res/assets/stop.png")
+                        fixedSize {
+                            width: 40
+                        }
+                    }
+                }
+                stack {
+                    center {
+                        x: showVodPlayer ? 0.125 : celebrityWidth/2
+                        y: showVodPlayer ? 0.875 : 0.5
+                    }
+                    size {
+                        width: showVodPlayer ? 0.125 : celebrityWidth
+                        height: showVodPlayer ? 0.125 : 1
+                    }
+                    celebrityPlayer {
+                    }
+                    absolute {
+                        alpha: celebrity.joinStatus!=.joined||celebrity.poorConnection ? 1 : 0
+                        backgroundColor: #58586c
+                        horizontal {
+                            spacing: 10
+                            alignment: .center
+                            center {
+                                x: 0.5
+                                y: 0.5
+                            }
+                            image {
+                                alpha: celebrity.joinStatus==.joined ? 1 : 0
+                                image: Image("res/host/link-broken.png")
+                                fixedSize {
+                                    width: 30
+                                    height: 30
+                                }
+                            }
+                            progress {
+                                alpha: celebrity.joinStatus!=.joined ? 1 : 0
+                                color: #ffffff
+                                fixedSize {
+                                    width: 30
+                                    height: 30
+                                }
+                            }
+                            label {
+                                text: celebrity.id==manager.id ? @("Waiting for video to start") : celebrity.joinStatus!=.joined ? @("Waiting for host to join") : @("Not receiving host stream data")
+                                font: Font(.bold, 15)
+                                textColor: #97979d
+                            }
+                        }
+                    }
+                    absolute {
+                        alpha: celebrity.joinStatus==.joined&&manager.id!=celebrity.id&&prescreen.id=="" ? 1 : 0
+                        horizontal {
+                            spacing: 10
+                            padding {
+                                left: 40
+                                bottom: 40
+                            }
+                            fixedSize {
+                                height: 45
+                            }
+                            hostUnmuteButton {
+                                alpha: celebrity.muted ? 1 : 0
+                                image: Image("res/manager/guests/unmute2.png")
+                                font: Font(10)
+                                textColor: #ffffff
+                                text: "UNMUTE"
+                                imagePosition: .top
+                                imagePadding: 3
+                                fixedSize {
+                                    width: 50
+                                }
+                            }
+                            hostMuteButton {
+                                alpha: celebrity.muted ? 0 : 1
+                                font: Font(10)
+                                textColor: #ffffff
+                                text: "MUTE"
+                                image: Image("res/manager/guests/mute2.png")
+                                imagePosition: .top
+                                imagePadding: 3
+                                fixedSize {
+                                    width: 50
+                                }
+                            }
+                            hostIFBButton {
+                                alpha: !celebrity.ifb&&manager.id!=celebrity.id ? 1 : 0
+                                font: Font(10)
+                                textColor: #ff0000
+                                text: "IFB"
+                                image: Image("res/manager/guests/microphone_active.png")
+                                imagePosition: .top
+                                imagePadding: 3
+                                fixedSize {
+                                    width: 50
+                                }
+                            }
+                            hostUnIFBButton {
+                                alpha: celebrity.ifb&&manager.id!=celebrity.id ? 1 : 0
+                                font: Font(10)
+                                textColor: #ffffff
+                                text: "End IFB"
+                                image: Image("res/manager/guests/microphone_inactive.png")
+                                imagePosition: .top
+                                imagePadding: 3
+                                fixedSize {
+                                    width: 50
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    layer {
+        id: "default_background"
+        z_order: 2
+        roundRect {
+            backgroundColor: #cccccc
+            padding {
+                left: leftPanelWidth
+                top: 0
+                bottom: bottomPanel.height
+                right: 0
+            }
+        }
+    }
+    layer {
+        id: "background"
+        z_order: 3
+        image {
+            image: Image(assets.backgroundUrl)
+            contentPolicy: .aspectFill
+            alpha: assets.backgroundUrl!="" ? 1 : 0
+            padding {
+                left: leftPanelWidth
+                top: 0
+                bottom: bottomPanel.height
+                right: 0
+            }
+        }
+    }
+    layer {
+        id: "main"
+        z_order: 10
+        vertical {
+            padding {
+                left: 0
+                top: 0
+                bottom: bottomPanel.height
+            }
+            fixedSize {
+                width: leftPanelWidth
+            }
+            absolute {
+                backgroundColor: #1e1f2e
+                fixedSize {
+                    height: 80
+                }
+                horizontal {
+                    alignment: .center
+                    spacing: 20
+                    padding {
+                        left: 20
+                        top: 10
+                        bottom: 10
+                        right: 20
+                    }
+                    celebrityAvatar {
+                        fixedSize {
+                            width: 60
+                            height: 60
+                        }
+                    }
+                    vertical {
+                        alignment: .leading
+                        spacing: 10
+                        label {
+                            text: celebrity.name
+                            textColor: #ffffff
+                            font: Font(.bold, 14)
+                        }
+                        horizontal {
+                            spacing: 10
+                            muteAllButton {
+                                alpha: session.muted ? 0 : 1
+                                cornerRadius: 4
+                                strokeColor: #ffffff
+                                strokeWidth: 1
+                                textColor: #ffffff
+                                font: Font(10)
+                                image: Image("res/manager/guests/mute.png")
+                                text: "Mute All Guests"
+                                fixedSize {
+                                    width: 110
+                                    height: 25
+                                }
+                            }
+                            unmuteAllButton {
+                                alpha: session.muted ? 1 : 0
+                                cornerRadius: 4
+                                strokeColor: #ffffff
+                                strokeWidth: 1
+                                textColor: #ffffff
+                                font: Font(10)
+                                image: Image("res/manager/guests/unmute.png")
+                                text: "Unmute All Guests"
+                                fixedSize {
+                                    width: 110
+                                    height: 25
+                                }
+                            }
+                            ifbAllButton {
+                                alpha: !session.ifbAll&&manager.id!=celebrity.id ? 1 : 0
+                                imagePadding: 10
+                                cornerRadius: 4
+                                strokeColor: #ff0000
+                                strokeWidth: 1
+                                textColor: #ff0000
+                                font: Font(10)
+                                image: Image("res/manager/guests/microphone_red_button.png")
+                                text: "IFB All Guests"
+                                contentPadding {
+                                    top: 3
+                                    bottom: 3
+                                    left: 3
+                                    right: 3
+                                }
+                                fixedSize {
+                                    width: 110
+                                    height: 25
+                                }
+                            }
+                            unifbAllButton {
+                                alpha: session.ifbAll&&manager.id!=celebrity.id ? 1 : 0
+                                imagePadding: 10
+                                cornerRadius: 4
+                                strokeColor: #ffffff
+                                strokeWidth: 1
+                                textColor: #ffffff
+                                font: Font(10)
+                                image: Image("res/manager/guests/microphone_button.png")
+                                text: "End IFB All"
+                                contentPadding {
+                                    top: 3
+                                    bottom: 3
+                                    left: 3
+                                    right: 3
+                                }
+                                fixedSize {
+                                    width: 110
+                                    height: 25
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            roundRect {
+                backgroundColor: #999999
+                fixedSize {
+                    height: 5
+                }
+            }
+            absolute {
+                backgroundColor: #000000
+                fixedSize {
+                    height: 35
+                }
+                label {
+                    textColor: #2961fd
+                    font: Font(15)
+                    textAlignment: .left
+                    text: "Invite guests to participate"
+                    padding {
+                        left: 40
+                        right: 40
+                    }
+                    center {
+                        y: 0.5
+                    }
+                }
+                priorGuestsButton {
+                    image: Image("res/manager/guests/history.png")
+                    center {
+                        y: 0.5
+                    }
+                    padding {
+                        right: 20
+                    }
+                    fixedSize {
+                        width: 20
+                        height: 20
+                    }
+                }
+            }
+            absolute {
+                backgroundColor: #1e1f2e
+                sizePolicy: .stretched
+                verticalList {
+                    alpha: guests.showingPriorPane ? 0 : 1
+                    spacing: 10
+                    model: session.guests
+                    padding {
+                        left: 0
+                        right: 0
+                        top: 20
+                        bottom: 0
+                    }
+                    online {
+                        fixedSize {
+                            height: 65
+                        }
+                        roundRect {
+                            strokeWidth: 1
+                            strokeColor: #444444
+                            cornerRadius: 6
+                            padding {
+                                left: 20
+                                right: 20
+                                top: 0
+                                bottom: 0
+                            }
+                        }
+                        absolute {
+                            padding {
+                                left: 20
+                                top: 0
+                                bottom: 0
+                            }
+                            fixedSize {
+                                width: 130
+                            }
+                            horizontal {
+                                spacing: 10
+                                center {
+                                    x: 0.5
+                                    y: 0.5
+                                }
+                                fixedSize {
+                                    height: 45
+                                }
+                                guestUnmuteButton {
+                                    alpha: muted ? 1 : 0
+                                    image: Image("res/manager/guests/unmute2.png")
+                                    font: Font(10)
+                                    textColor: #ffffff
+                                    text: "UNMUTE"
+                                    imagePosition: .top
+                                    imagePadding: 3
+                                    fixedSize {
+                                        width: 50
+                                    }
+                                }
+                                guestMuteButton {
+                                    alpha: muted ? 0 : 1
+                                    font: Font(10)
+                                    textColor: #ffffff
+                                    text: "MUTE"
+                                    image: Image("res/manager/guests/mute2.png")
+                                    imagePosition: .top
+                                    imagePadding: 3
+                                    fixedSize {
+                                        width: 50
+                                    }
+                                }
+                                guestIFBButton {
+                                    alpha: !ifb&&manager.id!=celebrity.id ? 1 : 0
+                                    font: Font(10)
+                                    textColor: #ff0000
+                                    text: "IFB"
+                                    image: Image("res/manager/guests/microphone_active.png")
+                                    imagePosition: .top
+                                    imagePadding: 5
+                                    contentPadding {
+                                        left: 5
+                                        right: 5
+                                        top: 3
+                                        bottom: 0
+                                    }
+                                    fixedSize {
+                                        width: 50
+                                    }
+                                }
+                                guestUnIFBButton {
+                                    alpha: ifb&&manager.id!=celebrity.id ? 1 : 0
+                                    font: Font(10)
+                                    textColor: #ffffff
+                                    text: "End IFB"
+                                    image: Image("res/manager/guests/microphone_inactive.png")
+                                    imagePosition: .top
+                                    imagePadding: 5
+                                    contentPadding {
+                                        left: 5
+                                        right: 5
+                                        top: 3
+                                        bottom: 0
+                                    }
+                                    fixedSize {
+                                        width: 50
+                                    }
+                                }
+                            }
+                        }
+                        absolute {
+                            backgroundColor: interactionStatus==.onAir ? participantColor(userIndex+1) : #43434a
+                            padding {
+                                left: 150
+                                top: 0
+                                bottom: 0
+                            }
+                            fixedSize {
+                                width: 86
+                            }
+                            image {
+                                alpha: interactionStatus==.onAir|.onHold|.preScreen ? 0 : 1
+                                image: Image("res/manager/guests/guest.png")
+                                contentPolicy: .aspectFit
+                                padding {
+                                    left: 3
+                                    right: 3
+                                    top: 3
+                                    bottom: 3
+                                }
+                            }
+                            stack {
+                                alpha: interactionStatus==.onAir|.onHold|.preScreen ? 1 : 0
+                                padding {
+                                    left: 3
+                                    right: 3
+                                    top: 3
+                                    bottom: 3
+                                }
+                                participantPreview {
+                                }
+                                guestToggleButton {
+                                }
+                            }
+                        }
+                        absolute {
+                            padding {
+                                left: 236
+                                top: 0
+                                bottom: 0
+                                right: 20
+                            }
+                            vertical {
+                                spacing: 5
+                                padding {
+                                    left: 10
+                                    right: 10
+                                }
+                                center {
+                                    y: 0.5
+                                }
+                                label {
+                                    text: name
+                                    textColor: #8f8f8f
+                                    font: Font(.bold, 13)
+                                    textAlignment: .left
+                                    maxLines: 1
+                                }
+                                prescreenDisconnect {
+                                    image: Image("res/manager/guests/fan-disconnect.png")
+                                    fixedSize {
+                                        height: 30
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    invited {
+                        fixedSize {
+                            height: contact_type=="rtmp" ? 64 : 54
+                        }
+                        roundRect {
+                            strokeColor: #444444
+                            strokeWidth: 1
+                            cornerRadius: 6
+                            padding {
+                                left: 20
+                                right: 20
+                                top: 0
+                                bottom: 0
+                            }
+                        }
+                        vertical {
+                            padding {
+                                left: 30
+                                right: 25
+                                top: 0
+                                bottom: contact_type=="rtmp" ? 3 : 0
+                            }
+                            horizontal {
+                                alignment: .center
+                                spacing: 10
+                                sizePolicy: .stretched
+                                vertical {
+                                    sizePolicy: .stretched
+                                    spacing: 5
+                                    label {
+                                        text: name
+                                        textColor: #8f8f8f
+                                        font: Font(.bold, 13)
+                                        maxLines: 1
+                                    }
+                                    label {
+                                        class: "contact"
+                                        text: contact
+                                        textColor: #d0d0d0
+                                        font: Font(11)
+                                        maxLines: 1
+                                    }
+                                }
+                                inviteResendButton {
+                                    alpha: contact_type!="sip" ? 1 : 0
+                                    cornerRadius: 0.5
+                                    textColor: #ffffff
+                                    backgroundColor: #ff6f02
+                                    font: Font(.bold, 11)
+                                    text: "Resend"
+                                    fixedSize {
+                                        width: 55
+                                        height: 24
+                                    }
+                                }
+                                inviteCancelButton {
+                                    cornerRadius: 0.5
+                                    textColor: #ffffff
+                                    backgroundColor: #194afb
+                                    font: Font(.bold, 11)
+                                    text: "Cancel"
+                                    fixedSize {
+                                        width: 55
+                                        height: 24
+                                    }
+                                }
+                            }
+                            label {
+                                class: "contact"
+                                alpha: contact_type=="rtmp" ? 1 : 0
+                                textColor: #d0d0d0
+                                font: Font(11)
+                                text: rtmpUrl+"/"+userId
+                                maxLines: 1
+                            }
+                        }
+                    }
+                    new {
+                        fixedSize {
+                            height: 161
+                        }
+                        guestInviteNew {
+                            padding {
+                                left: 0
+                                top: 0
+                                bottom: 0
+                                right: 0
+                            }
+                        }
+                    }
+                }
+                absolute {
+                    alpha: guests.showingPriorPane ? 1 : 0
+                    padding {
+                        left: 0
+                        right: 0
+                        top: 20
+                        bottom: 0
+                    }
+                    label {
+                        text: "Prior Guests"
+                        textColor: #2961fd
+                        font: Font(15)
+                        padding {
+                            left: 40
+                            top: 0
+                            right: 20
+                        }
+                    }
+                    verticalList {
+                        model: session.storedGuests
+                        padding {
+                            left: 40
+                            top: 40
+                            right: 20
+                            bottom: 50
+                        }
+                        stored {
+                            fixedSize {
+                                height: 44
+                            }
+                            roundRect {
+                                backgroundColor: #808080
+                                fixedSize {
+                                    height: 1
+                                }
+                                padding {
+                                    left: 0
+                                    top: 0
+                                    right: 0
+                                }
+                            }
+                            horizontal {
+                                spacing: 10
+                                alignment: .center
+                                padding {
+                                    left: 0
+                                    top: 1
+                                    bottom: 0
+                                    right: 0
+                                }
+                                vertical {
+                                    sizePolicy: .stretched
+                                    spacing: 2
+                                    label {
+                                        text: name
+                                        textColor: #ffffff
+                                        textAlignment: .center
+                                        font: Font(12)
+                                    }
+                                    label {
+                                        text: contact
+                                        textColor: #d0d0d0
+                                        textAlignment: .center
+                                        font: Font(11)
+                                    }
+                                }
+                                priorGuestsInviteButton {
+                                    alpha: invited ? 0 : 1
+                                    cornerRadius: 4
+                                    textColor: #ffffff
+                                    backgroundColor: #297bff
+                                    font: Font(.bold, 13)
+                                    text: "Invite"
+                                    fixedSize {
+                                        width: 85
+                                        height: 31
+                                    }
+                                }
+                                label {
+                                    alpha: invited ? 1 : 0
+                                    textAlignment: .center
+                                    textColor: #808080
+                                    font: Font(.bold, 13)
+                                    text: "Invited"
+                                    fixedSize {
+                                        width: 85
+                                    }
+                                }
+                            }
+                        }
+                        last {
+                            fixedSize {
+                                height: 1
+                            }
+                            roundRect {
+                                backgroundColor: #808080
+                                fixedSize {
+                                    height: 1
+                                }
+                                padding {
+                                    left: 0
+                                    top: 0
+                                    right: 0
+                                }
+                            }
+                        }
+                    }
+                    priorGuestsDoneButton {
+                        backgroundColor: #275ff7
+                        cornerRadius: 4
+                        textColor: #ffffff
+                        font: Font(15)
+                        text: "Done"
+                        padding {
+                            bottom: 10
+                        }
+                        fixedSize {
+                            width: 150
+                            height: 30
+                        }
+                        center {
+                            x: 0.5
+                        }
+                    }
+                }
+            }
+        }
+        absolute {
+            id: "assets"
+            backgroundColor: #ffffff
+            padding {
+                left: 0
+                bottom: 0
+                right: 0
+            }
+            fixedSize {
+                height: bottomPanel.height
+            }
+            label {
+                alpha: (!session.floor.opened||!session.floor.public)&&!isTownhall ? 1 : 0
+                text: "Media Assets"
+                font: Font(20)
+                textColor: #595959
+                padding {
+                    left: 20
+                    top: 20
+                }
+            }
+            horizontal {
+                alpha: (!session.floor.opened||!session.floor.public)&&!isTownhall ? 1 : 0
+                spacing: 30
+                alignment: .center
+                padding {
+                    left: 20
+                    top: 0
+                    bottom: 0
+                    right: bottomPanel.shareAssetsWidth
+                }
+                vertical {
+                    alignment: .center
+                    spacing: 10
+                    label {
+                        text: "Landing page"
+                        font: Font(15)
+                        textColor: #595959
+                    }
+                    sponsorUrlView {
+                        fixedSize {
+                            width: 200
+                            height: 30
+                        }
+                    }
+                }
+                vertical {
+                    alignment: .center
+                    spacing: 10
+                    label {
+                        text: "Background"
+                        font: Font(15)
+                        textColor: #595959
+                    }
+                    backgroundUpload {
+                        fixedSize {
+                            width: 115
+                            height: 100
+                        }
+                    }
+                }
+                vertical {
+                    alignment: .center
+                    spacing: 10
+                    label {
+                        text: "Logo"
+                        font: Font(15)
+                        textColor: #595959
+                    }
+                    logoUpload {
+                        fixedSize {
+                            width: 115
+                            height: 100
+                        }
+                    }
+                }
+                vertical {
+                    alignment: .center
+                    spacing: 10
+                    label {
+                        text: "Banner"
+                        font: Font(15)
+                        textColor: #595959
+                    }
+                    bannerUpload {
+                        fixedSize {
+                            width: 115
+                            height: 100
+                        }
+                    }
+                }
+                vertical {
+                    alignment: .center
+                    spacing: 10
+                    label {
+                        text: "Text"
+                        font: Font(15)
+                        textColor: #595959
+                    }
+                    absolute {
+                        fixedSize {
+                            width: 115
+                            height: 100
+                        }
+                        textUpload {
+                            padding {
+                                top: 0
+                                left: 0
+                                right: 0
+                                bottom: 0
+                            }
+                        }
+                        toggleLyricsButton {
+                            alpha: assets.lyricsUrl!=""&&!showLyrics ? 1 : 0
+                            image: Image("res/assets/play-dark.png")
+                            padding {
+                                top: 15
+                            }
+                            center {
+                                x: 0.5
+                            }
+                            fixedSize {
+                                width: 35
+                                height: 35
+                            }
+                        }
+                    }
+                }
+                vertical {
+                    alpha: vods.supported&&(!session.floor.opened||!session.floor.public)&&!isTownhall ? 1 : 0
+                    alignment: .fill
+                    spacing: 0
+                    sizePolicy: .stretched
+                    label {
+                        text: "VOD"
+                        font: Font(15)
+                        textColor: #595959
+                        textAlignment: .left
+                    }
+                    horizontalList {
+                        spacing: 20
+                        model: vods.content
+                        fixedSize {
+                            height: 110
+                        }
+                        loaded {
+                            fixedSize {
+                                width: 125
+                            }
+                            absolute {
+                                padding {
+                                    top: 10
+                                    left: 0
+                                    right: 10
+                                }
+                                fixedSize {
+                                    height: 62
+                                }
+                                image {
+                                    alpha: ready&&!playing&&!paused ? 1 : 0
+                                    image: Image(thumbnailUrl)
+                                    padding {
+                                        top: 0
+                                        left: 0
+                                        right: 0
+                                        bottom: 0
+                                    }
+                                }
+                                roundRect {
+                                    alpha: ready||playing||paused ? 0 : 1
+                                    backgroundColor: #dddddd
+                                    padding {
+                                        top: 0
+                                        left: 0
+                                        right: 0
+                                        bottom: 0
+                                    }
+                                }
+                                progress {
+                                    alpha: ready||playing||paused ? 0 : 1
+                                    color: #ffffff
+                                    center {
+                                        x: 0.5
+                                        y: 0.5
+                                    }
+                                    fixedSize {
+                                        width: 35
+                                        height: 35
+                                    }
+                                }
+                                videoPreview {
+                                    alpha: playing||paused ? 1 : 0
+                                    padding {
+                                        top: 0
+                                        left: 0
+                                        right: 0
+                                        bottom: 0
+                                    }
+                                }
+                                playVodButton {
+                                    alpha: ready&&((!playing&&!vods.playing&&!vods.paused)||paused) ? 1 : 0
+                                    image: Image("res/assets/play.png")
+                                    center {
+                                        x: 0.5
+                                        y: 0.5
+                                    }
+                                    fixedSize {
+                                        width: 35
+                                        height: 35
+                                    }
+                                }
+                            }
+                            roundRect {
+                                backgroundColor: playing ? #b40000 : #fd6a46
+                                alpha: playing||paused ? 1 : 0
+                                padding {
+                                    top: 10
+                                    left: 0
+                                    right: 10
+                                }
+                                fixedSize {
+                                    height: 3
+                                }
+                            }
+                            deleteVodButton {
+                                alpha: ready&&!playing ? 1 : 0
+                                image: Image("res/assets/close.png")
+                                padding {
+                                    right: 0
+                                    top: 0
+                                }
+                                fixedSize {
+                                    width: 20
+                                    height: 20
+                                }
+                            }
+                        }
+                        new {
+                            fixedSize {
+                                width: 125
+                            }
+                            videoDropZone {
+                                padding {
+                                    top: 10
+                                    left: 0
+                                    right: 0
+                                    bottom: 0
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            absolute {
+                alpha: !isTownhall&&(!session.floor.opened||!session.floor.public) ? 1 : 0
+                padding {
+                    top: 0
+                    right: 0
+                    bottom: 0
+                }
+                fixedSize {
+                    width: bottomPanel.shareAssetsWidth
+                }
+                openFloorButton {
+                    backgroundColor: #61c3f8
+                    cornerRadius: 5
+                    font: Font(16)
+                    textColor: #ffffff
+                    text: "Invite users to video chat"
+                    fixedSize {
+                        height: 44
+                    }
+                    center {
+                        y: 0.5
+                    }
+                    padding {
+                        left: 20
+                        right: isTownhall ? 10 : 60
+                    }
+                }
+                bulkInviteButton {
+                    image: Image("res/manager/bulk-join.png")
+                    fixedSize {
+                        width: 40
+                        height: 40
+                    }
+                    center {
+                        y: 0.5
+                    }
+                    padding {
+                        right: 10
+                    }
+                }
+            }
+            horizontal {
+                alpha: session.floor.opened&&session.floor.public ? 1 : 0
+                alignment: .center
+                padding {
+                    left: 0
+                    right: 0
+                    top: 0
+                    bottom: 0
+                }
+                absolute {
+                    id: "participant_count"
+                    fixedSize {
+                        width: 200
+                        height: isTownhall ? bottomPanel.height : nil
+                    }
+                    horizontal {
+                        alpha: isTownhall ? 1 : 0
+                        center {
+                            x: 0.5
+                            y: 0.5
+                        }
+                        fixedSize {
+                            height: 40
+                        }
+                        absolute {
+                            class: "round-header-left"
+                            backgroundColor: #db543d
+                            label {
+                                textColor: #ffffff
+                                font: Font(.bold, 16)
+                                text: String(session.participants.count)
+                                padding {
+                                    left: 15
+                                    right: 10
+                                }
+                                center {
+                                    y: 0.5
+                                }
+                            }
+                        }
+                        absolute {
+                            class: "round-header-right"
+                            backgroundColor: #ffffff
+                            fixedSize {
+                                width: 100
+                            }
+                            label {
+                                textColor: #595a6b
+                                font: Font(16)
+                                text: "ON-HOLD"
+                                padding {
+                                    left: 10
+                                }
+                                center {
+                                    y: 0.5
+                                }
+                            }
+                        }
+                    }
+                    vertical {
+                        alpha: isTownhall ? 0 : 1
+                        spacing: 10
+                        alignment: .center
+                        center {
+                            x: 0.5
+                            y: 0.5
+                        }
+                        absolute {
+                            fixedSize {
+                                width: 150
+                                height: 30
+                            }
+                            roundRect {
+                                backgroundColor: #595959
+                                cornerRadius: 5
+                                padding {
+                                    left: 0
+                                    right: 0
+                                    top: 0
+                                    bottom: 0
+                                }
+                            }
+                            label {
+                                textColor: #ffffff
+                                font: Font(16)
+                                text: "Users in Queue"
+                                textAlignment: .center
+                                center {
+                                    y: 0.5
+                                }
+                                padding {
+                                    left: 0
+                                    right: 0
+                                }
+                            }
+                        }
+                        absolute {
+                            fixedSize {
+                                width: 50
+                                height: 50
+                            }
+                            roundRect {
+                                strokeColor: #595959
+                                strokeWidth: 3
+                                cornerRadius: 0.5
+                                padding {
+                                    left: 0
+                                    right: 0
+                                    top: 0
+                                    bottom: 0
+                                }
+                            }
+                            label {
+                                textColor: #595959
+                                font: Font(.bold, 16)
+                                text: String(session.participantCount)
+                                center {
+                                    x: 0.5
+                                    y: 0.5
+                                }
+                            }
+                        }
+                        horizontal {
+                            id: "floor_location_title_line"
+                            alpha: isLocationGlobal||isTownhall ? 0 : 1
+                            alignment: .center
+                            fixedSize {
+                                height: 40
+                                width: 200
+                            }
+                            image {
+                                image: Image("res/manager/geofence-red.png")
+                                fixedSize {
+                                    width: 40
+                                    height: 40
+                                }
+                            }
+                            label {
+                                id: "floor_location_title_label"
+                                font: Font(16)
+                                textAlignment: .center
+                                textColor: #ff3d02
+                                text: locationTitle
+                                maxLines: 1
+                                fixedSize {
+                                    width: 120
+                                }
+                            }
+                        }
+                    }
+                }
+                absolute {
+                    backgroundColor: #f4f4f6
+                    sizePolicy: .stretched
+                    fixedSize {
+                        height: bottomPanel.height
+                    }
+                    horizontal {
+                        id: "disconnect_buttons"
+                        alpha: showingFirstFanPanel ? 1 : 0
+                        spacing: 40
+                        fixedSize {
+                            height: 55
+                        }
+                        size {
+                            width: 0.7
+                        }
+                        center {
+                            x: 0.5
+                            y: 0.5
+                        }
+                        firstFanDisconnectButton {
+                            class: "disconnect_button"
+                            sizePolicy: .stretched
+                            image: Image("res/manager/guests/fan-disconnect.png")
+                            imagePosition: .leftToText
+                            text: "DISCONNECT USER"
+                            backgroundColor: #39373a
+                            textColor: #ffffff
+                            imagePadding: 15
+                            font: Font(18)
+                        }
+                        firstFanBlockButton {
+                            class: "block_button"
+                            sizePolicy: .stretched
+                            image: Image("res/manager/guests/fan-block-solid.png")
+                            imagePosition: .leftToText
+                            text: "BLOCK USER"
+                            backgroundColor: #ff0000
+                            textColor: #ffffff
+                            imagePadding: 15
+                            font: Font(18)
+                        }
+                    }
+                    horizontalList {
+                        alpha: !showingFirstFanPanel ? 1 : 0
+                        model: session.participants
+                        itemTapped: prescreenTap
+                        spacing: 20
+                        padding {
+                            left: 0
+                            right: 0
+                            top: 5
+                            bottom: 5
+                        }
+                        participant {
+                            backgroundColor: #ffffff
+                            class: poorConnection ? "poor" : "good"
+                            fixedSize {
+                                width: 150
+                            }
+                            roundRect {
+                                backgroundColor: alreadyPrescreened ? #61c3f8 : #fd6a46
+                                padding {
+                                    left: 0
+                                    right: 0
+                                    top: 0
+                                }
+                                fixedSize {
+                                    height: 5
+                                }
+                            }
+                            participantPreview {
+                                padding {
+                                    left: 0
+                                    right: 0
+                                    top: 5
+                                }
+                                fixedSize {
+                                    height: 85
+                                }
+                            }
+                            absolute {
+                                alpha: poorConnection ? 1 : 0
+                                backgroundColor: #000000
+                                padding {
+                                    left: 0
+                                    right: 0
+                                    top: 5
+                                }
+                                fixedSize {
+                                    height: 85
+                                }
+                                vertical {
+                                    spacing: 5
+                                    alignment: .center
+                                    center {
+                                        x: 0.5
+                                        y: 0.5
+                                    }
+                                    image {
+                                        image: Image("res/host/audio-only.png")
+                                        fixedSize {
+                                            width: 30
+                                            height: 30
+                                        }
+                                    }
+                                    label {
+                                        maxLines: 1
+                                        text: "AUDIO ONLY"
+                                        textColor: #ffffff
+                                        font: Font(12)
+                                    }
+                                }
+                            }
+                            stack {
+                                alpha: interactionStatus==.onAir ? 1 : 0
+                                padding {
+                                    left: 5
+                                    top: 10
+                                }
+                                roundRect {
+                                    backgroundColor: #ff0000
+                                    cornerRadius: 2
+                                }
+                                absolute {
+                                    label {
+                                        text: "On Air"
+                                        font: Font(.bold, 10)
+                                        textColor: #ffffff
+                                        padding {
+                                            left: 3
+                                            top: 2
+                                            bottom: 2
+                                            right: 2
+                                        }
+                                    }
+                                }
+                            }
+                            vertical {
+                                padding {
+                                    left: 15
+                                    top: 95
+                                    right: 5
+                                }
+                                label {
+                                    textColor: #2e2e32
+                                    text: name
+                                    maxLines: 1
+                                    font: Font(.bold, 15)
+                                }
+                                label {
+                                    textColor: #2e2e32
+                                    text: location
+                                    maxLines: 1
+                                    font: Font(10)
+                                }
+                            }
+                            label {
+                                textColor: #2e2e32
+                                text: headline
+                                font: Font(12)
+                                maxLines: 1
+                                padding {
+                                    left: 15
+                                    bottom: 10
+                                    right: 5
+                                }
+                            }
+                            vertical {
+                                spacing: 5
+                                padding {
+                                    left: 5
+                                    bottom: 5
+                                    right: 5
+                                }
+                                horizontal {
+                                    spacing: 5
+                                    fixedSize {
+                                        height: 33
+                                    }
+                                    prescreenHold {
+                                        class: "auto-hide"
+                                        alpha: id==prescreen.id&&interactionStatus==.preScreen ? 1 : 0
+                                        sizePolicy: .stretched
+                                        backgroundColor: #4fad5b
+                                        text: "HOLD"
+                                        textColor: #ffffff
+                                        font: Font(.bold, 12)
+                                        fixedSize {
+                                            height: 33
+                                        }
+                                    }
+                                    prescreenSelect {
+                                        class: "auto-hide"
+                                        alpha: id!=prescreen.id&&!poorConnection&&interactionStatus==.preScreen ? 1 : 0
+                                        sizePolicy: .stretched
+                                        backgroundColor: #61c3f8
+                                        text: "SELECT"
+                                        textColor: #ffffff
+                                        font: Font(.bold, 12)
+                                        enabled: canSelectNext
+                                    }
+                                    prescreenDisconnect {
+                                        class: "auto-hide"
+                                        sizePolicy: .stretched
+                                        backgroundColor: #eb5333
+                                        text: interactionStatus==.onAir ? "DISCONNECT" : "REJECT"
+                                        textColor: #ffffff
+                                        font: Font(.bold, 12)
+                                    }
+                                }
+                                participantMessage {
+                                    class: "participant_message"
+                                    alpha: 0
+                                    fixedSize {
+                                        height: 26
+                                    }
+                                }
+                                prescreenDialog {
+                                    class: "auto-hide"
+                                    alpha: id==prescreen.id||poorConnection||interactionStatus!=.preScreen||alreadyPrescreened||isTownhall||manager.id==celebrity.id ? 0 : 1
+                                    backgroundColor: #4fad5b
+                                    text: "PRE-SCREEN"
+                                    textColor: #ffffff
+                                    font: Font(.bold, 12)
+                                    fixedSize {
+                                        height: 33
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                absolute {
+                    fixedSize {
+                        width: isTownhall ? 200 : 150
+                        height: bottomPanel.height
+                    }
+                    closeFloorButton {
+                        backgroundColor: isTownhall ? Color(#ffffff, 0) : #c53f46
+                        cornerRadius: isTownhall ? 0 : 5
+                        font: Font(.bold, 16)
+                        textColor: #ffffff
+                        text: isTownhall ? "" : "CLOSE"
+                        image: isTownhall ? Image("res/assets/close-red.png") : nil
+                        fixedSize {
+                            height: 33
+                            width: isTownhall ? 33 : nil
+                        }
+                        center {
+                            x: 0.5
+                            y: isTownhall ? nil : 0.5
+                        }
+                        contentPadding {
+                            left: isTownhall ? nil : 20
+                            right: isTownhall ? nil : 20
+                        }
+                        padding {
+                            top: isTownhall ? 10 : nil
+                        }
+                    }
+                    horizontal {
+                        alpha: isTownhall ? 1 : 0
+                        center {
+                            x: 0.5
+                            y: 0.5
+                        }
+                        fixedSize {
+                            height: 40
+                        }
+                        absolute {
+                            class: "round-header-left"
+                            backgroundColor: #595a6b
+                            label {
+                                textColor: #ffffff
+                                font: Font(.bold, 16)
+                                text: String(session.participantCount)
+                                padding {
+                                    left: 15
+                                    right: 10
+                                }
+                                center {
+                                    y: 0.5
+                                }
+                            }
+                        }
+                        absolute {
+                            class: "round-header-right"
+                            backgroundColor: #ffffff
+                            fixedSize {
+                                width: 100
+                            }
+                            label {
+                                textColor: #595a6b
+                                font: Font(16)
+                                text: "IN-QUEUE"
+                                padding {
+                                    left: 10
+                                }
+                                center {
+                                    y: 0.5
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        horizontal {
+            alignment: .center
+            spacing: 10
+            padding {
+                left: leftPanelWidth+leftOffset
+                top: 0
+                right: 20
+            }
+            fixedSize {
+                height: topOffset
+            }
+            image {
+                alpha: assets.logoUrl=="" ? 0 : 1
+                image: Image(assets.logoUrl)
+                contentPolicy: .aspectFit
+                fixedSize {
+                    width: 200
+                    height: topOffset*0.85
+                }
+            }
+            roundRect {
+                sizePolicy: .stretched
+                fixedSize {
+                    height: 10
+                }
+            }
+            activateSessionButton {
+                alpha: session.phase==.waitingForActivation&&!introScreens.showIntro&&!isTownhall ? 1 : 0
+                text: "Go Live"
+                textColor: #ffffff
+                backgroundColor: #407e22
+                cornerRadius: 5
+                fixedSize {
+                    width: 130
+                    height: 30
+                }
+            }
+            quitSessionButton {
+                alpha: !introScreens.showIntro||celebrity.joinStatus!=.joined ? 1 : 0
+                text: isTownhall ? "End Stream" : "End Podcast"
+                textColor: #ffffff
+                backgroundColor: #e1374b
+                cornerRadius: 5
+                fixedSize {
+                    width: 130
+                    height: 30
+                }
+            }
+        }
+        stack {
+            aspect: dialogActive ? 16/9 : nil
+            padding {
+                left: leftPanelWidth+(dialogActive ? 40 : 0)
+                top: dialogActive ? nil : topOffset
+                right: dialogActive ? nil : 0
+                bottom: bottomPanel.height+(dialogActive ? 40 : 0)
+            }
+            size {
+                width: dialogActive ? 0.2 : nil
+            }
+            absolute {
+                absoluteList {
+                    model: participantsOnAir
+                    padding {
+                        left: leftOffset
+                        right: rightOffset
+                        top: 0
+                        bottom: bottomOffset
+                    }
+                    participant {
+                        backgroundColor: participantColor(userIndex+1)
+                        center {
+                            x: fanCenterX(index+1)
+                            y: fanCenterY(index+1)
+                        }
+                        size {
+                            width: fanWidth(index+1)
+                            height: fanHeight
+                        }
+                        stack {
+                            padding {
+                                top: 4
+                                bottom: 4
+                                left: 4
+                                right: 4
+                            }
+                            fanPlayer {
+                                alpha: poorConnection||audioOnly ? 0 : 1
+                            }
+                            roundRect {
+                                alpha: poorConnection||audioOnly ? 1 : 0
+                                backgroundColor: #000000
+                            }
+                            vertical {
+                                alignment: .center
+                                alpha: poorConnection||audioOnly ? 1 : 0
+                                roundRect {
+                                    sizePolicy: .stretched
+                                    fixedSize {
+                                        width: 10
+                                    }
+                                }
+                                image {
+                                    image: Image("res/host/audio-only.png")
+                                    fixedSize {
+                                        width: 50
+                                        height: 50
+                                    }
+                                }
+                                roundRect {
+                                    fixedSize {
+                                        width: 10
+                                        height: 20
+                                    }
+                                }
+                                label {
+                                    text: @("$1 is streaming audio only", name)
+                                    textAlignment: .center
+                                    textColor: #ffffff
+                                    maxLines: 0
+                                }
+                                roundRect {
+                                    sizePolicy: .stretched
+                                    fixedSize {
+                                        width: 10
+                                    }
+                                }
+                            }
+                            absolute {
+                                alpha: index<2&&frameStatus==.maximized ? 1 : 0
+                                participantMinimizeButton {
+                                    image: Image("res/manager/guests/deactivate.png")
+                                    padding {
+                                        top: 1
+                                        right: 1
+                                    }
+                                    fixedSize {
+                                        width: 40
+                                        height: 40
+                                    }
+                                }
+                            }
+                            absolute {
+                                absolute {
+                                    padding {
+                                        left: 0
+                                        top: 0
+                                        right: 0
+                                        bottom: 30
+                                    }
+                                    label {
+                                        id: @("fan$1_name_label", String(index+1))
+                                        text: name
+                                        textAlignment: .center
+                                        center {
+                                            x: 1/2
+                                            y: 1
+                                        }
+                                        fixedSize {
+                                            height: 20
+                                        }
+                                        size {
+                                            width: 1
+                                        }
+                                    }
+                                }
+                            }
+                            absolute {
+                                alpha: 0
+                                participantDisconnectButton {
+                                    text: "Disconnect"
+                                    image: Image("res/manager/guests/fan-disconnect.png")
+                                    imagePadding: 3
+                                    imagePosition: .top
+                                    font: Font(.bold, 11)
+                                    textColor: #ffffff
+                                    padding {
+                                        left: 0
+                                        bottom: 10
+                                    }
+                                    fixedSize {
+                                        width: blockButtons.width
+                                        height: blockButtons.height
+                                    }
+                                }
+                                participantBlockButton {
+                                    text: "Block User"
+                                    image: Image("res/manager/guests/fan-block.png")
+                                    imagePadding: 3
+                                    imagePosition: .top
+                                    font: Font(.bold, 11)
+                                    textColor: #ff4d20
+                                    padding {
+                                        right: 0
+                                        bottom: 10
+                                    }
+                                    fixedSize {
+                                        width: blockButtons.width
+                                        height: blockButtons.height
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    layer {
+        id: "overlays"
+        z_order: 15
+        stack {
+            padding {
+                left: leftPanelWidth
+                top: topOffset
+                right: 0
+                bottom: bottomPanel.height
+            }
+            absolute {
+                absolute {
+                    padding {
+                        left: leftOffset
+                        right: rightOffset
+                        top: 0
+                        bottom: bottomOffset
+                    }
+                    absolute {
+                        alpha: session.playerUrls.public!=""||showingFirstFanPanel ? 1 : 0
+                        backgroundColor: Color(#000000, showingFirstFanPanel ? 0.3 : 0.5)
+                        padding {
+                            left: 0
+                            right: 0
+                            top: 0
+                        }
+                        fixedSize {
+                            height: 50
+                        }
+                        horizontal {
+                            alpha: showingFirstFanPanel ? 0 : 1
+                            spacing: 10
+                            center {
+                                x: 0.5
+                                y: 0.5
+                            }
+                            label {
+                                text: "Ask viewers to type"
+                                textColor: #ffffff
+                                font: Font(.bold, 16)
+                            }
+                            label {
+                                text: session.playerUrls.public
+                                textColor: #78d3f9
+                                font: Font(.bold, 16)
+                            }
+                            label {
+                                text: "in web browser to request video chat"
+                                textColor: #ffffff
+                                font: Font(.bold, 16)
+                            }
+                        }
+                        label {
+                            class: "abusive_label"
+                            alpha: showingFirstFanPanel ? 1 : 0
+                            text: "Click ‘Block user’ button if user gets abusive"
+                            textColor: #ff0000
+                            font: Font(20)
+                            maxLines: 1
+                            center {
+                                x: 0.5
+                                y: 0.5
+                            }
+                        }
+                    }
+                    stack {
+                        class: "live_indicator"
+                        alpha: session.phase==.activated&&!showVodPlayer ? 1 : 0
+                        padding {
+                            left: 40
+                            top: session.playerUrls.public!="" ? 70 : 40
+                        }
+                        roundRect {
+                            backgroundColor: #ff0000
+                            cornerRadius: 4
+                        }
+                        absolute {
+                            horizontal {
+                                spacing: 3
+                                padding {
+                                    left: 6
+                                    top: 4
+                                    bottom: 4
+                                    right: 5
+                                }
+                                label {
+                                    text: "LIVE"
+                                    font: Font(.bold, 13)
+                                    textColor: #ffffff
+                                }
+                                roundRect {
+                                    alpha: realUserCount>0 ? 1 : 0
+                                    backgroundColor: Color(#ffffff, 0.5)
+                                    fixedSize {
+                                        width: 1
+                                    }
+                                }
+                                label {
+                                    alpha: realUserCount>0 ? 1 : 0
+                                    text: ShortString(realUserCount)
+                                    font: Font(13)
+                                    textColor: #ffffff
+                                }
+                            }
+                        }
+                    }
+                    absolute {
+                        class: "lyrics_scroll"
+                        alpha: assets.lyricsUrl!=""&&showLyrics ? 1 : 0
+                        fixedSize {
+                            width: 300
+                            height: 300
+                        }
+                        padding {
+                            right: 30
+                            bottom: 0
+                        }
+                        image {
+                            image: Image("res/assets/scroll.png")
+                            padding {
+                                left: 0
+                                right: 0
+                                top: 0
+                                bottom: 0
+                            }
+                        }
+                        textPreview {
+                            center {
+                                x: 0.5
+                                y: 0.47
+                            }
+                            size {
+                                width: 240/512
+                                height: 290/512
+                            }
+                        }
+                        toggleLyricsButton {
+                            alpha: assets.lyricsUrl!=""&&showLyrics ? 1 : 0
+                            image: Image("res/assets/close-dark.png")
+                            padding {
+                                top: 20
+                                right: 63
+                            }
+                            fixedSize {
+                                width: 25
+                                height: 25
+                            }
+                        }
+                    }
+                    activateSessionButton {
+                        id: "activate_button_big"
+                        alpha: !introScreens.showIntro&&isTownhall&&session.phase==.waitingForActivation ? 1 : 0
+                        text: "Start Broadcast to Social Networks"
+                        textColor: #ffffff
+                        backgroundColor: #ff0000
+                        font: Font(24)
+                        center {
+                            x: 0.5
+                            y: 0.5
+                        }
+                        contentPadding {
+                            left: 40
+                            top: 20
+                            right: 40
+                            bottom: 20
+                        }
+                    }
+                }
+            }
+        }
+    }
+    layer {
+        id: "connecting"
+        z_order: 15
+        fullscreen: true
+        backgroundColor: Color(#000000, 0.5)
+        alpha: session.phase==.connecting ? 1 : 0
+        absolute {
+            padding {
+                left: leftPanelWidth+leftOffset
+                top: topOffset
+                right: rightOffset
+                bottom: bottomPanel.height+bottomOffset
+            }
+            horizontal {
+                alignment: .center
+                spacing: 5
+                center {
+                    x: 0.5
+                    y: 0.5
+                }
+                progress {
+                    color: #ffffff
+                    fixedSize {
+                        height: 30
+                        width: 30
+                    }
+                }
+                label {
+                    text: "Connecting..."
+                    textColor: #ffffff
+                    font: Font(16)
+                }
+            }
+        }
+    }
+    layer {
+        id: "prescreen"
+        z_order: 5
+        alpha: dialogActive ? 1 : 0
+        stack {
+            padding {
+                left: leftPanelWidth+leftOffset
+                top: topOffset
+                right: rightOffset
+                bottom: bottomPanel.height+bottomOffset
+            }
+            prescreenPlayer {
+            }
+        }
+    }
+    layer {
+        id: "banner"
+        z_order: 10
+        alpha: assets.bannerUrl=="" ? 0 : 1
+        absolute {
+            padding {
+                left: leftPanelWidth+leftOffset
+                right: rightOffset
+                bottom: bottomPanel.height+bottomOffset
+            }
+            image {
+                image: Image(assets.bannerUrl)
+                contentPolicy: .aspectFit
+                padding {
+                    left: 0
+                    right: 0
+                }
+                fixedSize {
+                    height: 60
+                }
+            }
+        }
+    }
+    layer {
+        id: "intro"
+        z_order: 20
+        alpha: introScreens.showIntro&&session.phase==.waitingForActivation|.activated ? 1 : 0
+        fullscreen: true
+        absolute {
+            padding {
+                left: 0
+                top: 0
+                bottom: 0
+                right: 0
+            }
+            roundRect {
+                backgroundColor: Color(#000000, 0.5)
+                padding {
+                    top: 0
+                    left: 0
+                    right: 0
+                    bottom: 0
+                }
+            }
+            absolute {
+                backgroundColor: #252525
+                padding {
+                    top: 0
+                    left: 0
+                    right: 0
+                }
+                fixedSize {
+                    height: 50
+                }
+                horizontal {
+                    spacing: 20
+                    padding {
+                        top: 0
+                        bottom: 0
+                    }
+                    center {
+                        x: 0.5
+                    }
+                    introButton1 {
+                        text: "SPONSORSHIP"
+                        alpha: isTownhall ? 0 : 1
+                        class: introScreen==introScreens.sponsorship ? "current" : ""
+                        textColor: #ffffff
+                        font: Font(.bold, 15)
+                        contentPadding {
+                            left: 20
+                            right: 20
+                        }
+                    }
+                    introButtonGuests {
+                        class: introScreen==introScreens.share ? "current" : ""
+                        text: "SHARE"
+                        textColor: #ffffff
+                        font: Font(.bold, 15)
+                        contentPadding {
+                            left: 20
+                            right: 20
+                        }
+                    }
+                    introButtonShare {
+                        class: introScreen==introScreens.guests ? "current" : ""
+                        text: "GUESTS"
+                        textColor: #ffffff
+                        font: Font(.bold, 15)
+                        contentPadding {
+                            left: 20
+                            right: 20
+                        }
+                    }
+                }
+            }
+            vertical {
+                center {
+                    x: 0.5
+                    y: 0.5
+                }
+                absolute {
+                    alpha: isTownhall ? 0 : 1
+                    backgroundColor: #252525
+                    fixedSize {
+                        height: 50
+                    }
+                    sessionTitleEditor {
+                        padding {
+                            left: 10
+                            top: 10
+                            right: 10
+                            bottom: 10
+                        }
+                    }
+                }
+                absolute {
+                    backgroundColor: #4c4c4c
+                    horizontal {
+                        alignment: .center
+                        spacing: 20
+                        padding {
+                            top: 10
+                            bottom: 10
+                        }
+                        center {
+                            x: 0.5
+                        }
+                        absolute {
+                            alpha: sharingCisco&&!isTownhall ? 1 : 0
+                            image {
+                                image: Image("res/manager/share/cisco_round.png")
+                                fixedSize {
+                                    width: 50
+                                    height: 50
+                                }
+                                padding {
+                                    left: 10
+                                    top: 0
+                                    right: 10
+                                    bottom: 0
+                                }
+                            }
+                        }
+                        label {
+                            class: "intro_screen_title"
+                            text: switch(introScreen) {
+    case introScreens.sponsorship => "UPLOAD SPONSORSHIP ASSETS"
+    case introScreens.share => sharingCisco ? "POST ON WEBEX TEAMS" : @("SHARE $1", isTownhall ? "TOWNHALL" : "PODCAST")
+    case introScreens.guests => @("INVITE GUESTS INTO $1", isTownhall ? "TOWNHALL" : "PODCAST")
+    case _ => ""
+}
+                            textColor: #53b5dd
+                            font: Font(.bold, 17)
+                            textAlignment: .center
+                            maxLines: 1
+                        }
+                    }
+                }
+                absolute {
+                    backgroundColor: #4c4c4c
+                    alpha: !sharingCisco&&!isTownhall ? 1 : 0
+                    label {
+                        text: switch(introScreen) {
+    case introScreens.sponsorship => "Upload your sponsor's assets to be embedded into the podcast.\nYou can display 3 VOD clips during the live stream"
+    case introScreens.share => isTownhall ? "Simulcast townhall to any of streaming services" : "Share podcast to any social network"
+    case introScreens.guests => "Invite guests from any device - laptop, smartphone, video camera or Webex camera"
+    case _ => ""
+}
+                        textColor: #ffffff
+                        font: Font(12)
+                        padding {
+                            left: 10
+                            top: 0
+                            right: 10
+                            bottom: 0
+                        }
+                    }
+                }
+                introScreenSponsorship {
+                    alpha: introScreen==introScreens.sponsorship ? 1 : 0
+                }
+                introScreenShare {
+                    alpha: introScreen==introScreens.share&&!sharingCisco ? 1 : 0
+                }
+                introScreenCisco {
+                    alpha: introScreen==introScreens.share&&sharingCisco ? 1 : 0
+                }
+                introScreenGuests {
+                    alpha: introScreen==introScreens.guests ? 1 : 0
+                }
+                absolute {
+                    backgroundColor: #252525
+                    fixedSize {
+                        height: introScreen==introScreens.guests ? 120 : 80
+                    }
+                    introButtonGuests {
+                        alpha: introScreen==introScreens.sponsorship ? 1 : 0
+                        text: "NEXT"
+                        textColor: #000000
+                        font: Font(.bold, 15)
+                        cornerRadius: 2
+                        backgroundColor: #60bcf6
+                        padding {
+                            right: 20
+                        }
+                        center {
+                            y: 0.5
+                        }
+                        fixedSize {
+                            width: 80
+                            height: 40
+                        }
+                    }
+                    introButtonDone {
+                        alpha: introScreen==introScreens.guests&&isTownhall ? 1 : 0
+                        text: "NEXT"
+                        textColor: #000000
+                        font: Font(.bold, 15)
+                        cornerRadius: 2
+                        backgroundColor: #60bcf6
+                        padding {
+                            right: 20
+                        }
+                        center {
+                            y: 0.5
+                        }
+                        fixedSize {
+                            width: 80
+                            height: 40
+                        }
+                    }
+                    introButtonShare {
+                        alpha: introScreen==introScreens.share&&!sharingCisco ? 1 : 0
+                        text: "NEXT"
+                        textColor: #000000
+                        font: Font(.bold, 15)
+                        cornerRadius: 2
+                        backgroundColor: #60bcf6
+                        padding {
+                            right: 20
+                        }
+                        center {
+                            y: 0.5
+                        }
+                        fixedSize {
+                            width: 80
+                            height: 40
+                        }
+                    }
+                    activateSessionButton2 {
+                        alpha: introScreen==introScreens.guests&&!isTownhall ? 1 : 0
+                        text: "GO LIVE"
+                        textColor: #000000
+                        font: Font(.bold, 15)
+                        cornerRadius: 2
+                        backgroundColor: #729b45
+                        padding {
+                            right: 20
+                        }
+                        center {
+                            y: 0.5
+                        }
+                        fixedSize {
+                            width: 80
+                            height: 40
+                        }
+                    }
+                    endSharingCisco {
+                        alpha: introScreen==introScreens.share&&sharingCisco ? 1 : 0
+                        text: "DONE"
+                        textColor: #000000
+                        font: Font(.bold, 15)
+                        cornerRadius: 2
+                        backgroundColor: #60bcf6
+                        center {
+                            x: 0.5
+                            y: 0.5
+                        }
+                        fixedSize {
+                            width: 80
+                            height: 40
+                        }
+                    }
+                    introTextUpload {
+                        alpha: introScreen==introScreens.guests&&!isTownhall ? 1 : 0
+                        padding {
+                            left: 20
+                            bottom: 20
+                        }
+                        fixedSize {
+                            width: 115
+                            height: 80
+                        }
+                    }
+                }
+            }
+        }
+    }
+    layer {
+        id: "geofence"
+        z_order: 25
+        alpha: showGeofence ? 1 : 0
+        fullscreen: true
+        absolute {
+            padding {
+                left: 0
+                top: 0
+                bottom: 0
+                right: 0
+            }
+            roundRect {
+                backgroundColor: Color(#000000, 0.5)
+                padding {
+                    top: 0
+                    left: 0
+                    right: 0
+                    bottom: 0
+                }
+            }
+            absolute {
+                center {
+                    x: 0.5
+                    y: 0.5
+                }
+                size {
+                    width: 0.7
+                    height: 0.7
+                }
+                absolute {
+                    padding {
+                        left: 16
+                        top: 16
+                        right: 16
+                        bottom: 16
+                    }
+                    mapView {
+                        padding {
+                            top: 0
+                            left: 0
+                            right: 0
+                            bottom: 0
+                        }
+                    }
+                    geofenceInviteButton {
+                        text: "INVITE USERS TO TOWNHALL"
+                        textColor: #ffffff
+                        font: Font(.bold, 15)
+                        cornerRadius: 4
+                        backgroundColor: #61c3f8
+                        padding {
+                            top: 20
+                            right: 10
+                        }
+                        fixedSize {
+                            width: 250
+                            height: 40
+                        }
+                    }
+                }
+                geofenceCancelButton {
+                    image: Image("res/common/close-button-white.png")
+                    padding {
+                        top: 0
+                        right: 0
+                    }
+                    fixedSize {
+                        width: 32
+                        height: 32
+                    }
+                }
+            }
+        }
+    }
+    layer {
+        id: "bulk_invite"
+        z_order: 25
+        fullscreen: true
+        alpha: showBulkInvite ? 1 : 0
+        backgroundColor: Color(#000000, 0.5)
+        absolute {
+            backgroundColor: #ffffff
+            center {
+                x: 0.5
+                y: 0.5
+            }
+            size {
+                width: 0.6
+                height: 0.7
+            }
+            vertical {
+                spacing: 10
+                padding {
+                    top: 10
+                    left: 30
+                    right: 30
+                    bottom: 10
+                }
+                label {
+                    text: "Enter Usernames and Emails"
+                    font: Font(24)
+                    textColor: #000000
+                    maxLines: 1
+                    textAlignment: .center
+                }
+                label {
+                    text: "Format: Name, Email (separated by comma)"
+                    font: Font(16)
+                    textColor: #585858
+                    maxLines: 1
+                    textAlignment: .center
+                }
+                bulkInviteView {
+                    sizePolicy: .stretched
+                }
+                absolute {
+                    fixedSize {
+                        height: 64
+                    }
+                    bulkInviteButtonConfirm {
+                        enabled: bulkInviteValid
+                        backgroundColor: #61c3f8
+                        cornerRadius: 5
+                        font: Font(16)
+                        textColor: #ffffff
+                        text: "INVITE"
+                        center {
+                            x: 0.5
+                            y: 0.5
+                        }
+                        fixedSize {
+                            width: 200
+                            height: 44
+                        }
+                    }
+                }
+            }
+        }
+    }
+    layer {
+        id: "audio_activation"
+        z_order: 26
+        alpha: media.needSoundActivation&&session.phase==.activated ? 1 : 0
+        fullscreen: true
+        backgroundColor: Color(#000000, 0.5)
+        absolute {
+            center {
+                x: 0.5
+                y: 0.5
+            }
+            fixedSize {
+                height: 250
+                width: 500
+            }
+            roundRect {
+                backgroundColor: #000000
+                strokeColor: #ffffff
+                strokeWidth: 2
+                padding {
+                    bottom: 0
+                    left: 0
+                    right: 0
+                    top: 0
+                }
+            }
+            vertical {
+                alignment: .center
+                spacing: 10
+                center {
+                    x: 0.5
+                    y: 0.5
+                }
+                label {
+                    textColor: #ffffff
+                    font: Font(.bold, 16)
+                    text: "Oops!"
+                }
+                label {
+                    textColor: #ffffff
+                    font: Font(.bold, 16)
+                    text: "Looks like your browser refreshed."
+                }
+                roundRect {
+                    fixedSize {
+                        height: 10
+                        width: 5
+                    }
+                }
+                activateSoundButton {
+                    backgroundColor: #4e86f6
+                    cornerRadius: 5
+                    textColor: #ffffff
+                    font: Font(18)
+                    text: "CONTINUE"
+                    contentPadding {
+                        left: 15
+                        right: 15
+                        top: 10
+                        bottom: 10
+                    }
+                }
+            }
+        }
+    }
+    layer {
+        id: "session_full"
+        fullscreen: true
+        z_order: 27
+        alpha: session.phase==.full ? 1 : 0
+        backgroundColor: Color(#000000, 0.4)
+        absolute {
+            center {
+                x: 0.5
+                y: 0.5
+            }
+            fixedSize {
+                height: 250
+                width: 500
+            }
+            roundRect {
+                backgroundColor: #000000
+                strokeColor: #ffffff
+                strokeWidth: 2
+                padding {
+                    bottom: 0
+                    left: 0
+                    right: 0
+                    top: 0
+                }
+            }
+            vertical {
+                alignment: .center
+                spacing: 10
+                center {
+                    x: 0.5
+                    y: 0.5
+                }
+                size {
+                    width: 0.95
+                }
+                label {
+                    textColor: #ffffff
+                    font: Font(.bold, 16)
+                    text: "System is overloaded"
+                }
+                label {
+                    textColor: #ffffff
+                    font: Font(.bold, 16)
+                    text: "Please wait for a couple of minutes while we allocating additional resources for your session."
+                    textAlignment: .center
+                }
+                roundRect {
+                    fixedSize {
+                        height: 10
+                        width: 5
+                    }
+                }
+                horizontal {
+                    spacing: 20
+                    quitSessionButton {
+                        backgroundColor: #eb5333
+                        cornerRadius: 5
+                        textColor: #ffffff
+                        font: Font(18)
+                        text: "Quit"
+                        fixedSize {
+                            width: 120
+                        }
+                        contentPadding {
+                            left: 15
+                            right: 15
+                            top: 10
+                            bottom: 10
+                        }
+                    }
+                    retryConnectButton {
+                        backgroundColor: #4e86f6
+                        cornerRadius: 5
+                        textColor: #ffffff
+                        font: Font(18)
+                        text: "Retry"
+                        fixedSize {
+                            width: 120
+                        }
+                        contentPadding {
+                            left: 15
+                            right: 15
+                            top: 10
+                            bottom: 10
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
