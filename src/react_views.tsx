@@ -1,8 +1,8 @@
 import React, { Component, CSSProperties } from 'react';
-import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from 'view';
+import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { ElementSize, resizeObserver } from 'resize_sensor';
+import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
 import { extend, forEach, identity, isEqual, pick } from 'lodash';
 
