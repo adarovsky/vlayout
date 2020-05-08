@@ -1,6 +1,6 @@
-import {Inputs} from "./inputs";
-import {Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition, Types} from "./types";
-import {EnumValue, Expression} from "./expression";
+import { Inputs } from './inputs';
+import { Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition, Types } from './types';
+import { EnumValue, Expression } from './expression';
 import {
     ColorAlpha,
     FontFamily,
@@ -10,16 +10,16 @@ import {
     Image,
     LocalizedNumber,
     LocalizedString,
-    ShortLocalizedNumber
-} from "./builtin_functions";
-import React from "react";
-import {ViewListReference, ViewReference} from "./view_reference";
-import {View} from "./view";
-import _ from "lodash";
-import {ReactViewProps} from "./react_views";
-import {Button, TextField} from "./primitives";
-import {Observable} from "rxjs";
-import {ListClickHandler, ListEnterHandler, ListModelItem, ListTextChangeHandler} from "./list";
+    ShortLocalizedNumber,
+} from './builtin_functions';
+import React from 'react';
+import { ViewListReference, ViewReference } from './view_reference';
+import { View } from './view';
+import { ReactViewProps } from './react_views';
+import { Button, TextField } from './primitives';
+import { Observable } from 'rxjs';
+import { ListClickHandler, ListEnterHandler, ListModelItem, ListTextChangeHandler } from './list';
+import { isEqual } from 'lodash';
 
 export class Engine {
     readonly inputs = new Inputs(this);
@@ -102,7 +102,7 @@ export class Engine {
         }
         else {
             for (let f of this.functions) {
-                if (f.name === name && _.isEqual(f.parameterTypes, parameters)) {
+                if (f.name === name && isEqual(f.parameterTypes, parameters)) {
                     return f;
                 }
             }

@@ -357,7 +357,6 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
             .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
         if (!isEqual(this.children.value, children)) {
             this.children.next(children);
-            this.updateSubviewPositions();
         }
     }
 
@@ -376,8 +375,6 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
         </div>);
     }
 
-    protected updateSubviewPositions(): void {
-    }
 }
 
 export class ReactViewReference<P extends ReactViewProps, S extends ReactViewState> extends ReactView<P, S> {

@@ -1,12 +1,12 @@
-import {Expression} from "./expression";
-import {LexIdentifier} from "./lexer";
-import {TypeDefinition} from "./types";
-import {FunctionImplementationI} from "./builtin_functions";
-import {Layout, Scope} from "./layout";
-import {Engine} from "./engine";
-import {Observable} from "rxjs";
-import _ from "lodash";
-import {View} from "./view";
+import { Expression } from './expression';
+import { LexIdentifier } from './lexer';
+import { TypeDefinition } from './types';
+import { FunctionImplementationI } from './builtin_functions';
+import { Layout, Scope } from './layout';
+import { Engine } from './engine';
+import { Observable } from 'rxjs';
+import { View } from './view';
+import { isEqual } from 'lodash';
 
 class FunctionArgument extends Expression {
     typeDefinition: TypeDefinition | null = null;
@@ -101,7 +101,7 @@ export class Functions {
 
     functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI|null {
         for (let f of this.functions) {
-            if (f.name === name && _.isEqual(f.parameterTypes, parameters)) {
+            if (f.name === name && isEqual(f.parameterTypes, parameters)) {
                 return f;
             }
         }

@@ -4,8 +4,8 @@ import { ViewProperty } from './view';
 import { combineLatest, Observable } from 'rxjs';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import { map, switchMap } from 'rxjs/operators';
-import _ from 'lodash';
 import { ReactList, ReactListState } from './react_list';
+import { pick } from 'lodash';
 
 interface ReactHorizontalListState extends ReactListState {
     scrollerStyle: CSSProperties;
@@ -76,7 +76,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        const extra = _.pick(this.state, 'id');
+        const extra = pick(this.state, 'id');
         return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             <div style={{
                 ...this.state.scrollerStyle,

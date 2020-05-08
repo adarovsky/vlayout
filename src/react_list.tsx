@@ -1,16 +1,15 @@
 import { ReactContainerState, ReactView, ReactViewProps, ReactViewState } from './react_views';
 import { List, ListItemPrototype, ListModelItem, prototypeMatch } from './list';
 import { ReactAbsoluteLayout } from './react_absolute';
-import _ from 'lodash';
 import React from 'react';
 import { Container, LinearLayoutAxis, ViewProperty } from './view';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
+import { BehaviorSubject, from, Subscription } from 'rxjs';
 import { ListButton, ListTextField } from './primitives';
 import { ReactButtonBase, ReactButtonState } from './react_button';
 import { ViewListReference } from './view_reference';
 import { ReactTextFieldBase, ReactTextFieldState } from './react_text';
 import { Dictionary } from './types';
+import { identity, isEqual, partition, toPairs } from 'lodash';
 
 //import FlipMove from "react-flip-move";
 
@@ -82,7 +81,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<ReactListItemSta
             e.preventDefault();
             e.stopPropagation();
             const promise = tapCallback(self.modelItemSnapshot);
-            this.subscription.add(fromPromise(promise)
+            this.subscription.add(from(promise)
                 .subscribe({
                     error: () => this.setState(s => ({...s, running: false})),
                     complete: () => this.setState(s => ({...s, running: false}))
@@ -115,11 +114,11 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
         super.componentDidMount();
         const parentList = this.props.parentView as List;
         if (parentList.axis !== null) {
-            this.wire('spacing', 'spacing', _.identity);
+            this.wire('spacing', 'spacing', identity);
         }
         this.subscription.add(parentList.model!.sink.subscribe(arr => {
             const newModelItems = arr as Dictionary<ListModelItem>[];
-            const [reuse, extra] = _.partition(this.state.childItems, x =>
+            const [reuse, extra] = partition(this.state.childItems, x =>
                 newModelItems.findIndex(y => prototypeMatch(x, y)) >= 0);
 
             extra.forEach(p => parentList.returnReusableItem(p));
@@ -129,7 +128,7 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
                 if (!item) {
                     item = parentList.requestReusableItem(m)
                 }
-                const [key, v] = _.toPairs(m)[0];
+                const [key, v] = toPairs(m)[0];
                 item.setModelItem(v as ListModelItem);
 
                 return item;
@@ -148,43 +147,9 @@ export class ReactList<S extends ReactListState> extends ReactView<ReactViewProp
         const children = this.state.childItems
             .map(v => v.instance)
             .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
-        if (!_.isEqual(this.children.value, children)) {
+        if (!isEqual(this.children.value, children)) {
             this.children.next(children);
-            this.updateSubviewPositions();
         }
-    }
-
-    protected updateSubviewPositions(): void {
-        // const self = this.viewRef.current;
-        // if (!self) return;
-        //
-        // this.subviewSubscription.unsubscribe();
-        // const isInStack = this.props.parentView.parent instanceof StackLayout;
-        // this.subviewSubscription = this.intrinsicSize()
-        //     .subscribe(size => {
-        //             if (size.width > 0 && !this.isWidthDefined()) {
-        //                 self.style.minWidth = size.width + 'px';
-        //             }
-        //             else {
-        //                 if (isInStack) {
-        //                     self.style.minWidth = '100%';
-        //                 } else {
-        //                     delete self.style.minWidth;
-        //                 }
-        //             }
-        //
-        //             if (size.height > 0 && !this.isHeightDefined()) {
-        //                 self.style.minHeight = size.height + 'px';
-        //             }
-        //             else {
-        //                 if (isInStack) {
-        //                     self.style.minHeight = '100%';
-        //                 } else {
-        //                     delete self.style.minHeight;
-        //                 }
-        //             }
-        //         }
-        //     );
     }
 }
 
@@ -208,7 +173,7 @@ export class ReactListButton extends ReactButtonBase<ReactButtonState & {modelIt
             e.preventDefault();
             e.stopPropagation();
             const promise = parent.onClick(this.state.modelItem);
-            this.subscription.add(fromPromise(promise)
+            this.subscription.add(from(promise)
                 .subscribe({
                     error: () => this.setState(s => ({...s, running: false})),
                     complete: () => this.setState(s => ({...s, running: false}))

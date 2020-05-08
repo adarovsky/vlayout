@@ -1,12 +1,12 @@
 import { ReactContainer, ReactContainerState, ReactViewProps } from './react_views';
 import { Container, ViewProperty } from './view';
 import React, { CSSProperties } from 'react';
-import _ from 'lodash';
 import { ReactStackLayout } from './react_stack';
 import { combineLatest, fromEvent, Observable } from 'rxjs';
 import { ElementSize } from './resize_sensor';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import ReactDOM from 'react-dom';
+import { identity, pick } from 'lodash';
 
 
 class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: number}> {
@@ -20,7 +20,7 @@ class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: n
 
     componentDidMount(): void {
         super.componentDidMount();
-        this.wire('spacing', 'spacing', _.identity);
+        this.wire('spacing', 'spacing', identity);
     }
 
     protected spacerStyle(): CSSProperties {
@@ -28,7 +28,7 @@ class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: n
     }
 
     render() {
-        const extra = _.pick(this.state, 'id');
+        const extra = pick(this.state, 'id');
         return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
@@ -237,7 +237,7 @@ export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen
 
 
     render() {
-        const extra = _.pick(this.state, 'id');
+        const extra = pick(this.state, 'id');
         const content = (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             {(this.props.parentView as Container).views
                 .filter((v, index) => this.state.childrenVisible[index])
@@ -248,6 +248,4 @@ export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen
 }
 
 export class ReactTopLayout extends ReactStackLayout {
-    protected updateSubviewPositions(): void {
-    }
 }

@@ -1,8 +1,7 @@
-import React from "react";
-import _ from "lodash";
-import {Observable} from "rxjs";
-import {ListModelItem} from "../src/list";
-import {ReactView, ReactViewProps, ReactViewState} from "../src";
+import React from 'react';
+import { Observable } from 'rxjs';
+import { ListModelItem } from '../src/list';
+import { ReactView, ReactViewProps, ReactViewState } from '../src';
 
 interface SampleProps extends ReactViewProps {
     color: string
@@ -33,7 +32,7 @@ export class SampleListView extends ReactView<SampleProps, SampleState> {
     }
 
     render() {
-        return (<div style={_.extend(this.state.style, {backgroundColor: this.props.color})}>
+        return (<div style={{...this.state.style, backgroundColor: this.props.color}}>
             {this.state.user.name}
         </div>);
     }

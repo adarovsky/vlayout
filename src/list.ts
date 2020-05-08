@@ -1,21 +1,21 @@
-import {AbsoluteLayout, LinearLayoutAxis, View, ViewProperty} from "./view";
-import {Layout, Scope} from "./layout";
-import {LexIdentifier} from "./lexer";
-import {Expression, Variable} from "./expression";
-import {Dictionary, ListDefinition, ListDefinitionItem, TypeDefinition} from "./types";
-import {Engine} from "./engine";
-import {FunctionImplementationI} from "./builtin_functions";
-import {LinkError} from "./errors";
-import {combineLatest, EMPTY, Observable, of, ReplaySubject} from "rxjs";
-import _ from "lodash";
-import {finalize, map, switchMap} from "rxjs/operators";
-import React, {createElement} from "react";
-import {ReactListItemPrototype} from "./react_list";
-import {ListButton} from "./primitives";
-import {ReactHorizontalList} from "./react_horizontal_list";
-import {ReactVerticalList} from "./react_vertical_list";
-import {ReactAbsoluteList} from "./react_absolute_list";
-import {PrototypeCache} from "./prototype_cache";
+import { AbsoluteLayout, LinearLayoutAxis, View, ViewProperty } from './view';
+import { Layout, Scope } from './layout';
+import { LexIdentifier } from './lexer';
+import { Expression, Variable } from './expression';
+import { Dictionary, ListDefinition, ListDefinitionItem, TypeDefinition } from './types';
+import { Engine } from './engine';
+import { FunctionImplementationI } from './builtin_functions';
+import { LinkError } from './errors';
+import { combineLatest, EMPTY, Observable, of, ReplaySubject } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs/operators';
+import React, { createElement } from 'react';
+import { ReactListItemPrototype } from './react_list';
+import { ListButton } from './primitives';
+import { ReactHorizontalList } from './react_horizontal_list';
+import { ReactVerticalList } from './react_vertical_list';
+import { ReactAbsoluteList } from './react_absolute_list';
+import { PrototypeCache } from './prototype_cache';
+import { forIn, get, toPairs } from 'lodash';
 
 export interface ListModelItem extends Dictionary<any> {
     id: string;
@@ -41,7 +41,7 @@ class ListItemAccessor extends Expression {
                     if (m === null) {
                         return EMPTY;
                     }
-                    const prop = _.get(m, this.keyPath);
+                    const prop = get(m, this.keyPath);
                     if (prop === undefined) {
                         return EMPTY;
                     }
@@ -78,7 +78,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     }
 
     private buildAccessors(source: Observable<any>, structure: ListDefinitionItem, prefix: string): void {
-        _.forIn(structure, (value, key) => {
+        forIn(structure, (value, key) => {
             const path = prefix.length > 0 ? prefix + '.' + key : key;
             if (value instanceof TypeDefinition) {
                 this.accessors[path] = new ListItemAccessor(path, value);
@@ -109,7 +109,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     copyFrom(what: this): void {
         super.copyFrom(what);
         this.accessors = {};
-        _.forIn(what.accessors, a => this.accessors[a.keyPath] = a.instantiate());
+        forIn(what.accessors, a => this.accessors[a.keyPath] = a.instantiate());
     }
 
     linkModel(): void {
@@ -201,7 +201,7 @@ export class List extends View {
             this.model.sink = this.model.sink.pipe(
                 map((arr: Dictionary<ListModelItem>[]) => arr.map(
                     (modelItem, index) => {
-                        const [key, v] = _.toPairs(modelItem)[0];
+                        const [key, v] = toPairs(modelItem)[0];
                         const ret: { [x: string]: { index: number; id: string; }; } = {};
                         ret[key] = {...v, index};
                         return ret;
@@ -227,8 +227,8 @@ export class List extends View {
         if (hasFilter) {
             this.model.sink = this.model.sink.pipe(
                 switchMap((arr: Dictionary<ListModelItem>[]) =>
-                    combineLatest(_.map(arr, modelItem => {
-                        const [key] = _.toPairs(modelItem)[0];
+                    combineLatest(arr.map(modelItem => {
+                        const [key] = toPairs(modelItem)[0];
                         const prop = this.prototypes.find(p => p.name.content === key);
                         if (prop) {
                             const p = this.requestReusableItem(modelItem);
@@ -250,13 +250,13 @@ export class List extends View {
     }
 
     private createNewReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
-        const [key] = _.toPairs(modelItem)[0];
+        const [key] = toPairs(modelItem)[0];
         const proto = this.prototypes.find(p => p.name.content === key);
         if (!proto) {
             throw new LinkError(this.line, this.column, `model item ${key} not found`);
         }
 
-        const real = proto.instantiate(); //_.cloneDeep(proto);
+        const real = proto.instantiate(); //cloneDeep(proto);
         real.parent = this;
         real.linkModel();
         return real;
@@ -267,7 +267,7 @@ export class List extends View {
     }
 
     requestReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
-        const [key, value] = _.toPairs(modelItem)[0];
+        const [key, value] = toPairs(modelItem)[0];
         let item = this.reusableItems.take(value.id);
 
         if (!item || item.name.content != key) {
@@ -306,6 +306,6 @@ export class List extends View {
 }
 
 export function prototypeMatch(proto: ListItemPrototype, modelItem: Dictionary<ListModelItem>) {
-    const [key, value] = _.toPairs(modelItem)[0];
+    const [key, value] = toPairs(modelItem)[0];
     return key === proto.name.content && value.id === proto.modelItemSnapshot?.id;
 }

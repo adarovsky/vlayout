@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ElementSize } from './resize_sensor';
 import { ReactList, ReactListState } from './react_list';
 import { absoluteIntrinsicSize } from './react_absolute';
-import _ from 'lodash';
+import { pick } from 'lodash';
 
 export class ReactAbsoluteList extends ReactList<ReactListState> {
 
@@ -20,7 +20,7 @@ export class ReactAbsoluteList extends ReactList<ReactListState> {
     }
 
     // render() {
-    //     const extra = _.pick(this.state, 'id');
+    //     const extra = pick(this.state, 'id');
     //     return (<div style={this.style()} className={this.className} ref={this.updateRef} {...extra}>
     //             {this.state.childItems.map(v => v.target)});
     //                 return result;
@@ -29,7 +29,7 @@ export class ReactAbsoluteList extends ReactList<ReactListState> {
     // }
 
     render() {
-        const extra = _.pick(this.state, 'id');
+        const extra = pick(this.state, 'id');
         return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             {this.state.childItems.map( v => v.target )}
         </div>);
