@@ -181,6 +181,7 @@ export class Engine {
     }
 
     logInputValue(name: string, value: any): void {
+        console.log(name, ' <- ', value);
         this.valueSnapshot.inputs[name] = value;
     }
 }

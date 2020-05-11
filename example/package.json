@@ -8,7 +8,6 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@adarovsky/vlayout": "^1.5.2",
     "bootstrap": "^4.4.1",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
@@ -20,7 +19,7 @@
   },
   "alias": {
     "react": "../node_modules/react",
-    "exjs": "../node_modules/rxjs",
+    "rxjs": "../node_modules/rxjs",
     "react-dom": "../node_modules/react-dom/profiling",
     "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
   },
@@ -28,6 +27,7 @@
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.8.4",
     "parcel": "^1.12.4",
+    "parcel-plugin-txt": "^1.0.3",
     "typescript": "^3.8.3"
   }
 }

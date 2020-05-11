@@ -3,9 +3,9 @@ import { ReactViewProps } from './react_views';
 import { ViewProperty } from './view';
 import { combineLatest, Observable } from 'rxjs';
 import { ElementSize, resizeObserver } from './resize_sensor';
-import { map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 import { ReactList, ReactListState } from './react_list';
-import { pick } from 'lodash';
+import { isEqual, pick } from 'lodash';
 
 interface ReactHorizontalListState extends ReactListState {
     scrollerStyle: CSSProperties;
@@ -45,7 +45,9 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
                     width: maxWidth,
                     height: maxHeight
                 };
-            })
+            }),
+            startWith({width: 0, height: 0}),
+            distinctUntilChanged(isEqual)
         );
     }
 

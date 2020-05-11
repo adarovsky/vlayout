@@ -1,9 +1,10 @@
-import {ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {combineLatest, Observable, pipe} from "rxjs";
-import React from "react";
-import {ViewProperty} from "./view";
-import {ElementSize} from "./resize_sensor";
-import {map, switchMap} from "rxjs/operators";
+import { ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState } from './react_views';
+import { combineLatest, Observable, pipe } from 'rxjs';
+import React from 'react';
+import { ViewProperty } from './view';
+import { ElementSize } from './resize_sensor';
+import { distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
+import { isEqual } from 'lodash';
 
 export class ReactAbsoluteLayout<S extends ReactContainerState> extends ReactContainer<S> {
 
@@ -56,6 +57,8 @@ export function absoluteIntrinsicSize() {
                 width: maxWidth,
                 height: maxHeight
             };
-        })
+        }),
+        startWith({width: 0, height: 0}),
+        distinctUntilChanged(isEqual)
     )
 }

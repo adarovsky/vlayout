@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactView, ReactViewProps, ReactViewState } from '@adarovsky/vlayout';
+import { ReactView, ReactViewProps, ReactViewState } from '../';
 
 export interface ParticipantMessageProps {
     sendMessage: (content: string) => void;

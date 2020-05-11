@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { asyncScheduler, Observable, Subscription } from 'rxjs';
 import uuid from 'uuid';
-import { ReactView, ReactViewProps, ReactViewState, resizeObserver } from '@adarovsky/vlayout';
+import { ReactView, ReactViewProps, ReactViewState, resizeObserver } from '../';
 import _ from 'lodash';
 
 export interface WowFieldProps {

@@ -1,10 +1,10 @@
 import React, { CSSProperties } from 'react';
-import { cloneDeep, forEach, identity, pick } from 'lodash';
+import { cloneDeep, forEach, identity, isEqual, pick } from 'lodash';
 import { ViewProperty } from './view';
 import { ColorContainer, FontContainer, ImageContainer } from './types';
 import { ReactView, ReactViewProps, ReactViewState } from './react_views';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { filter, shareReplay, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import deleteProperty = Reflect.deleteProperty;
 
@@ -127,7 +127,9 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
 
     intrinsicSize(): Observable<ElementSize> {
         return this.shadowRef.pipe(
-            switchMap(self => resizeObserver(self))
+            switchMap(self => resizeObserver(self)),
+            startWith({width: 0, height: 0}),
+            distinctUntilChanged(isEqual)
         );
     }
 

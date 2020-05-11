@@ -1,7 +1,7 @@
 import React, { Component, CSSProperties } from 'react';
 import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
 import { extend, forEach, identity, isEqual, pick } from 'lodash';
@@ -280,6 +280,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     };
                 })),
             ),
+            startWith({width: 0, height: 0}),
+            distinctUntilChanged(isEqual)
         );
     }
 

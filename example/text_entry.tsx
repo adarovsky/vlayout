@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Observable, Subscription } from 'rxjs';
-import { ReactView, ReactViewProps, ReactViewState } from '@adarovsky/vlayout';
+import { ReactView, ReactViewProps, ReactViewState } from '../';
 
 export interface TextEntryProps {
     inputId?:   string;

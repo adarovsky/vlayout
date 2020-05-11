@@ -1,9 +1,20 @@
 import * as React from 'react';
 import { Component, createElement } from 'react';
 import './App.css';
-import { Color, Engine, Layout } from '@adarovsky/vlayout';
-import { BehaviorSubject, concat, interval, Observable, of, throwError, timer } from 'rxjs';
-import { finalize, ignoreElements, map, pluck, scan, shareReplay, startWith, take, takeWhile } from 'rxjs/operators';
+import { Color, Engine, Layout } from '../';
+import { BehaviorSubject, concat, from, interval, Observable, of, throwError, timer } from 'rxjs';
+import {
+    finalize,
+    ignoreElements,
+    map,
+    pluck,
+    scan,
+    shareReplay,
+    startWith,
+    switchMap,
+    take,
+    takeWhile,
+} from 'rxjs/operators';
 import { SampleView } from './sample_view';
 import { LayoutURLEntry } from './url_entry';
 import { LayoutDropZone } from './drop_zone';
@@ -12,9 +23,7 @@ import uuid from 'uuid';
 import { ParticipantMessage } from './participant_message';
 import { LayoutWowField } from './wow_field';
 import { LayoutTextUploadZone } from './text_upload_zone';
-import { readFileSync } from 'fs';
-
-const layout = readFileSync(__dirname + '/main.vlayout', 'utf8');
+import layout from './main.vlayout';
 
 export enum InteractionStatus {
     Suspended,
@@ -161,6 +170,15 @@ class App extends Component {
         ]
     };
 
+    componentDidMount() {
+        this.getLayout(layout)
+            .subscribe( (l1) => this.setState({isLoaded: true, content1: l1}),
+                error => this.setState({isLoaded: true, error}));
+    }
+
+    getLayout(name: string): Observable<string> {
+        return from(fetch(name)).pipe(switchMap(res => res.text()));
+    }
 
     constructor(props: any) {
         super(props);
@@ -480,9 +498,10 @@ class App extends Component {
         this.engine.registerListButton('prescreenHold', async item => {});
         this.engine.registerListButton('prescreenTap', async item => {});
 
-        const participantsOnAir = interval(2000).pipe(
+        const participantsOnAir: Observable<Fan[]> = interval(2000).pipe(
             map(x => this.state.fans.slice(0, x)),
             map( fans => fans.filter(f => f.interactionStatus === InteractionStatus.OnAir)),
+            startWith([]),
             takeWhile(x => x.length <= 2),
             shareReplay({bufferSize: 1, refCount: true})
         );
@@ -852,7 +871,15 @@ class App extends Component {
     }
 
     render() {
-        return <Layout engine={this.engine} content={layout} key={'content1'}/>;
+        if (this.state.error) {
+            return <p>{this.state.error}</p>;
+        }
+        else if (this.state.content1) {
+            return <Layout engine={this.engine} content={this.state.content1} key={'content1'}/>;
+        }
+        else {
+            return <p>loading...</p>;
+        }
     }
 }
 

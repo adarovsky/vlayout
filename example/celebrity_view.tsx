@@ -1,4 +1,4 @@
-import { ReactView, ReactViewProps, ReactViewState } from '@adarovsky/vlayout';
+import { ReactView, ReactViewProps, ReactViewState } from '../';
 import React from 'react';
 
 interface SampleProps extends ReactViewProps {
@@ -13,7 +13,7 @@ export class CelebrityView extends ReactView<SampleProps, ReactViewState> {
     }
 
     render() {
-        return (<div style={this.style()} className={'vyu_session_self_preview'} ref={this.viewRef}>
+        return (<div style={this.style()} className={'vyu_session_self_preview'} ref={x => this.setViewRef(x)}>
             <video muted={true} style={{
                 width: '100%',
                 height: '100%',

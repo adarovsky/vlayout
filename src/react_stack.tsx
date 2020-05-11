@@ -1,9 +1,10 @@
-import {ReactContainer, ReactContainerState} from "./react_views";
-import {combineLatest, Observable} from "rxjs";
-import React from "react";
-import {ViewProperty} from "./view";
-import {ElementSize} from "./resize_sensor";
-import {map, switchMap} from "rxjs/operators";
+import { ReactContainer, ReactContainerState } from './react_views';
+import { combineLatest, Observable } from 'rxjs';
+import React from 'react';
+import { ViewProperty } from './view';
+import { ElementSize } from './resize_sensor';
+import { distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
+import { isEqual } from 'lodash';
 
 export class ReactStackLayout extends ReactContainer<ReactContainerState> {
 
@@ -31,7 +32,9 @@ export class ReactStackLayout extends ReactContainer<ReactContainerState> {
                     width: maxWidth,
                     height: maxHeight
                 };
-            })
+            }),
+            startWith({width: 0, height: 0}),
+            distinctUntilChanged(isEqual)
         );
     }
 }

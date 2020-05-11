@@ -1,6 +1,6 @@
 import React from 'react';
 import { EMPTY, from, Observable, of, Subject, Subscription } from 'rxjs';
-import { ReactView, ReactViewProps, ReactViewState } from '@adarovsky/vlayout';
+import { ReactView, ReactViewProps, ReactViewState } from '../';
 import { flatMap, switchMap, tap } from 'rxjs/operators';
 import Overlay from 'react-bootstrap/Overlay';
 import Popover from 'react-bootstrap/Popover';

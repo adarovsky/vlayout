@@ -4,9 +4,9 @@ import React, { CSSProperties } from 'react';
 import { ReactStackLayout } from './react_stack';
 import { combineLatest, fromEvent, Observable } from 'rxjs';
 import { ElementSize } from './resize_sensor';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 import ReactDOM from 'react-dom';
-import { identity, pick } from 'lodash';
+import { identity, isEqual, pick } from 'lodash';
 
 
 class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: number}> {
@@ -96,7 +96,9 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
                     width: maxWidth + this.state.spacing * (sizes.length - 1),
                     height: maxHeight
                 };
-            })
+            }),
+            startWith({width: 0, height: 0}),
+            distinctUntilChanged(isEqual)
         );
     }
 
@@ -159,7 +161,9 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                     width: maxWidth,
                     height: maxHeight + this.state.spacing * (sizes.length - 1)
                 };
-            })
+            }),
+            startWith({width: 0, height: 0}),
+            distinctUntilChanged(isEqual)
         );
     }
 
