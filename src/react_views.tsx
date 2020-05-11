@@ -334,7 +334,7 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
 
     constructor(props: ReactViewProps) {
         super(props);
-        this.state = { ...this.state, childrenVisible: [] };
+        this.state = { ...this.state, childrenVisible: (this.props.parentView as Container).views.map(() => true) };
     }
 
     componentDidMount(): void {
