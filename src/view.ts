@@ -3,13 +3,13 @@ import { Dictionary } from './types';
 import { Scope } from './layout';
 import React, { createElement } from 'react';
 import { ReactContainer, ReactView, ReactViewProps, ReactViewState } from './react_views';
-import uuid from 'uuid';
+import { v1 as uuid_v1 } from 'uuid';
 import { ReactHorizontalLayout, ReactLayer, ReactTopLayout, ReactVerticalLayout } from './react_layouts';
 import { LexNumber } from './lexer';
 import { take } from 'rxjs/operators';
 import { ReactStackLayout } from './react_stack';
 import { ReactAbsoluteLayout } from './react_absolute';
-import { forEach, forIn, values } from 'lodash';
+import { forIn, values } from 'lodash';
 
 export class ViewProperty {
     line: number = 0;
@@ -72,7 +72,7 @@ export class View {
         this.registerProperty(new ViewProperty('alpha', 'Number'));
         this.registerProperty(new ViewProperty('sizePolicy', 'SizePolicy'));
         this.registerProperty(new ViewProperty('class', 'String'));
-        this._key = uuid.v1();
+        this._key = uuid_v1();
     }
 
     instantiate(): this {
@@ -92,7 +92,7 @@ export class View {
             n.content = '1';
             this.property('alpha').value = new Constant(n);
         }
-        forEach(this.properties, p => {
+        forIn(this.properties, p => {
             p.link(scope);
         });
     }

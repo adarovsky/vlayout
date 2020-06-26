@@ -8,7 +8,6 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@adarovsky/vlayout": "^1.5.2",
     "bootstrap": "^4.4.1",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",

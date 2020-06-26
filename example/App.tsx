@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Component, createElement } from 'react';
 import './App.css';
-import { Color, Engine, Layout } from '@adarovsky/vlayout';
+import { Color, Engine, Layout } from '../';
 import { BehaviorSubject, concat, interval, Observable, of, throwError, timer } from 'rxjs';
 import { finalize, ignoreElements, map, pluck, scan, shareReplay, startWith, take, takeWhile } from 'rxjs/operators';
 import { SampleView } from './sample_view';
 import { LayoutURLEntry } from './url_entry';
 import { LayoutDropZone } from './drop_zone';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import uuid from 'uuid';
+import { v1 as uuid_v1 } from 'uuid';
 import { ParticipantMessage } from './participant_message';
 import { LayoutWowField } from './wow_field';
 import { LayoutTextUploadZone } from './text_upload_zone';
@@ -329,7 +329,7 @@ class App extends Component {
                 headline: 'hi there',
                 alreadyPrescreened: true,
                 name: 'User 1',
-                userId: uuid.v1(),
+                userId: uuid_v1(),
                 location: 'Courusant, Empire',
                 interactionStatus: InteractionStatus.PreScreen
             }
@@ -338,7 +338,7 @@ class App extends Component {
                 {
                     ...participantTemplate,
                     id: 'user2',
-                    userId: uuid.v1(),
+                    userId: uuid_v1(),
                     headline: 'wanna talk',
                     alreadyPrescreened: false,
                     name: 'User 2',
@@ -350,7 +350,7 @@ class App extends Component {
                 {
                     ...participantTemplate,
                     id: 'user3',
-                    userId: uuid.v1(),
+                    userId: uuid_v1(),
                     headline: 'cannot stop communicating',
                     alreadyPrescreened: false,
                     name: 'User 3',
@@ -380,7 +380,7 @@ class App extends Component {
                         userIndex: 0,
                         muted: false,
                         ifb: true,
-                        userId: uuid.v1(),
+                        userId: uuid_v1(),
                         interactionStatus: InteractionStatus.Applicant
                     }
             },{
@@ -394,14 +394,14 @@ class App extends Component {
                         location: 'Mustafar, Empire',
                         userIndex: 1,
                         muted: true,
-                        userId: uuid.v1(),
+                        userId: uuid_v1(),
                         interactionStatus: InteractionStatus.OnAir
                     }
             },
             {
                 invited: {
                     id: 'invited1',
-                    userId: uuid.v1(),
+                    userId: uuid_v1(),
                     name: 'Invited user 1',
                     contact: 'mail1@domain.com',
                     contact_type: 'mail'
@@ -410,7 +410,7 @@ class App extends Component {
             {
                 invited: {
                     id: 'invited2',
-                    userId: uuid.v1(),
+                    userId: uuid_v1(),
                     name: 'Invited user 2',
                     contact: 'sip:username2@very.very.very.vert.long.sip.domain.com',
                     contact_type: 'sip'
@@ -419,7 +419,7 @@ class App extends Component {
             {
                 invited: {
                     id: 'invited3',
-                    userId: uuid.v1(),
+                    userId: uuid_v1(),
                     name: 'Invited user 3',
                     contact: 'username3@mail.domain.com',
                     contact_type: 'rtmp'

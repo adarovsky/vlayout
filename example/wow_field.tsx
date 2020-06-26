@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { asyncScheduler, Observable, Subscription } from 'rxjs';
-import uuid from 'uuid';
-import { ReactView, ReactViewProps, ReactViewState, resizeObserver } from '@adarovsky/vlayout';
+import { v1 as uuid_v1 } from 'uuid';
+import { ReactView, ReactViewProps, ReactViewState, resizeObserver } from '../';
 import _ from 'lodash';
 
 export interface WowFieldProps {
@@ -69,7 +69,7 @@ export class WowField extends Component<WowFieldProps, WowFieldState> {
 
     shoot(type: string) {
         const wow: Wow = {
-            id: uuid.v1(),
+            id: uuid_v1(),
             type: type,
             offset: Math.random(),
             offsetPeriod: Math.random() * 0.3 + 1,

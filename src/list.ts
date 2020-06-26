@@ -133,7 +133,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     }
 
     setModelItem(modelItem: ListModelItem): void {
-        // this._key = uuid.v1();
+        // this._key = uuid_v1();
         this._key = modelItem.id;
         this.modelItem.next(modelItem);
         this.modelItemSnapshot = modelItem;

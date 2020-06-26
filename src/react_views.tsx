@@ -33,7 +33,9 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
         let id = null;
         const sink = props.parentView.property('id').value?.sink;
-        sink?.subscribe(x => id = x);
+        if (sink) {
+            this.subscription.add(sink.subscribe(x => id = x));
+        }
 
         // @ts-ignore
         this.state = { style: {}, aspect: null, id: id, className: '' };
