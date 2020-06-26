@@ -19,7 +19,7 @@
   },
   "alias": {
     "react": "../node_modules/react",
-    "exjs": "../node_modules/rxjs",
+    "rxjs": "../node_modules/rxjs",
     "react-dom": "../node_modules/react-dom/profiling",
     "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
   },

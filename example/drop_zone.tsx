@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as _ from 'lodash';
 import { concat, Observable, of, Subscription, timer } from 'rxjs';
-import { ReactView, ReactViewProps, ReactViewState } from '@adarovsky/vlayout';
+import { ReactView, ReactViewProps, ReactViewState } from '../';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { catchError, ignoreElements, map } from 'rxjs/operators';
 import { TextPreview } from './text_preview';

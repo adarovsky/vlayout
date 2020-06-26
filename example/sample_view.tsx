@@ -1,4 +1,4 @@
-import { ReactView, ReactViewProps, ReactViewState } from '@adarovsky/vlayout';
+import { ReactView, ReactViewProps, ReactViewState } from '../';
 import React from 'react';
 import _ from 'lodash';
 
