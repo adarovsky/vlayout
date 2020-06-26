@@ -248,4 +248,11 @@ export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen
 }
 
 export class ReactTopLayout extends ReactStackLayout {
+    protected isWidthDefined(): boolean {
+        return true;
+    }
+
+    protected isHeightDefined(): boolean {
+        return true;
+    }
 }

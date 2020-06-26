@@ -1,8 +1,11 @@
 import { mount } from 'enzyme';
 import { Engine, Layout, pauseObserving, resizeObserver, resumeObserving } from '../src';
 import React from 'react';
-import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, EMPTY, of, Subscription, timer } from 'rxjs';
 import { observers } from '../src/resize_sensor';
+
+let module = require("../src/resize_sensor");
+// const sizeChange = new Subject<ElementSize>();
 
 let engine: Engine = new Engine();
 
@@ -197,4 +200,33 @@ describe("layout", () => {
         expect(node.hasClass('sample-class')).toBe(true);
     });
 
+    it("top level layout should not have min width and height", async function() {
+        module.resizeObserver = jest.fn((e: Element) => {
+            if (e.classList.contains('vlayout_label'))
+                return of({width: 500, height: 300});
+            return EMPTY;
+        });
+
+        const wrapper = mount(
+            <Layout
+                className={'sample-class'}
+                engine={engine}
+                content={`
+                layout {
+                    layer {
+                        label {
+                            padding { left: 0 right: 0 top: 0 bottom: 0 }
+                            text: "test"
+                        }
+                    }
+                }`}
+            />
+        );
+        wrapper.update();
+
+        let node = wrapper.find(".vlayout_layout");
+
+        expect(node.prop('style')?.minWidth).toBeUndefined();
+        expect(node.prop('style')?.minHeight).toBeUndefined();
+    });
 });

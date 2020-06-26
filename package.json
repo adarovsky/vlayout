@@ -23,7 +23,7 @@
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
-    "bump": "npm version patch",
+    "bump": "npm version patch && npm publish",
     "prepublishOnly": "tsdx test",
     "coveralls": "tsdx test --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
