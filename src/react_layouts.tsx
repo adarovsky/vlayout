@@ -2,11 +2,12 @@ import { ReactContainer, ReactContainerState, ReactViewProps } from './react_vie
 import { Container, ViewProperty } from './view';
 import React, { CSSProperties } from 'react';
 import { ReactStackLayout } from './react_stack';
-import { combineLatest, fromEvent, Observable } from 'rxjs';
+import { fromEvent, Observable } from 'rxjs';
 import { ElementSize } from './resize_sensor';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import ReactDOM from 'react-dom';
 import { identity, pick } from 'lodash';
+import { visibleChildrenSizes } from './react_absolute';
 
 
 class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: number}> {
@@ -82,7 +83,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
 
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
-            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            visibleChildrenSizes(),
             map(sizes => {
                 let maxHeight = 0;
                 let maxWidth = 0;
@@ -145,7 +146,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
 
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
-            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            visibleChildrenSizes(),
             map(sizes => {
                 let maxHeight = 0;
                 let maxWidth = 0;

@@ -1,9 +1,10 @@
-import {ReactContainer, ReactContainerState} from "./react_views";
-import {combineLatest, Observable} from "rxjs";
-import React from "react";
-import {ViewProperty} from "./view";
-import {ElementSize} from "./resize_sensor";
-import {map, switchMap} from "rxjs/operators";
+import { ReactContainer, ReactContainerState } from './react_views';
+import { Observable } from 'rxjs';
+import React from 'react';
+import { ViewProperty } from './view';
+import { ElementSize } from './resize_sensor';
+import { map } from 'rxjs/operators';
+import { visibleChildrenSizes } from './react_absolute';
 
 export class ReactStackLayout extends ReactContainer<ReactContainerState> {
 
@@ -17,7 +18,7 @@ export class ReactStackLayout extends ReactContainer<ReactContainerState> {
 
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
-            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            visibleChildrenSizes(),
             map(sizes => {
                 let maxHeight = 0;
                 let maxWidth = 0;

@@ -1,9 +1,9 @@
-import {ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState} from "./react_views";
-import {combineLatest, Observable, pipe} from "rxjs";
-import React from "react";
-import {ViewProperty} from "./view";
-import {ElementSize} from "./resize_sensor";
-import {map, switchMap} from "rxjs/operators";
+import { ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState } from './react_views';
+import { combineLatest, Observable, pipe } from 'rxjs';
+import React from 'react';
+import { ViewProperty } from './view';
+import { ElementSize } from './resize_sensor';
+import { map, switchMap } from 'rxjs/operators';
 
 export class ReactAbsoluteLayout<S extends ReactContainerState> extends ReactContainer<S> {
 
@@ -19,18 +19,44 @@ export class ReactAbsoluteLayout<S extends ReactContainerState> extends ReactCon
     }
 }
 
-export function absoluteIntrinsicSize() {
+export function visibleChildrenWithSizes() {
     return pipe(
         switchMap((children: ReactView<ReactViewProps, ReactViewState>[]) =>
-            combineLatest(children.map(c => c.intrinsicSize())).pipe(map(sizes => [children, sizes]))
-        ),
+            combineLatest(children.map(c =>
+                combineLatest([c.intrinsicSize(), c.props.parentView.property('alpha').value!.sink as Observable<number>])
+            )).pipe(map(sizes => {
+                let elements: ReactView<ReactViewProps, ReactViewState>[] = [];
+                let s: ElementSize[] = [];
+                for (let i = 0; i < children.length; ++i) {
+                    let [size, alpha] = sizes[i];
+                    if (alpha > 0) {
+                        elements.push(children[i]);
+                        s.push(size);
+                    }
+                }
+                return [elements, s];
+            }))
+        )
+    )
+}
+
+export function visibleChildrenSizes() {
+    return pipe(
+        visibleChildrenWithSizes(),
+        map(s => s[1] as ElementSize[])
+    )
+}
+
+export function absoluteIntrinsicSize() {
+    return pipe(
+        visibleChildrenWithSizes(),
         map((project) => {
             const children = project[0] as ReactView<ReactViewProps, ReactViewState>[];
-            const sizes = project[1] as ElementSize[];
+            const sv = project[1] as ElementSize[];
             let maxHeight = 0;
             let maxWidth = 0;
 
-            sizes.forEach((size, index) => {
+            sv.forEach((size, index) => {
                 const child = children[index];
 
                 maxWidth = Math.max(maxWidth, size.width);

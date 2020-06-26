@@ -2,67 +2,58 @@ bindings {
 }
 
 types {
-    MyItems: list (
-        user {
-            name: String
-        },
-        newUser {
-            // no fields required
-        }
-    )
 }
 
 inputs {
-    items: MyItems
-    text: String
-}
-
-properties {
-    celebrityWidth: 0
-    fanWidth: items.count == 0 ? 1 : items.count == 4 ? 0.5 : 1 / items.count
-    fanHeight: items.count == 4 ? 0.5 : 1
-}
-
-functions {
-    fanCenterX(index: Number) => celebrityWidth + fanWidth * ((items.count == 4 && index == 3|4 ? index - 2 : index) - 0.5)
-    fanCenterY(index: Number) => items.count == 4 ? (index == 3|4 ? 0.5+0.25 : 0.25) : 0.5
-    fanColor(index: Number) => switch(index) {
-        case 1 => #00ff00
-        case 2 => #00ffff
-        case 3 => #ffff00
-        case 4 => #cccccc
-        case _ => #000000
-    }
+    counter: Number
 }
 
 layout {
     layer {
         z_order: 1
         fullscreen: false
-        absoluteList {
-            alpha: text != '' ? 1 : 0
-            padding { left: 0 right: 0 top: 0 bottom: 0 }
-            model: items
-            user {
-                class: name
-                size { width: fanWidth height: fanHeight }
-                center { x: fanCenterX(index + 1) y: fanCenterY(index + 1) }
-                label {
-                    center { x: 0.5 y: 0.5 }
-                    text: @("$1 - $2", name, String(index + 1))
+
+        stack {
+            class: "live_indicator"
+            padding {
+                left: 40
+                top: 70
+            }
+
+            roundRect {
+                backgroundColor: #ff0000
+                cornerRadius: 4
+            }
+
+            absolute {
+                horizontal {
+                    spacing: 3
+                    padding {
+                        left: 6
+                        top: 4
+                        bottom: 4
+                        right: 5
+                    }
+                    label {
+                        text: "LIVE"
+                        font: Font(.bold, 13)
+                        textColor: #ffffff
+                    }
+                    roundRect {
+                        alpha: counter > 0 ? 1 : 0
+                        fixedSize {
+                            width: 1
+                        }
+                        backgroundColor: Color(#ffffff, 0.5)
+                    }
+                    label {
+                        alpha: counter > 0 ? 1 : 0
+                        text: ShortString(counter)
+                        font: Font(13)
+                        textColor: #ffffff
+                    }
                 }
-                backgroundColor: fanColor(index + 1)
             }
         }
     }
-
-    layer {
-        z_order: 2
-        label {
-            //class: "placeholder"
-            center { x: 0.5 y: 0.5 }
-            text: text
-        }
-    }
-
 }

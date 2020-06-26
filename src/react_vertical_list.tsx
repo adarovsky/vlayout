@@ -1,10 +1,11 @@
 import { ViewProperty } from './view';
 import React from 'react';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ElementSize } from './resize_sensor';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ReactList, ReactListState } from './react_list';
 import { pick } from 'lodash';
+import { visibleChildrenSizes } from './react_absolute';
 
 export class ReactVerticalList extends ReactList<ReactListState> {
 
@@ -21,7 +22,7 @@ export class ReactVerticalList extends ReactList<ReactListState> {
 
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
-            switchMap(children => combineLatest(children.map(c => c.intrinsicSize()))),
+            visibleChildrenSizes(),
             map(sizes => {
                 let maxHeight = 0;
                 let maxWidth = 0;
