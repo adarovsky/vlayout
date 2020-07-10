@@ -8,7 +8,7 @@ interface SampleProps extends ReactViewProps {
 export class SampleView extends ReactView<SampleProps, ReactViewState> {
 
     render() {
-        return (<div style={_.extend(this.state.style, {backgroundColor: this.props.color})} className={this.state.className}>
+        return (<div style={_.extend(this.state.style, {backgroundColor: this.props.color})} className={this.state.className} ref={x => this.setViewRef(x)}>
         </div>);
     }
 }
