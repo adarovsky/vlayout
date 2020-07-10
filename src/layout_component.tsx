@@ -1,5 +1,5 @@
-import { ReactViewProps, ReactViewState } from 'react_views';
-import { ReactView } from 'index';
+import { ReactViewProps, ReactViewState } from './react_views';
+import { ReactView } from './index';
 import React from 'react';
 
 export class LayoutComponent extends ReactView<ReactViewProps, ReactViewState> {
