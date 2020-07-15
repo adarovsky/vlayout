@@ -177,6 +177,7 @@ describe('label', () => {
             >
               <div
                 class="vlayout_placeholder"
+                style="min-width: 0px;"
               />
               <div
                 class="vlayout_label_shadow"

@@ -12,6 +12,7 @@ interface ReactLabelState extends ReactViewState {
     style: CSSProperties;
     text: string|null;
     maxLines: number;
+    shadowWidth: number;
 }
 
 export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
@@ -27,7 +28,8 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         super(props);
         this.state = {...this.state,
             text: null,
-            maxLines: 0
+            maxLines: 0,
+            shadowWidth: 0
         }
 
         this.setShadowRef = this.setShadowRef.bind(this);
@@ -37,6 +39,7 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         super.componentDidMount();
         this.wire('text', 'text', identity);
         this.wire('maxLines', 'maxLines', identity);
+        this.subscription.add(this.intrinsicSize().subscribe(size => this.setState({shadowWidth: size.width})));
     }
 
     styleProperties(): ViewProperty[] {
@@ -106,7 +109,7 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         });
 
         return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
-            {this.state.text === null ? <div className={'vlayout_placeholder'}/> : content}
+            {this.state.text === null ? <div className={'vlayout_placeholder'} style={{minWidth: `${this.state.shadowWidth}px`}}/> : content}
             <div style={this.shadowStyle()} key='shadow' className={'vlayout_'+this.props.parentView.viewType()+'_shadow'} ref={this.setShadowRef}>
                 {content}
             </div>
@@ -131,9 +134,9 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         );
     }
 
-    protected isWidthDefined(): boolean {
-        return false;
-    }
+    // protected isWidthDefined(): boolean {
+    //     return false;
+    // }
 
     protected isHeightDefined(): boolean {
         return false;

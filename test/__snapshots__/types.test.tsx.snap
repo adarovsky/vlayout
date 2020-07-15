@@ -80,6 +80,7 @@ exports[`types should throw if invalid enum value is sent to input 1`] = `
 >
   <div
     class="vlayout_placeholder"
+    style="min-width: 0px;"
   />
   <div
     class="vlayout_label_shadow"
@@ -151,6 +152,7 @@ exports[`types should throw if invalid value is sent to input 1`] = `
 >
   <div
     class="vlayout_placeholder"
+    style="min-width: 0px;"
   />
   <div
     class="vlayout_label_shadow"

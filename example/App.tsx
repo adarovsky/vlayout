@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Component } from 'react';
 import './App.css';
 import { Engine, Layout } from '../';
-import { interval } from 'rxjs';
+import { interval, of } from 'rxjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { readFileSync } from 'fs';
-import { map } from 'rxjs/operators';
+import { delay, map, startWith } from 'rxjs/operators';
 
 const layout = readFileSync(__dirname + '/test.vlayout', 'utf8');
 
@@ -23,6 +23,10 @@ class App extends Component {
 
         this.engine.registerInput('counter', this.engine.numberType(), interval(1000).pipe(
             map(v => v % 5)
+        ));
+        this.engine.registerInput('test', this.engine.stringType(), of('sample text').pipe(
+            delay(5000),
+            startWith(null)
         ));
     }
 

@@ -6,6 +6,7 @@ types {
 
 inputs {
     counter: Number
+    test: String
 }
 
 layout {
@@ -13,46 +14,21 @@ layout {
         z_order: 1
         fullscreen: false
 
-        stack {
-            class: "live_indicator"
-            padding {
-                left: 40
-                top: 70
+        vertical {
+            center { x: 0.5 y: 0.5 }
+            fixedSize { width: 200 height: 150 }
+            alignment: .center
+
+            label {
+                text: "a label with a very very very very very very very very very very very very very very very long text"
+                center { x: 0.5 y: 0.5 }
+                size { width: 0.9 }
             }
 
-            roundRect {
-                backgroundColor: #ff0000
-                cornerRadius: 4
-            }
-
-            absolute {
-                horizontal {
-                    spacing: 3
-                    padding {
-                        left: 6
-                        top: 4
-                        bottom: 4
-                        right: 5
-                    }
-                    label {
-                        text: "LIVE"
-                        font: Font(.bold, 13)
-                        textColor: #ffffff
-                    }
-                    roundRect {
-                        alpha: counter > 0 ? 1 : 0
-                        fixedSize {
-                            width: 1
-                        }
-                        backgroundColor: Color(#ffffff, 0.5)
-                    }
-                    label {
-                        alpha: counter > 0 ? 1 : 0
-                        text: ShortString(counter)
-                        font: Font(13)
-                        textColor: #ffffff
-                    }
-                }
+            label {
+                text: test
+                center { x: 0.5 y: 0.5 }
+                size { width: 0.9 }
             }
         }
     }
