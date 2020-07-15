@@ -8,3 +8,4 @@ export {View} from "./view";
 export {ColorContainer as Color, ImageContainer as Image, SimpleListDefinitionItem, ListDefinitionItem, ComplexDefinitionItem} from './types';
 export { ListModelItem } from './list';
 export { LayoutComponent } from './layout_component'
+export { connect } from './connect'
