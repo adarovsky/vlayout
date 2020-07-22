@@ -136,6 +136,10 @@ export class Engine {
         this.types.registerEnum(new EnumDefinition(this, name, values));
     }
 
+    registerStandardEnum<EnumType>(name: string, e: StandardEnum<EnumType>): void {
+        this.types.registerEnum(new EnumDefinition(this, name, materializeEnum(e)));
+    }
+
     registerList(name: string, fields: Dictionary<ListDefinitionItem>): void {
         this.types.registerList(new ListDefinition(this, name, fields));
     }
@@ -183,4 +187,24 @@ export class Engine {
     logInputValue(name: string, value: any): void {
         this.valueSnapshot.inputs[name] = value;
     }
+}
+
+
+export type StandardEnum<T> = {
+    [id: string]: T | string;
+    [nu: number]: string;
+}
+
+
+function camelize(str: string) {
+    return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+        if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+        return index === 0 ? match.toLowerCase() : match.toUpperCase();
+    });
+}
+
+function materializeEnum<EnumType>(e: StandardEnum<EnumType>) {
+    return Object.keys(e).filter(x => isNaN(+x)).reduce((prev, cur) => ({...prev,
+        [camelize(cur)] : e[cur]
+    }), {})
 }
