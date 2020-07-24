@@ -1,7 +1,7 @@
 import React, { Component, CSSProperties } from 'react';
 import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { debounceTime, filter, map, switchMap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
 import { extend, forEach, identity, isEqual, pick } from 'lodash';
@@ -70,39 +70,41 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
 
         const isInStack = this.props.parentView.parent instanceof StackLayout;
-        this.subscription.add(combineLatest([this.intrinsicSize(), this.viewRef])
-            .subscribe(([size, self]) => {
-                if (size.width > 0 && !this.isWidthDefined()) {
-                    self.style.minWidth = size.width + 'px';
-                } else {
-                    self.style.minWidth = isInStack ? '100%' : '';
-                }
+        this.subscription.add(combineLatest([this.intrinsicSize(), this.viewRef]).pipe(
+            debounceTime(1)
+        ).subscribe(([size, self]) => {
+            if (size.width > 0 && !this.isWidthDefined()) {
+                self.style.minWidth = size.width + 'px';
+            } else {
+                self.style.minWidth = isInStack ? '100%' : '';
+            }
 
-                if (size.height > 0 && !this.isHeightDefined()) {
-                    self.style.minHeight = size.height + 'px';
-                } else {
-                    self.style.minHeight = isInStack ? '100%' : '';
-                }
-            }));
+            if (size.height > 0 && !this.isHeightDefined()) {
+                self.style.minHeight = size.height + 'px';
+            } else {
+                self.style.minHeight = isInStack ? '100%' : '';
+            }
+        }));
 
         const p = this.props.parentView.property('aspect');
         if (p.value) {
-            this.subscription.add(combineLatest([this.intrinsicSize(), p.value.sink, this.viewRef])
-                .subscribe(([size, aspect, self]) => {
-                    this.setState({ aspect: aspect });
-                    if (this.state.style.width && !this.state.style.height) {
-                        self.style.height = aspect !== null ? `${size.width / aspect}px` : '';
-                    } else if (!this.state.style.width && this.state.style.height) {
-                        self.style.width = aspect !== null ? `${size.height * aspect}px` : '';
-                    } else {
-                        if (!this.state.style.width && self.style.width) {
-                            self.style.width = '';
-                        }
-                        if (!this.state.style.height && self.style.height) {
-                            self.style.height = '';
-                        }
+            this.subscription.add(combineLatest([this.intrinsicSize(), p.value.sink, this.viewRef]).pipe(
+                debounceTime(1)
+            ).subscribe(([size, aspect, self]) => {
+                this.setState({ aspect: aspect });
+                if (this.state.style.width && !this.state.style.height) {
+                    self.style.height = aspect !== null ? `${size.width / aspect}px` : '';
+                } else if (!this.state.style.width && this.state.style.height) {
+                    self.style.width = aspect !== null ? `${size.height * aspect}px` : '';
+                } else {
+                    if (!this.state.style.width && self.style.width) {
+                        self.style.width = '';
                     }
-                }));
+                    if (!this.state.style.height && self.style.height) {
+                        self.style.height = '';
+                    }
+                }
+            }));
         }
 
         this.wire('id', 'id', identity);

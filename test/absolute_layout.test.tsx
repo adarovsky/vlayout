@@ -1,8 +1,8 @@
-import {mount} from "enzyme";
-import {Engine, Layout} from "../src";
-import React from "react";
-import {Subject} from "rxjs";
-import {ElementSize} from "../src/resize_sensor";
+import { mount } from 'enzyme';
+import { Engine, Layout } from '../src';
+import React from 'react';
+import { Subject, timer } from 'rxjs';
+import { ElementSize } from '../src/resize_sensor';
 
 let module = require("../src/resize_sensor");
 
@@ -38,6 +38,8 @@ describe("absolute", () => {
     const node = wrapper.find(".vlayout_absolute");
 
     sizeChange.next({ width: 30, height: 20 });
+
+    await timer(5).toPromise();
 
     expect(node.getDOMNode()).toHaveProperty("style.min-width", "50px");
     expect(node.getDOMNode()).toHaveProperty("style.min-height", "40px");
