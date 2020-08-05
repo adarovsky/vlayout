@@ -1,7 +1,7 @@
-import {Engine} from "./engine";
-import {ColorContainer, FontContainer, ImageContainer, TypeDefinition} from "./types";
-import {combineLatest, Observable} from "rxjs";
-import {map} from "rxjs/operators";
+import { Engine } from './engine';
+import { ColorContainer, FontContainer, ImageContainer, TypeDefinition } from './types';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface FunctionImplementationI {
     returnType: TypeDefinition;

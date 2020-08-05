@@ -363,9 +363,20 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
         }
     }
 
+    styleProperties(): ViewProperty[] {
+        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('interactive'));
+    }
+
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        r.pointerEvents = 'none';
+
+        const index = props.findIndex(p => p.name === 'interactive');
+        if (index >= 0 && value[index]) {
+            r.pointerEvents = 'auto';
+        }
+        else {
+            r.pointerEvents = 'none';
+        }
         return r;
     }
 

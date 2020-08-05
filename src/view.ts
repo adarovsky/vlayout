@@ -143,6 +143,12 @@ export class View {
 
 export class Container extends View {
     private _views: View[] = [];
+
+    constructor() {
+        super();
+        this.registerProperty(new ViewProperty('interactive', 'Bool'));
+    }
+
     addManagedView(view: View): void {
         view.parent = this;
         this._views.push(view);
@@ -166,6 +172,7 @@ export class Container extends View {
 
     link(scope: Scope): void {
         super.link(scope);
+
         for (let v of this._views) {
             v.link(scope);
         }
