@@ -9,13 +9,25 @@ import { visibleChildrenSizes } from './react_absolute';
 
 export class ReactVerticalList extends ReactList<ReactListState> {
 
+
+    styleProperties(): ViewProperty[] {
+        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('scrollable'));
+    }
+
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         r.pointerEvents = 'auto';
         if (!r.position) {
             r.position = 'relative';
         }
-        r.overflowY = 'auto';
+
+        const index = props.findIndex(p => p.name === 'scrollable');
+        if (index < 0 || value[index]) {
+            r.overflowY = 'auto';
+        }
+        else {
+            r.overflowY = 'visible';
+        }
 
         return r;
     }
@@ -28,13 +40,13 @@ export class ReactVerticalList extends ReactList<ReactListState> {
                 let maxWidth = 0;
 
                 sizes.forEach((size) => {
-                    maxHeight += maxHeight;
+                    maxHeight += size.height;
                     maxWidth = Math.max(maxWidth, size.width);
                 });
 
                 return {
                     width: maxWidth,
-                    height: maxHeight
+                    height: maxHeight + this.state.spacing * Math.max(sizes.length - 1, 0)
                 };
             })
         );

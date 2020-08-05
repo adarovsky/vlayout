@@ -170,6 +170,7 @@ export class List extends View {
     constructor(readonly axis: LinearLayoutAxis|null) {
         super();
         this.registerProperty(new ViewProperty('backgroundColor', 'Color'));
+        this.registerProperty(new ViewProperty('scrollable', 'Bool'));
         if (this.axis !== null) {
             this.registerProperty(new ViewProperty('spacing', 'Number'));
         }

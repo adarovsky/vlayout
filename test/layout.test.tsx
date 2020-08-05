@@ -24,8 +24,7 @@ describe("layout", () => {
              stack {
                  center { x: 0.5 y: 0.5 }
                  label {
-                     id: "image1"
-                     
+                     id: "image1"                     
                      text: "asd"                 
                  }
              }
@@ -35,12 +34,12 @@ describe("layout", () => {
         );
         const node = wrapper.find(".vlayout_label_shadow");
 
-        expect(observers).toHaveLength(2);
+        expect(observers).toHaveLength(5);
         expect(node.getDOMNode().childElementCount).toBe(3);
         pauseObserving();
         expect(node.getDOMNode().childElementCount).toBe(1);
         resumeObserving();
-        expect(observers).toHaveLength(2);
+        expect(observers).toHaveLength(5);
         expect(node.getDOMNode().childElementCount).toBe(3);
 
         await timer(0).toPromise();
@@ -71,7 +70,7 @@ describe("layout", () => {
             />
         );
 
-        expect(observers).toHaveLength(2);
+        expect(observers).toHaveLength(5);
 
         const node = wrapper.find(".vlayout_label_shadow");
         expect(node.getDOMNode().childElementCount).toBe(3);
@@ -80,16 +79,16 @@ describe("layout", () => {
         const subscription = new Subscription();
 
         subscription.add(observer.subscribe(() => {}));
-        expect(observers).toHaveLength(2);
+        expect(observers).toHaveLength(5);
         expect(node.getDOMNode().childElementCount).toBe(3);
 
         subscription.add(observer.subscribe(() => {}));
-        expect(observers).toHaveLength(2);
+        expect(observers).toHaveLength(5);
         expect(node.getDOMNode().childElementCount).toBe(3);
 
         wrapper.unmount();
         subscription.unsubscribe();
-        await timer(0).toPromise();
+        await timer(50).toPromise();
 
         expect(observers).toHaveLength(0);
     });
@@ -126,7 +125,7 @@ describe("layout", () => {
             />
         );
 
-        expect(observers).toHaveLength(2);
+        expect(observers).toHaveLength(4);
 
         let node = wrapper.find(".vlayout_button");
         expect(node.getDOMNode().childElementCount).toBe(3);
@@ -136,10 +135,10 @@ describe("layout", () => {
 
         node = wrapper.find(".vlayout_button");
         expect(node.getDOMNode().childElementCount).toBe(3);
-        expect(observers).toHaveLength(2);
+        expect(observers).toHaveLength(4);
         expect(node.text()).toBe('asd2');
-        await timer(0).toPromise();
         wrapper.unmount();
+        await timer(50).toPromise();
 
         expect(observers).toHaveLength(0);
     });

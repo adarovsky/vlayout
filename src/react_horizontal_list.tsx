@@ -43,7 +43,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
                 });
 
                 return {
-                    width: maxWidth,
+                    width: maxWidth + this.state.spacing * Math.max(sizes.length - 1, 0),
                     height: maxHeight
                 };
             })

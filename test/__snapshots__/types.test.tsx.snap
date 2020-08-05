@@ -33,6 +33,20 @@ exports[`types should allow null to number inputs 1`] = `
       />
     </div>
   </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
+  </div>
 </div>
 `;
 
@@ -68,6 +82,20 @@ exports[`types should allow null to number inputs 2`] = `
         style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
       />
     </div>
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
   </div>
 </div>
 `;
@@ -105,6 +133,20 @@ exports[`types should throw if invalid enum value is sent to input 1`] = `
       />
     </div>
   </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
+  </div>
 </div>
 `;
 
@@ -140,6 +182,20 @@ exports[`types should throw if invalid enum value is sent to input 2`] = `
         style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
       />
     </div>
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
   </div>
 </div>
 `;
@@ -177,6 +233,20 @@ exports[`types should throw if invalid value is sent to input 1`] = `
       />
     </div>
   </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
+  </div>
 </div>
 `;
 
@@ -212,6 +282,20 @@ exports[`types should throw if invalid value is sent to input 2`] = `
         style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
       />
     </div>
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+    />
+  </div>
+  <div
+    style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+  >
+    <div
+      style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+    />
   </div>
 </div>
 `;

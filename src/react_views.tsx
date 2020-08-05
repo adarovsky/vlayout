@@ -70,7 +70,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
 
         const isInStack = this.props.parentView.parent instanceof StackLayout;
-        this.subscription.add(combineLatest([this.intrinsicSize(), this.viewRef]).pipe(
+        this.subscription.add(combineLatest([this.safeIntrinsicSize(), this.viewRef]).pipe(
             debounceTime(1)
         ).subscribe(([size, self]) => {
             if (size.width > 0 && !this.isWidthDefined()) {
@@ -88,7 +88,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
         const p = this.props.parentView.property('aspect');
         if (p.value) {
-            this.subscription.add(combineLatest([this.intrinsicSize(), p.value.sink, this.viewRef]).pipe(
+            this.subscription.add(combineLatest([this.safeIntrinsicSize(), p.value.sink, this.viewRef]).pipe(
                 debounceTime(1)
             ).subscribe(([size, aspect, self]) => {
                 this.setState({ aspect: aspect });
@@ -272,6 +272,36 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
         });
         return r;
+    }
+
+    hasExplicitWidth(): boolean {
+        return this.props.parentView.activePropertiesNamed('fixedSize.width', 'size.width').length > 0;
+    }
+
+    hasExplicitHeight(): boolean {
+        return this.props.parentView.activePropertiesNamed('fixedSize.height', 'size.height').length > 0;
+    }
+
+    safeIntrinsicSize(): Observable<ElementSize> {
+        return combineLatest([this.intrinsicSize(), this.selfSize()]).pipe(
+            map(([intrinsic, self]) => ({
+                width: this.hasExplicitWidth() ? self.width : intrinsic.width,
+                height: this.hasExplicitHeight() ? self.height : intrinsic.height
+            }))
+        )
+    }
+
+    selfSize(): Observable<ElementSize> {
+        return this.viewRef.pipe(
+            switchMap(self => resizeObserver(self).pipe(
+                map(size => {
+                    return {
+                        width: this.isWidthDefined() ? size.width : 0,
+                        height: this.isHeightDefined() ? size.height : 0,
+                    };
+                })),
+            ),
+        );
     }
 
     intrinsicSize(): Observable<ElementSize> {

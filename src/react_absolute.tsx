@@ -1,5 +1,5 @@
 import { ReactContainer, ReactContainerState, ReactView, ReactViewProps, ReactViewState } from './react_views';
-import { combineLatest, Observable, pipe } from 'rxjs';
+import { combineLatest, Observable, of, pipe } from 'rxjs';
 import React from 'react';
 import { ViewProperty } from './view';
 import { ElementSize } from './resize_sensor';
@@ -21,9 +21,10 @@ export class ReactAbsoluteLayout<S extends ReactContainerState> extends ReactCon
 
 export function visibleChildrenWithSizes() {
     return pipe(
-        switchMap((children: ReactView<ReactViewProps, ReactViewState>[]) =>
+        switchMap((children: ReactView<ReactViewProps, ReactViewState>[]) => children.length == 0 ?
+            of([[], []]) :
             combineLatest(children.map(c =>
-                combineLatest([c.intrinsicSize(), c.props.parentView.property('alpha').value!.sink as Observable<number>])
+                combineLatest([c.safeIntrinsicSize(), c.props.parentView.property('alpha').value!.sink as Observable<number>])
             )).pipe(map(sizes => {
                 let elements: ReactView<ReactViewProps, ReactViewState>[] = [];
                 let s: ElementSize[] = [];

@@ -2,11 +2,17 @@ bindings {
 }
 
 types {
+    TestList: list(
+        item {
+            name: String
+        }
+    )
 }
 
 inputs {
     counter: Number
     test: String
+    testList: TestList
 }
 
 layout {
@@ -16,19 +22,28 @@ layout {
 
         vertical {
             center { x: 0.5 y: 0.5 }
-            fixedSize { width: 200 height: 150 }
-            alignment: .center
-
             label {
-                text: "a label with a very very very very very very very very very very very very very very very long text"
-                center { x: 0.5 y: 0.5 }
-                size { width: 0.9 }
+                text: "test header"
             }
+            absolute {
+                backgroundColor: #cccccc
 
-            label {
-                text: test
-                center { x: 0.5 y: 0.5 }
-                size { width: 0.9 }
+                // fixedSize { height: 300 }
+
+                verticalList {
+                    model: testList
+                    spacing: 10
+
+                    padding { left: 10 top: 10 bottom: 10 right: 10 }
+
+                    item {
+                        backgroundColor: #ccffcc
+                        label {
+                            padding { left: 10 top: 10 bottom: 10 right: 10 }
+                            text: name
+                        }
+                    }
+                }
             }
         }
     }

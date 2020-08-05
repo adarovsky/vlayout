@@ -152,7 +152,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                 let maxWidth = 0;
 
                 sizes.forEach((size) => {
-                    maxHeight += maxHeight;
+                    maxHeight += size.height;
                     maxWidth = Math.max(maxWidth, size.width);
                 });
 
