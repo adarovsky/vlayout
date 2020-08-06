@@ -119,7 +119,9 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         value.forEach((val, index) => {
             switch (props[index].name) {
                 case 'textColor':
-                    r.color = val.toString();
+                    if (val) {
+                        r.color = val.toString();
+                    }
                     break;
                 case 'contentPadding.left':
                     r.paddingLeft = `${val}px`;
@@ -135,9 +137,9 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                     break;
                 case 'font':
                     const c = val as FontContainer;
-                    if (c.familyName)
+                    if (c?.familyName)
                         r.fontFamily = c.familyName;
-                    switch (c.type) {
+                    switch (c?.type) {
                         case 'bold':
                             r.fontWeight = 'bold';
                             break;
@@ -145,7 +147,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                             r.fontStyle = 'italic';
                             break;
                     }
-                    if (c.size) {
+                    if (c?.size) {
                         r.fontSize = `${c.size}px`;
                     }
                     break;

@@ -1,9 +1,9 @@
-import {combineLatest, EMPTY, Observable, of} from "rxjs";
-import {distinctUntilChanged, map, switchMap} from 'rxjs/operators';
-import {ColorContainer, EnumDefinition, Set, TypeDefinition} from "./types";
-import {LexColor, LexNumber, LexString, LexToken} from "./lexer";
-import {Scope} from "./layout";
-import {LinkError} from "./errors";
+import { combineLatest, EMPTY, Observable, of } from 'rxjs';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { ColorContainer, EnumDefinition, Set, TypeDefinition } from './types';
+import { LexColor, LexNumber, LexString, LexToken } from './lexer';
+import { Scope } from './layout';
+import { LinkError } from './errors';
 
 export class Expression {
     readonly line: number;
@@ -82,7 +82,7 @@ export class Nil extends Constant {
 
     link(scope: Scope, hint: TypeDefinition | null): void {
         if  (hint === scope.engine.numberType() ||
-            // hint === layout.engine.stringType() ||
+            hint === scope.engine.colorType() ||
             hint === scope.engine.imageType()) {
             this.typeDefinition = hint;
             this.sink = of(null);

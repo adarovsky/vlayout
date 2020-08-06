@@ -5,7 +5,7 @@ import { Engine, Layout } from '../';
 import { interval, of } from 'rxjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { readFileSync } from 'fs';
-import { delay, map, pluck, scan, startWith } from 'rxjs/operators';
+import { delay, map, pluck, scan, startWith, take } from 'rxjs/operators';
 
 const layout = readFileSync(__dirname + '/test.vlayout', 'utf8');
 
@@ -44,6 +44,7 @@ class App extends Component {
                     name: `Item-${index}`
                 }
             }))),
+            take(4)
         ));
 
         this.engine.registerInput('counter', this.engine.numberType(), interval(1000).pipe(

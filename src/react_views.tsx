@@ -1,7 +1,7 @@
 import React, { Component, CSSProperties } from 'react';
 import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { debounceTime, filter, map, switchMap } from 'rxjs/operators';
+import { debounceTime, filter, map, startWith, switchMap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
 import { extend, forEach, identity, isEqual, pick } from 'lodash';
@@ -231,7 +231,9 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     break;
 
                 case 'backgroundColor':
-                    r.backgroundColor = val.toString();
+                    if (val) {
+                        r.backgroundColor = val.toString();
+                    }
                     break;
 
                 case 'sizePolicy':
@@ -283,12 +285,20 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     safeIntrinsicSize(): Observable<ElementSize> {
-        return combineLatest([this.intrinsicSize(), this.selfSize()]).pipe(
-            map(([intrinsic, self]) => ({
-                width: this.hasExplicitWidth() ? self.width : intrinsic.width,
-                height: this.hasExplicitHeight() ? self.height : intrinsic.height
-            }))
-        )
+        if (this.hasExplicitHeight() && this.hasExplicitWidth()) {
+            return this.selfSize();
+        }
+        else if (!this.hasExplicitHeight() && !this.hasExplicitWidth()) {
+            return this.intrinsicSize();
+        }
+        else {
+            return combineLatest([this.intrinsicSize(), this.selfSize()]).pipe(
+                map(([intrinsic, self]) => ({
+                    width: this.hasExplicitWidth() ? self.width : intrinsic.width,
+                    height: this.hasExplicitHeight() ? self.height : intrinsic.height
+                }))
+            )
+        }
     }
 
     selfSize(): Observable<ElementSize> {
@@ -301,6 +311,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     };
                 })),
             ),
+            startWith({width: 0, height: 0})
         );
     }
 
@@ -314,6 +325,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     };
                 })),
             ),
+            startWith({width: 0, height: 0})
         );
     }
 

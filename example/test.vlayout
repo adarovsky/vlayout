@@ -28,7 +28,7 @@ layout {
             absolute {
                 backgroundColor: #cccccc
 
-                // fixedSize { height: 300 }
+                fixedSize { width: 300 }
 
                 verticalList {
                     model: testList
@@ -37,14 +37,34 @@ layout {
                     padding { left: 10 top: 10 bottom: 10 right: 10 }
 
                     item {
-                        backgroundColor: #ccffcc
-                        label {
+                        roundRect {
+                            padding { left: 3 top: 3 bottom: 3 right: 3 }
+                            backgroundColor: index % 2 == 0 ? nil : #ccffcc
+                            strokeColor: index % 2 == 0 ? #ddffcc : nil
+                            strokeWidth: index % 2 == 0 ? 1 : nil
+                            cornerRadius: 5
+                        }
+                        horizontal {
+                            alignment: .center
+                            spacing: 10
                             padding { left: 10 top: 10 bottom: 10 right: 10 }
-                            text: name
+                            image {
+                                image: Image("/prescreen-select.png")
+                            }
+                            label {
+                                text: name
+                                textColor: index % 2 == 1 ? nil : #ccffcc
+                            }
                         }
                     }
                 }
             }
+
+            image {
+                fixedSize { width: 100 height: 100 }
+                image: Image("/geofence-red.png")
+            }
+
         }
     }
 }

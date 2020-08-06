@@ -57,6 +57,8 @@ export function absoluteIntrinsicSize() {
             let maxHeight = 0;
             let maxWidth = 0;
 
+
+
             sv.forEach((size, index) => {
                 const child = children[index];
 

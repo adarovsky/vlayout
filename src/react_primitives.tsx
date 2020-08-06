@@ -52,7 +52,9 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'textColor':
-                    r.color = val.toString();
+                    if (val) {
+                        r.color = val.toString();
+                    }
                     break;
                 case 'textAlignment':
                     switch (val) {
@@ -187,6 +189,7 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
         return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
             <img style={this.state.innerStyle}
                  src={this.state.image.src}
+                 // srcSet={this.state.image.srcSet}
                  alt=""/>
         </div>);
     }
@@ -289,7 +292,9 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
         forEach(value, (val, index) => {
             switch (props[index].name) {
                 case 'strokeColor':
-                    r.borderColor = val.toString();
+                    if (val) {
+                        r.borderColor = val.toString();
+                    }
                     break;
                 case 'strokeWidth':
                     if (val > 0) {
@@ -326,7 +331,7 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
 
     componentDidMount(): void {
         super.componentDidMount();
-        this.wire('color', 'progressColor', (x: ColorContainer) => x.toString())
+        this.wire('color', 'progressColor', (x: ColorContainer) => x?.toString())
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {

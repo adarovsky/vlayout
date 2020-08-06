@@ -218,6 +218,14 @@ export class ImageContainer {
     constructor(public readonly src: string) {
 
     }
+
+    get srcSet(): string {
+        const result = /(.*)\.(png|jpe?g)/.exec(this.src);
+        if (result) {
+            return `${result[1]}@2x.${result[2]} 2x, ${result[1]}@3x.${result[2]} 3x`
+        }
+        return '';
+    }
 }
 
 export class FontContainer {

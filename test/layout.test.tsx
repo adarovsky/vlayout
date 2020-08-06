@@ -34,12 +34,12 @@ describe("layout", () => {
         );
         const node = wrapper.find(".vlayout_label_shadow");
 
-        expect(observers).toHaveLength(5);
+        expect(observers).toHaveLength(2);
         expect(node.getDOMNode().childElementCount).toBe(3);
         pauseObserving();
         expect(node.getDOMNode().childElementCount).toBe(1);
         resumeObserving();
-        expect(observers).toHaveLength(5);
+        expect(observers).toHaveLength(2);
         expect(node.getDOMNode().childElementCount).toBe(3);
 
         await timer(0).toPromise();
@@ -70,7 +70,7 @@ describe("layout", () => {
             />
         );
 
-        expect(observers).toHaveLength(5);
+        expect(observers).toHaveLength(2);
 
         const node = wrapper.find(".vlayout_label_shadow");
         expect(node.getDOMNode().childElementCount).toBe(3);
@@ -79,11 +79,11 @@ describe("layout", () => {
         const subscription = new Subscription();
 
         subscription.add(observer.subscribe(() => {}));
-        expect(observers).toHaveLength(5);
+        expect(observers).toHaveLength(2);
         expect(node.getDOMNode().childElementCount).toBe(3);
 
         subscription.add(observer.subscribe(() => {}));
-        expect(observers).toHaveLength(5);
+        expect(observers).toHaveLength(2);
         expect(node.getDOMNode().childElementCount).toBe(3);
 
         wrapper.unmount();
@@ -125,7 +125,7 @@ describe("layout", () => {
             />
         );
 
-        expect(observers).toHaveLength(4);
+        expect(observers).toHaveLength(2);
 
         let node = wrapper.find(".vlayout_button");
         expect(node.getDOMNode().childElementCount).toBe(3);
@@ -135,7 +135,7 @@ describe("layout", () => {
 
         node = wrapper.find(".vlayout_button");
         expect(node.getDOMNode().childElementCount).toBe(3);
-        expect(observers).toHaveLength(4);
+        expect(observers).toHaveLength(2);
         expect(node.text()).toBe('asd2');
         wrapper.unmount();
         await timer(50).toPromise();
