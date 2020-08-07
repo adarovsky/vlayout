@@ -46,7 +46,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
         super.componentDidMount();
 
         this.wire('text', 'text', x => x);
-        this.wire('image', 'imageSrc', (image: ImageContainer) => image.src);
+        this.wire('image', 'imageSrc', (image: ImageContainer) => image?.src);
         this.wire('enabled', 'enabled', x => x);
 
         const paddingProp = this.props.parentView.property('imagePadding');

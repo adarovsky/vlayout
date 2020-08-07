@@ -146,7 +146,7 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
 }
 
 interface ReactImageState extends ReactViewState {
-    src: string;
+    src?: string;
     srcSet?: string;
     innerStyle: CSSProperties;
 }
@@ -156,14 +156,13 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
     constructor(props: ReactViewProps) {
         super(props);
         this.state = {...this.state,
-            src: '',
             innerStyle: { width: '100%', height: '100%', objectFit: 'fill' }
         }
     }
 
     componentDidMount(): void {
         super.componentDidMount();
-        this.wire('image', 'src', (image: ImageContainer) => image.src);
+        this.wire('image', 'src', (image: ImageContainer) => image?.src);
 
         const image = this.props.parentView.property('image').value;
 
