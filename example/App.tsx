@@ -54,6 +54,8 @@ class App extends Component {
             delay(5000),
             startWith(null)
         ));
+
+        this.engine.registerButton('testButton', async () => {});
     }
 
     render() {

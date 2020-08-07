@@ -60,9 +60,11 @@ layout {
                 }
             }
 
-            image {
-                fixedSize { width: 100 height: 100 }
-                image: Image("/geofence-red.png")
+            testButton {
+                fixedSize { width: 200 height: 40 }
+                backgroundColor: #ccffff
+                image: Image("/prescreen-select.png")
+                text: "test button"
             }
 
         }

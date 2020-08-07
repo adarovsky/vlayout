@@ -146,7 +146,8 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
 }
 
 interface ReactImageState extends ReactViewState {
-    image: ImageContainer;
+    src: string;
+    srcSet?: string;
     innerStyle: CSSProperties;
 }
 
@@ -155,14 +156,22 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
     constructor(props: ReactViewProps) {
         super(props);
         this.state = {...this.state,
-            image: new ImageContainer(''),
+            src: '',
             innerStyle: { width: '100%', height: '100%', objectFit: 'fill' }
         }
     }
 
     componentDidMount(): void {
         super.componentDidMount();
-        this.wire('image', 'image', v => v);
+        this.wire('image', 'src', (image: ImageContainer) => image.src);
+
+        const image = this.props.parentView.property('image').value;
+
+        if (image) {
+            this.subscription.add(image.sink.pipe(
+                switchMap((image: ImageContainer) => image.srcSet())
+            ).subscribe(srcSet => this.setState({srcSet})))
+        }
         this.wire('contentPolicy', 'innerStyle', v => {
             const s: CSSProperties = { width: '100%', height: '100%' };
 
@@ -188,8 +197,8 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
         const extra = pick(this.state, 'id');
         return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
             <img style={this.state.innerStyle}
-                 src={this.state.image.src}
-                 // srcSet={this.state.image.srcSet}
+                 src={this.state.src}
+                 srcSet={this.state.srcSet}
                  alt=""/>
         </div>);
     }

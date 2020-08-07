@@ -1,7 +1,7 @@
 import React, { Component, CSSProperties } from 'react';
 import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { debounceTime, filter, map, startWith, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
 import { extend, forEach, identity, isEqual, pick } from 'lodash';
@@ -296,7 +296,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 map(([intrinsic, self]) => ({
                     width: this.hasExplicitWidth() ? self.width : intrinsic.width,
                     height: this.hasExplicitHeight() ? self.height : intrinsic.height
-                }))
+                })),
+                distinctUntilChanged((x, y) => x.width === y.width && x.height === y.height)
             )
         }
     }
@@ -311,22 +312,13 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                     };
                 })),
             ),
-            startWith({width: 0, height: 0})
+            startWith({width: 0, height: 0}),
+            distinctUntilChanged((x, y) => x.width === y.width && x.height === y.height)
         );
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        return this.viewRef.pipe(
-            switchMap(self => resizeObserver(self).pipe(
-                map(size => {
-                    return {
-                        width: this.isWidthDefined() ? size.width : 0,
-                        height: this.isHeightDefined() ? size.height : 0,
-                    };
-                })),
-            ),
-            startWith({width: 0, height: 0})
-        );
+        return this.selfSize();
     }
 
     getClassName(): string {

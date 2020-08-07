@@ -1,6 +1,9 @@
 import { Engine } from './engine';
 import { Color } from './index';
 import { includes } from 'lodash';
+import { combineLatest, Observable, of } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
+import { map } from 'rxjs/operators';
 
 export class TypeDefinition {
     readonly  engine: Engine;
@@ -219,16 +222,34 @@ export class ImageContainer {
 
     }
 
-    get srcSet(): string {
+    srcSet(): Observable<string|undefined> {
         const result = /(.*)\.(png|jpe?g)/.exec(this.src);
         if (result) {
-            return `${result[1]}@2x.${result[2]} 2x, ${result[1]}@3x.${result[2]} 3x`
+            return combineLatest(['2', '3'].map(scale => scaledSource(result[1], result[2], scale))).pipe(
+                map(items => {
+                        const result = items.filter(x => !!x).join(', ');
+                        return result || undefined;
+                    }
+                )
+            );
         }
-        return '';
+        return of(undefined);
     }
 }
 
 export class FontContainer {
     constructor(public readonly familyName: string|null, public readonly size: number|null, public readonly type: string|null) {
     }
+}
+
+function scaledSource(base: string, extension: string, scale: string) {
+    const src = `${base}@${scale}x.${extension}`;
+    return fromFetch(src, {
+        method: "HEAD",
+        headers: {
+            accept: 'image/*'
+        }
+    }).pipe(
+        map(value => value.ok && value.headers.get('Content-Type')?.startsWith('image') ? `${src} ${scale}x` : '')
+    )
 }
