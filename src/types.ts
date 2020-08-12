@@ -3,7 +3,7 @@ import { Color } from './index';
 import { includes } from 'lodash';
 import { combineLatest, Observable, of } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 export class TypeDefinition {
     readonly  engine: Engine;
@@ -250,6 +250,7 @@ function scaledSource(base: string, extension: string, scale: string) {
             accept: 'image/*'
         }
     }).pipe(
-        map(value => value.ok && value.headers.get('Content-Type')?.startsWith('image') ? `${src} ${scale}x` : '')
+        map(value => value.ok && value.headers.get('Content-Type')?.startsWith('image') ? `${src} ${scale}x` : ''),
+        catchError( err => of(''))
     )
 }
