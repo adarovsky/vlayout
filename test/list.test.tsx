@@ -1,11 +1,11 @@
-import {mount, shallow} from "enzyme";
-import {Engine, Layout} from "../src";
-import React from "react";
-import {BehaviorSubject, of, ReplaySubject, Subject} from "rxjs";
-import {List} from "../src/list";
-import sinon from "sinon";
-import {SampleListView} from "./sample_list_view";
-import {ElementSize} from "../src/resize_sensor";
+import { mount, shallow } from 'enzyme';
+import { Engine, Layout } from '../src';
+import React from 'react';
+import { BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
+import { List } from '../src/list';
+import sinon from 'sinon';
+import { SampleListView } from './sample_list_view';
+import { ElementSize } from '../src/resize_sensor';
 
 let module = require("../src/resize_sensor");
 
@@ -238,6 +238,78 @@ describe("lists", () => {
                                   user {
                                       label {
                                           text: name + (prop2 ? " - good" : " - bad")
+                                      }
+                                  }
+                                  newUser {
+                                      label {
+                                          text: "add new"
+                                      }
+                                  }
+                              }
+                          }
+                      }`}
+            />
+        );
+
+        const node = wrapper.find(".vlayout_verticalList");
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
+    it("model description should support nested list item properties", async function () {
+        engine.registerList("MyItems", {
+            user: {
+                name: {
+                    first: engine.stringType(),
+                    last: engine.stringType(),
+                },
+                prop2: engine.boolType(),
+            },
+            newUser: {}
+        });
+        engine.registerInput(
+            "items",
+            engine.type("MyItems")!,
+            of([
+                {user: {id: 1, name: {first: "Alex", last: "Darovsky"}, prop2: false}},
+                {user: {id: 2, name: {first: "Anton", last: "Last Name 1"}, prop2: true}},
+                {user: {id: 3, name: {first: "Denis", last: "Last Name 2"}, prop2: false}},
+                {newUser: {id: "new"}}
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={`
+                      types {
+                          MyItems: list (
+                              user {
+                                  name {
+                                      first: String
+                                      last: String
+                                  }
+                                  prop2: Bool
+                              },
+                              newUser {
+                                  // no fields required
+                              }
+                          )
+                      }
+                      
+                      inputs {
+                          items: MyItems
+                      }
+                      
+                      layout {
+                          layer {
+                              verticalList {
+                                  padding { left: 10 right: 10 top: 10 bottom: 10 }
+                                  model: items
+                      
+                                  user {
+                                      label {
+                                          text: name.first + "  " + name.last + (prop2 ? " - good" : " - bad")
                                       }
                                   }
                                   newUser {

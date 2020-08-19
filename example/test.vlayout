@@ -7,6 +7,26 @@ types {
             name: String
         }
     )
+
+    TriviaRounds: list (
+        round{
+            number: Number
+            question: String
+            variant1{
+                key: String
+                value: String
+            }
+            variant2{
+                key: String
+                value: String
+            }
+            variant3{
+                key: String
+                value: String
+            }
+            answerKey: String
+        }
+    )
 }
 
 inputs {

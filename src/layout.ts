@@ -288,8 +288,14 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 }
             }
             else if (this.match('{')) {
-                item[v.content] = this.parseListItem();
+                const inner: ListDefinitionItem = {};
+                let i: ListDefinitionItem|null = null;
+                while( !isEmpty(i = this.parseListItem()) ) {
+                    extend(inner, i);
+                }
                 this.matchOrFail('}');
+
+                item[v.content] = inner;
             }
             return item;
         } else {
