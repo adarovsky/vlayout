@@ -1,7 +1,7 @@
-import {mount} from "enzyme";
-import {Engine, Layout} from "../src";
-import React from "react";
-import {Subject} from "rxjs";
+import { mount } from 'enzyme';
+import { Engine, Layout } from '../src';
+import React from 'react';
+import { Subject } from 'rxjs';
 
 let engine = new Engine();
 
@@ -52,7 +52,7 @@ describe("types", () => {
         );
 
         const node = wrapper.find(".vlayout_label");
-        subj.next(null);
+        subj.next(123);
 
         expect(console.error).toHaveBeenCalled();
         expect(node.getDOMNode()).toMatchSnapshot();

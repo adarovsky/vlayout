@@ -16,7 +16,7 @@ interface AppState {
 }
 
 class App extends Component {
-    private readonly engine = new Engine();
+    private readonly engine = new Engine(true);
 
     constructor(props: any) {
         super(props);
@@ -52,7 +52,7 @@ class App extends Component {
         ));
         this.engine.registerInput('test', this.engine.stringType(), of('sample text').pipe(
             delay(5000),
-            startWith(null)
+            // startWith(null)
         ));
 
         this.engine.registerButton('testButton', async () => {});

@@ -17,7 +17,8 @@ export class TypeDefinition {
     isTypeCorrect(value: any): boolean {
         switch (this.typeName) {
             case 'String':
-                return typeof (value) === 'string';
+                return value === null ||
+                    typeof (value) === 'string';
             case 'Number':
                 return value === null ||
                     typeof (value) === 'number' ||

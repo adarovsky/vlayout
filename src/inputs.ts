@@ -1,10 +1,10 @@
-import {Engine} from "./engine";
-import {Dictionary, ListDefinition, TypeDefinition} from "./types";
-import {Expression} from "./expression";
-import {Observable} from "rxjs";
-import {LinkError} from "./errors";
-import {distinctUntilChanged, filter, map, shareReplay, tap} from "rxjs/operators";
-import {isEqual} from "lodash";
+import { Engine } from './engine';
+import { Dictionary, ListDefinition, TypeDefinition } from './types';
+import { Expression } from './expression';
+import { concat, Observable, throwError } from 'rxjs';
+import { LinkError } from './errors';
+import { catchError, distinctUntilChanged, filter, map, shareReplay, skip, take, tap, timeout } from 'rxjs/operators';
+import { isEqual } from 'lodash';
 
 export class Input extends Expression {
     line: number = 0;
@@ -49,6 +49,21 @@ export class Inputs {
             // }),
             shareReplay({bufferSize: 1, refCount: true} )
         );
+
+        if (this.engine.debug) {
+            const head = inp.sink.pipe(
+                take(1),
+                timeout(1000),
+                catchError(err => {
+                    console.error(`inconcistensy for input ${name}: no value came in 1s`);
+                    return throwError(new Error(`inconcistensy for input ${name}: no value came in 1s`));
+                })
+            );
+            const tail = inp.sink.pipe(
+                skip(1)
+            )
+            inp.sink = concat(head, tail);
+        }
 
         this.inputs[name] = inp;
     }

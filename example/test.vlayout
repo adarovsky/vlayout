@@ -7,26 +7,6 @@ types {
             name: String
         }
     )
-
-    TriviaRounds: list (
-        round{
-            number: Number
-            question: String
-            variant1{
-                key: String
-                value: String
-            }
-            variant2{
-                key: String
-                value: String
-            }
-            variant3{
-                key: String
-                value: String
-            }
-            answerKey: String
-        }
-    )
 }
 
 inputs {
@@ -40,53 +20,9 @@ layout {
         z_order: 1
         fullscreen: false
 
-        vertical {
+        label {
+            text: test
             center { x: 0.5 y: 0.5 }
-            label {
-                text: "test header"
-            }
-            absolute {
-                backgroundColor: #cccccc
-
-                fixedSize { width: 300 }
-
-                verticalList {
-                    model: testList
-                    spacing: 10
-
-                    padding { left: 10 top: 10 bottom: 10 right: 10 }
-
-                    item {
-                        roundRect {
-                            padding { left: 3 top: 3 bottom: 3 right: 3 }
-                            backgroundColor: index % 2 == 0 ? nil : #ccffcc
-                            strokeColor: index % 2 == 0 ? #ddffcc : nil
-                            strokeWidth: index % 2 == 0 ? 1 : nil
-                            cornerRadius: 5
-                        }
-                        horizontal {
-                            alignment: .center
-                            spacing: 10
-                            padding { left: 10 top: 10 bottom: 10 right: 10 }
-                            image {
-                                image: Image("/prescreen-select.png")
-                            }
-                            label {
-                                text: name
-                                textColor: index % 2 == 1 ? nil : #ccffcc
-                            }
-                        }
-                    }
-                }
-            }
-
-            testButton {
-                fixedSize { width: 200 height: 40 }
-                backgroundColor: #ccffff
-                image: Image("/prescreen-select.png")
-                text: "test button"
-            }
-
         }
     }
 }

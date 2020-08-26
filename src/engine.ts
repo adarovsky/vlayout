@@ -36,7 +36,7 @@ export class Engine {
         properties: {}
     };
 
-    constructor() {
+    constructor(readonly debug = false) {
         this.functions = [
             new LocalizedNumber(this),
             new ShortLocalizedNumber(this),
