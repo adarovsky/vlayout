@@ -1,7 +1,7 @@
 import { Engine } from './engine';
 import { Dictionary, ListDefinition, TypeDefinition } from './types';
 import { Expression } from './expression';
-import { concat, Observable, throwError } from 'rxjs';
+import { concat, Observable, throwError, TimeoutError } from 'rxjs';
 import { LinkError } from './errors';
 import { catchError, distinctUntilChanged, filter, map, shareReplay, skip, take, tap, timeout } from 'rxjs/operators';
 import { isEqual } from 'lodash';
@@ -59,8 +59,13 @@ export class Inputs {
                 take(1),
                 timeout(1000),
                 catchError(err => {
-                    console.error(`inconcistensy for input ${name}: no value came in 1s`);
-                    return throwError(new Error(`inconcistensy for input ${name}: no value came in 1s`));
+                    if (err instanceof TimeoutError) {
+                        console.error(`inconsistency for input ${name}: no value came in 1s`);
+                        return throwError(new Error(`inconsistency for input ${name}: no value came in 1s`));
+                    }
+                    else {
+                        return throwError(err);
+                    }
                 })
             );
             const tail = inp.sink.pipe(

@@ -52,7 +52,7 @@ export class ReactVerticalList extends ReactList<ReactListState> {
         );
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+    render(): React.ReactElement | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = pick(this.state, 'id');
         return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
             {/*<FlipMove key={'flip'} duration={250} easing="ease-in-out" enterAnimation="fade" leaveAnimation="fade">*/}

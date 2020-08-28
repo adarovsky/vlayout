@@ -143,7 +143,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         return `listPrototype_${this.name.content}`;
     }
 
-    get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
+    get target(): React.ReactElement {
         return createElement(ReactListItemPrototype, {parentView: this, key: this.name.content + '-' + this.key});
     }
 
@@ -284,7 +284,7 @@ export class List extends View {
     }
 
 
-    get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
+    get target(): React.ReactElement {
         let cls;
         switch (this.axis) {
             case null:

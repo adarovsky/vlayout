@@ -136,5 +136,32 @@ describe("types", () => {
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
+
+    it("should warn about missing value", async function () {
+        jest.useFakeTimers();
+        const subj = new Subject<any>();
+        engine.registerInput('testInput', engine.numberType(), subj);
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={`
+                 inputs {
+                    testInput: Number
+                 }
+                 layout {
+                     layer {
+                         label {
+                             id: "label1"
+                             center { x: 0.5 y: 0.5 }
+                             
+                             text: testInput == nil ? "null" : String(testInput)                 
+                         }
+                     }
+                 }`}
+            />
+        );
+
+        expect(() => jest.advanceTimersByTime(2000)).toThrow(/inconsistency for input testInput: no value came in/);
+    });
 });
 
