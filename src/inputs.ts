@@ -32,6 +32,10 @@ export class Inputs {
             distinctUntilChanged(isEqual),
             tap( x => this.engine.logInputValue(name, x)),
             filter(x => {
+                // pass through everything in release mode
+                if (!this.engine.debug) {
+                    return true;
+                }
                 const correct = type.isTypeCorrect(x);
                 if (!correct) {
                     console.error(`wrong type for input ${name}: expected value of type ${type.typeName}, got ${x}`);

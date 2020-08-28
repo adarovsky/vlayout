@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 let engine = new Engine();
 
 beforeEach(() => {
-    engine = new Engine();
+    engine = new Engine(true);
 });
 
 beforeAll(() => {
