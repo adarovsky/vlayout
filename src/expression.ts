@@ -92,8 +92,7 @@ export class Nil extends Constant {
             this.typeDefinition = scope.engine.numberType();
             this.sink = of(null);
         }
-
-        if (hint !==this.typeDefinition) {
+        else if (hint !==this.typeDefinition) {
             throw new LinkError(this.line, this.column, `cannot cast nil to ${hint}`);
         }
     }

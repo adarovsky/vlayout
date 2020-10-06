@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import { Engine, Layout } from '../src';
 import React from 'react';
 import { Subject } from 'rxjs';
@@ -162,6 +162,35 @@ describe("types", () => {
         );
 
         expect(() => jest.advanceTimersByTime(2000)).toThrow(/inconsistency for input testInput: no value came in/);
+    });
+
+    it("should accept nil values in functions", async function () {
+        const subj = new Subject<any>();
+        engine.registerInput('testInput', engine.numberType(), subj);
+        const wrapper = shallow(
+            <Layout
+                engine={engine}
+                content={`
+                 inputs {
+                    testInput: Number
+                 }
+                 functions {
+                    testFunction(index:Number) => testInput <= 1 ? nil : index % 2 == 0 ? 10 : nil
+                 }
+                 layout {
+                     layer {
+                         label {
+                             id: "label1"
+                             center { x: 0.5 y: 0.5 }
+                             
+                             text: String(testInput)                 
+                         }
+                     }
+                 }`}
+            />
+        );
+
+        expect(() => wrapper).not.toThrow()
     });
 });
 
