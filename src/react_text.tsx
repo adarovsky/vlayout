@@ -48,6 +48,7 @@ export class ReactTextFieldBase<S extends ReactTextFieldState = ReactTextFieldSt
         this.wire('font', 'fontStyle', fontStyle);
         this.wire('textColor', 'colorStyle', x => ({color: x.toString()}));
         this.wire('type', 'type', x => x);
+        this.wire('placeholder', 'placeholder', x => x);
         const props = [this.safeIntrinsicSize(),
             this.props.parentView.property('contentPadding.top').value?.sink ?? of(0),
             this.props.parentView.property('contentPadding.bottom').value?.sink ?? of(0),
