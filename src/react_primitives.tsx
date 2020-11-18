@@ -120,12 +120,19 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
 
     private shadowStyle(): CSSProperties {
         const r = cloneDeep(this.style());
-        for (let t of ['width', 'height', 'top', 'bottom', 'left', 'right']) {
+        for (let t of ['top', 'bottom', 'left', 'right']) {
             deleteProperty(r, t);
         }
 
         r.position = 'absolute';
-        r.whiteSpace = 'pre';
+
+        if (!this.isWidthDefined()) {
+            r.whiteSpace = 'pre';
+            for (let t of ['width', 'height']) {
+                deleteProperty(r, t);
+            }
+        }
+
         r.opacity = 0;
         return r;
     }
@@ -192,10 +199,25 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
         });
     }
 
+    styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
+        const r = super.styleValue(props, value);
+        if (!r.position)
+            r.position = 'relative';
+        return r;
+    }
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const extra = pick(this.state, 'id');
         return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
-            <img style={this.state.innerStyle}
+            <img style={{...this.state.innerStyle, opacity: 0}}
+                 src={this.state.src}
+                 srcSet={this.state.srcSet}
+                 alt=""/>
+            <img style={{...this.state.innerStyle,
+                position: 'absolute',
+                left: 0,
+                top: 0
+            }}
                  src={this.state.src}
                  srcSet={this.state.srcSet}
                  alt=""/>

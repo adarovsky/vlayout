@@ -101,6 +101,48 @@ describe('label', () => {
             `);
     });
 
+    it('should have wrapping shadow if width is set', async function() {
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+     layout {
+         layer {
+             label {
+                 center { x: 0.5 y: 0.5 }
+                 fixedSize { width: 100 }
+                 
+                 text: "test label"                 
+             }
+         }
+     }`}
+            />
+        );
+
+        const node = wrapper.find('.vlayout_label');
+
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_label"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; width: 100px; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+            >
+              <span>
+                test label
+                <br />
+              </span>
+              <div
+                class="vlayout_label_shadow"
+                style="position: absolute; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; width: 100px; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              >
+                <span>
+                  test label
+                  <br />
+                </span>
+              </div>
+            </div>
+        `);
+    });
+
     it('concatenated strings whould work', async function() {
         const wrapper = mount(
             <Layout
