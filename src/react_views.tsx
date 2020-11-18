@@ -346,7 +346,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     protected isHeightDefined(): boolean {
-        return !!this.state.style.height ||
+        const x = !!this.state.style.height ||
             (this.props.parentView.parent !== null
                 && (this.props.parentView.parent instanceof StackLayout ||
                     this.props.parentView.parent instanceof LinearLayout)
@@ -357,6 +357,8 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 && this.props.parentView.parent.instance !== null
                 && this.props.parentView.parent.instance.isHeightDefined()) ||
             (!!this.state.style.width && !!this.state.aspect);
+        console.log(this.props.parentView.toString() + ': height defined: ' + x);
+        return x;
     }
 }
 

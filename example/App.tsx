@@ -55,7 +55,8 @@ class App extends Component {
             // startWith(null)
         ));
 
-        this.engine.registerButton('testButton', async () => {});
+        this.engine.registerButton('inviteHostIFB', async () => {});
+        this.engine.registerButton('toggleHostIFB', async () => {});
     }
 
     render() {
