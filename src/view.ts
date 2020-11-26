@@ -2,9 +2,19 @@ import { Constant, EnumValue, Expression } from './expression';
 import { Dictionary } from './types';
 import { Scope } from './layout';
 import React, { createElement } from 'react';
-import { ReactContainer, ReactView, ReactViewProps, ReactViewState } from './react_views';
+import {
+    ReactContainer,
+    ReactView,
+    ReactViewProps,
+    ReactViewState,
+} from './react_views';
 import { v1 as uuid_v1 } from 'uuid';
-import { ReactHorizontalLayout, ReactLayer, ReactTopLayout, ReactVerticalLayout } from './react_layouts';
+import {
+    ReactHorizontalLayout,
+    ReactLayer,
+    ReactTopLayout,
+    ReactVerticalLayout,
+} from './react_layouts';
 import { LexNumber } from './lexer';
 import { take } from 'rxjs/operators';
 import { ReactStackLayout } from './react_stack';
@@ -17,8 +27,8 @@ export class ViewProperty {
 
     name: string;
     typeName: string;
-    value: Expression|null = null;
-    view: View|null = null;
+    value: Expression | null = null;
+    view: View | null = null;
 
     constructor(name: string, typeName: string) {
         this.name = name;
@@ -26,9 +36,11 @@ export class ViewProperty {
     }
 
     instantiate(): this {
-        const v = new (this.constructor as typeof ViewProperty)(this.name, this.typeName);
-        if (this.value)
-            v.value = this.value.instantiate();
+        const v = new (this.constructor as typeof ViewProperty)(
+            this.name,
+            this.typeName
+        );
+        if (this.value) v.value = this.value.instantiate();
         return v as this;
     }
 
@@ -39,7 +51,9 @@ export class ViewProperty {
     }
 
     toString(padding: number = 0): string {
-        return `${' '.repeat(padding)}${this.name}: ${this.value ? this.value.toString() : '<empty>'}`;
+        return `${' '.repeat(padding)}${this.name}: ${
+            this.value ? this.value.toString() : '<empty>'
+        }`;
     }
 }
 
@@ -47,23 +61,23 @@ export class View {
     line: number = 0;
     column: number = 0;
 
-    parent: View|null = null;
+    parent: View | null = null;
 
     protected properties: Dictionary<ViewProperty> = {};
     protected _key: string;
-    instance: ReactView<ReactViewProps, ReactViewState>|null = null;
+    instance: ReactView<ReactViewProps, ReactViewState> | null = null;
 
     constructor() {
         this.registerProperty(new ViewProperty('id', 'String'));
-        ['left', 'right', 'top', 'bottom'].forEach( t => {
+        ['left', 'right', 'top', 'bottom'].forEach(t => {
             this.registerProperty(new ViewProperty('padding.' + t, 'Number'));
         });
 
-        ['x', 'y'].forEach( t => {
+        ['x', 'y'].forEach(t => {
             this.registerProperty(new ViewProperty('center.' + t, 'Number'));
         });
 
-        ['width', 'height'].forEach( t => {
+        ['width', 'height'].forEach(t => {
             this.registerProperty(new ViewProperty('size.' + t, 'Number'));
             this.registerProperty(new ViewProperty('fixedSize.' + t, 'Number'));
         });
@@ -75,10 +89,13 @@ export class View {
         this._key = uuid_v1();
     }
 
-    instantiate(): this {
-        const v = new (this.constructor as typeof View);
-        v.copyFrom(this);
-        return v as this;
+    get key(): string {
+        let key = this._key;
+        const idProp = this.property('id');
+        if (idProp.value)
+            idProp.value.sink.pipe(take(1)).subscribe(i => (key = i));
+
+        return key;
     }
 
     copyFrom(that: this) {
@@ -97,28 +114,26 @@ export class View {
         });
     }
 
-    get key() : string {
-        let key = this._key;
-        const idProp = this.property('id');
-        if (idProp.value)
-            idProp.value.sink.pipe(take(1)).subscribe( i => key = i);
-
-        return key;
+    get target(): React.ReactElement {
+        return createElement('div', { key: this.key }, []);
     }
 
-    get target(): React.ReactElement {
-        return createElement('div', {key: this.key}, []);
+    get activeProperties(): ViewProperty[] {
+        return values(this.properties).filter(p => !!p.value);
     }
 
     registerProperty(prop: ViewProperty): void {
         this.properties[prop.name] = prop;
     }
+
     property(name: string) {
         return this.properties[name];
     }
 
-    get activeProperties(): ViewProperty[] {
-        return values(this.properties).filter( p => !!p.value);
+    instantiate(): this {
+        const v = new (this.constructor as typeof View)();
+        v.copyFrom(this);
+        return v as this;
     }
 
     activePropertiesNamed(...names: string[]): ViewProperty[] {
@@ -133,7 +148,7 @@ export class View {
         let r = `${' '.repeat(padding)}${this.viewType()} {\n`;
         for (let k in this.properties) {
             if (this.properties.hasOwnProperty(k) && this.properties[k].value) {
-                r += `${this.properties[k].toString(padding+4)}\n`;
+                r += `${this.properties[k].toString(padding + 4)}\n`;
             }
         }
         r += `${' '.repeat(padding)}}`;
@@ -178,11 +193,18 @@ export class Container extends View {
         }
     }
 
+    get target(): React.ReactElement {
+        return createElement(ReactContainer, {
+            parentView: this,
+            key: this.key,
+        });
+    }
+
     toString(padding: number = 0): string {
         let r = `${' '.repeat(padding)}${this.viewType()} {\n`;
         for (let k in this.properties) {
             if (this.properties.hasOwnProperty(k) && this.properties[k].value) {
-                r += `${this.properties[k].toString(padding+4)}\n`;
+                r += `${this.properties[k].toString(padding + 4)}\n`;
             }
         }
 
@@ -192,10 +214,6 @@ export class Container extends View {
 
         r += `${' '.repeat(padding)}}`;
         return r;
-    }
-
-    get target(): React.ReactElement {
-        return createElement(ReactContainer, {parentView: this, key: this.key});
     }
 }
 
@@ -216,13 +234,16 @@ export class AbsoluteLayout extends Container {
     }
 
     get target(): React.ReactElement {
-        return createElement(ReactAbsoluteLayout, {parentView: this, key: this.key});
+        return createElement(ReactAbsoluteLayout, {
+            parentView: this,
+            key: this.key,
+        });
     }
 }
 
 export enum LinearLayoutAxis {
     Horizontal,
-    Vertical
+    Vertical,
 }
 
 export class LinearLayout extends Container {
@@ -241,8 +262,20 @@ export class LinearLayout extends Container {
         return v as this;
     }
 
-    viewType(): string {
-        return this.axis === LinearLayoutAxis.Horizontal ? 'horizontal' : 'vertical';
+    get target(): React.ReactElement<
+        any,
+        string | React.JSXElementConstructor<any>
+    > {
+        if (this.axis === LinearLayoutAxis.Horizontal)
+            return createElement(ReactHorizontalLayout, {
+                parentView: this,
+                key: this.key,
+            });
+        else
+            return createElement(ReactVerticalLayout, {
+                parentView: this,
+                key: this.key,
+            });
     }
 
     link(scope: Scope): void {
@@ -252,11 +285,10 @@ export class LinearLayout extends Container {
         super.link(scope);
     }
 
-    get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        if (this.axis === LinearLayoutAxis.Horizontal)
-            return createElement(ReactHorizontalLayout, {parentView: this, key: this.key});
-        else
-            return createElement(ReactVerticalLayout, {parentView: this, key: this.key});
+    viewType(): string {
+        return this.axis === LinearLayoutAxis.Horizontal
+            ? 'horizontal'
+            : 'vertical';
     }
 }
 
@@ -276,8 +308,14 @@ export class StackLayout extends Container {
         return 'stack';
     }
 
-    get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactStackLayout, {parentView: this, key: this.key});
+    get target(): React.ReactElement<
+        any,
+        string | React.JSXElementConstructor<any>
+    > {
+        return createElement(ReactStackLayout, {
+            parentView: this,
+            key: this.key,
+        });
     }
 }
 
@@ -290,8 +328,15 @@ export class LayoutView extends Container {
         return 'layout';
     }
 
-    get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactTopLayout, {parentView: this, key: this.key, className: this.className});
+    get target(): React.ReactElement<
+        any,
+        string | React.JSXElementConstructor<any>
+    > {
+        return createElement(ReactTopLayout, {
+            parentView: this,
+            key: this.key,
+            className: this.className,
+        });
     }
 }
 
@@ -301,6 +346,7 @@ export class Layer extends AbsoluteLayout {
         this.registerProperty(new ViewProperty('z_order', 'Number'));
         this.registerProperty(new ViewProperty('fullscreen', 'Bool'));
     }
+
     instantiate(): this {
         const v = new (this.constructor as typeof Layer)();
         v.copyFrom(this);
@@ -311,7 +357,10 @@ export class Layer extends AbsoluteLayout {
         return 'layer';
     }
 
-    get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-        return createElement(ReactLayer, {parentView: this, key: this.key});
+    get target(): React.ReactElement<
+        any,
+        string | React.JSXElementConstructor<any>
+    > {
+        return createElement(ReactLayer, { parentView: this, key: this.key });
     }
 }

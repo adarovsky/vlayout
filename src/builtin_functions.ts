@@ -1,5 +1,10 @@
 import { Engine } from './engine';
-import { ColorContainer, FontContainer, ImageContainer, TypeDefinition } from './types';
+import {
+    ColorContainer,
+    FontContainer,
+    ImageContainer,
+    TypeDefinition,
+} from './types';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -12,11 +17,11 @@ export interface FunctionImplementationI {
 }
 
 export class FunctionImplementation {
-    constructor(public readonly engine: Engine) {
-    }
+    constructor(public readonly engine: Engine) {}
 }
 
-export class LocalizedNumber extends FunctionImplementation implements FunctionImplementationI {
+export class LocalizedNumber extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -30,13 +35,12 @@ export class LocalizedNumber extends FunctionImplementation implements FunctionI
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(
-            map( x => `${x}`)
-        );
+        return parameters[0].pipe(map(x => `${x}`));
     }
 }
 
-export class ShortLocalizedNumber extends FunctionImplementation implements FunctionImplementationI {
+export class ShortLocalizedNumber extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -51,12 +55,11 @@ export class ShortLocalizedNumber extends FunctionImplementation implements Func
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return parameters[0].pipe(
-            map( x => {
+            map(x => {
                 if (x > 1000000) {
-                    return `${Math.round(x / 100000) / 10} M`
-                }
-                else if (x > 1000) {
-                    return `${Math.round(x / 100) / 10} K`
+                    return `${Math.round(x / 100000) / 10} M`;
+                } else if (x > 1000) {
+                    return `${Math.round(x / 100) / 10} K`;
                 }
                 return `${x}`;
             })
@@ -64,7 +67,8 @@ export class ShortLocalizedNumber extends FunctionImplementation implements Func
     }
 }
 
-export class LocalizedString extends FunctionImplementation implements FunctionImplementationI {
+export class LocalizedString extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -91,7 +95,8 @@ export class LocalizedString extends FunctionImplementation implements FunctionI
     }
 }
 
-export class Image extends FunctionImplementation implements FunctionImplementationI {
+export class Image extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -105,13 +110,12 @@ export class Image extends FunctionImplementation implements FunctionImplementat
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(
-            map(x => new ImageContainer(x))
-        );
+        return parameters[0].pipe(map(x => new ImageContainer(x)));
     }
 }
 
-export class FontFamily extends FunctionImplementation implements FunctionImplementationI {
+export class FontFamily extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -131,7 +135,8 @@ export class FontFamily extends FunctionImplementation implements FunctionImplem
     }
 }
 
-export class FontTyped extends FunctionImplementation implements FunctionImplementationI {
+export class FontTyped extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -151,7 +156,8 @@ export class FontTyped extends FunctionImplementation implements FunctionImpleme
     }
 }
 
-export class FontSized extends FunctionImplementation implements FunctionImplementationI {
+export class FontSized extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -171,7 +177,8 @@ export class FontSized extends FunctionImplementation implements FunctionImpleme
     }
 }
 
-export class ColorAlpha extends FunctionImplementation implements FunctionImplementationI {
+export class ColorAlpha extends FunctionImplementation
+    implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -189,7 +196,12 @@ export class ColorAlpha extends FunctionImplementation implements FunctionImplem
             map(params => {
                 const original = params[0] as ColorContainer;
                 const alpha = params[1] as number;
-                return new ColorContainer(original.red, original.green, original.blue, Math.max(0, Math.min(alpha, 1)));
+                return new ColorContainer(
+                    original.red,
+                    original.green,
+                    original.blue,
+                    Math.max(0, Math.min(alpha, 1))
+                );
             })
         );
     }
