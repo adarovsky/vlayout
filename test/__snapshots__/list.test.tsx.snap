@@ -1298,9 +1298,14 @@ exports[`lists should support external views 1`] = `
     style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
   >
     <div
-      style="background-color: rgb(170, 153, 204); position: absolute; z-index: 1; pointer-events: auto;"
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: auto;"
     >
-      Alex
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Alex
+      </div>
     </div>
     <div
       class="vlayout_label"
@@ -1326,9 +1331,14 @@ exports[`lists should support external views 1`] = `
     style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
   >
     <div
-      style="background-color: rgb(170, 153, 204); position: absolute; z-index: 1; pointer-events: auto;"
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: auto;"
     >
-      Anton
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Anton
+      </div>
     </div>
     <div
       class="vlayout_label"
@@ -1354,9 +1364,14 @@ exports[`lists should support external views 1`] = `
     style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
   >
     <div
-      style="background-color: rgb(170, 153, 204); position: absolute; z-index: 1; pointer-events: auto;"
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: auto;"
     >
-      Denis
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Denis
+      </div>
     </div>
     <div
       class="vlayout_label"
@@ -1413,9 +1428,14 @@ exports[`lists should support filtering 1`] = `
     style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
   >
     <div
-      style="background-color: rgb(170, 153, 204); position: absolute; z-index: 1; pointer-events: auto;"
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: auto;"
     >
-      Alex
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Alex
+      </div>
     </div>
     <div
       class="vlayout_label"
@@ -1441,9 +1461,14 @@ exports[`lists should support filtering 1`] = `
     style="height: 44px; pointer-events: none; position: relative; min-width: 100%;"
   >
     <div
-      style="background-color: rgb(170, 153, 204); position: absolute; z-index: 1; pointer-events: auto;"
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: auto;"
     >
-      Anton
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Anton
+      </div>
     </div>
     <div
       class="vlayout_label"

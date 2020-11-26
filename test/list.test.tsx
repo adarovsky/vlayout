@@ -1,13 +1,18 @@
 import { mount, shallow } from 'enzyme';
-import { Engine, Layout } from '../src';
+import {
+    connect,
+    Engine,
+    Layout,
+    LayoutComponent,
+    ListModelItem,
+} from '../src';
 import React from 'react';
 import { BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
 import { List } from '../src/list';
 import sinon from 'sinon';
-import { SampleListView } from './sample_list_view';
 import { ElementSize } from '../src/resize_sensor';
 
-let module = require("../src/resize_sensor");
+let module = require('../src/resize_sensor');
 
 let engine = new Engine();
 const sizeChange = new Subject<ElementSize>();
@@ -61,91 +66,79 @@ function getContent(type: string) {
   }`;
 }
 
-describe("lists", () => {
-    it("should initialize and render vertical list", async function () {
-        engine.registerList("MyItems", {
+describe('lists', () => {
+    it('should initialize and render vertical list', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
         const wrapper = mount(
-            <Layout
-                engine={engine}
-                content={getContent('verticalList')}
-            />
+            <Layout engine={engine} content={getContent('verticalList')} />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should initialize and render absolute list", async function () {
-        engine.registerList("MyItems", {
+    it('should initialize and render absolute list', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
         const wrapper = mount(
-            <Layout
-                engine={engine}
-                content={getContent('absoluteList')}
-            />
+            <Layout engine={engine} content={getContent('absoluteList')} />
         );
 
-        const node = wrapper.find(".vlayout_absoluteList");
+        const node = wrapper.find('.vlayout_absoluteList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should reuse items properly", async function () {
-        engine.registerList("MyItems", {
+    it('should reuse items properly', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
-            }
+                name: engine.stringType(),
+            },
         });
 
         const item = (index: number) => ({
             user: {
                 id: `user-${index}`,
-                name: `User-${index + 1}`
-            }
+                name: `User-${index + 1}`,
+            },
         });
-        const data = [[1], [0, 1]].map(
-            value => value.map(item)
-        );
+        const data = [[1], [0, 1]].map(value => value.map(item));
 
         const input = new BehaviorSubject(data[0]);
 
-        engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
-            input
-        );
+        engine.registerInput('items', engine.type('MyItems')!, input);
 
         const wrapper = mount(
             <Layout
@@ -181,7 +174,7 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_absoluteList");
+        const node = wrapper.find('.vlayout_absoluteList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
 
@@ -190,22 +183,22 @@ describe("lists", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("model description should support multiple properties", async function () {
-        engine.registerList("MyItems", {
+    it('model description should support multiple properties', async function() {
+        engine.registerList('MyItems', {
             user: {
                 name: engine.stringType(),
                 prop2: engine.boolType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex", prop2: false}},
-                {user: {id: 2, name: "Anton", prop2: true}},
-                {user: {id: 3, name: "Denis", prop2: false}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex', prop2: false } },
+                { user: { id: 2, name: 'Anton', prop2: true } },
+                { user: { id: 3, name: 'Denis', prop2: false } },
+                { newUser: { id: 'new' } },
             ])
         );
 
@@ -251,13 +244,13 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("model description should support nested list item properties", async function () {
-        engine.registerList("MyItems", {
+    it('model description should support nested list item properties', async function() {
+        engine.registerList('MyItems', {
             user: {
                 name: {
                     first: engine.stringType(),
@@ -265,16 +258,34 @@ describe("lists", () => {
                 },
                 prop2: engine.boolType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: {first: "Alex", last: "Darovsky"}, prop2: false}},
-                {user: {id: 2, name: {first: "Anton", last: "Last Name 1"}, prop2: true}},
-                {user: {id: 3, name: {first: "Denis", last: "Last Name 2"}, prop2: false}},
-                {newUser: {id: "new"}}
+                {
+                    user: {
+                        id: 1,
+                        name: { first: 'Alex', last: 'Darovsky' },
+                        prop2: false,
+                    },
+                },
+                {
+                    user: {
+                        id: 2,
+                        name: { first: 'Anton', last: 'Last Name 1' },
+                        prop2: true,
+                    },
+                },
+                {
+                    user: {
+                        id: 3,
+                        name: { first: 'Denis', last: 'Last Name 2' },
+                        prop2: false,
+                    },
+                },
+                { newUser: { id: 'new' } },
             ])
         );
 
@@ -323,75 +334,63 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should initialize and render horizontal list", async function () {
-        engine.registerList("MyItems", {
+    it('should initialize and render horizontal list', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
         const wrapper = mount(
-            <Layout
-                engine={engine}
-                content={getContent('horizontalList')}
-            />
+            <Layout engine={engine} content={getContent('horizontalList')} />
         );
 
-        const node = wrapper.find(".vlayout_horizontalList");
+        const node = wrapper.find('.vlayout_horizontalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should reuse items on updates", async function () {
+    it('should reuse items on updates', async function() {
         // @ts-ignore
-        const spy = sinon.spy(List.prototype, "createNewReusableItem");
-        engine.registerList("MyItems", {
+        const spy = sinon.spy(List.prototype, 'createNewReusableItem');
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
-        let items = [
-            {user: {id: 1, name: "Alex"}}
-        ];
+        let items = [{ user: { id: 1, name: 'Alex' } }];
         const subj = new BehaviorSubject(items);
 
-        engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
-            subj
-        );
+        engine.registerInput('items', engine.type('MyItems')!, subj);
 
         const wrapper = mount(
-            <Layout
-                engine={engine}
-                content={getContent('verticalList')}
-            />
+            <Layout engine={engine} content={getContent('verticalList')} />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(spy.callCount).toBe(1);
         expect(node.getDOMNode()).toMatchSnapshot();
 
-        items = items.concat([{user: {id: 2, name: "Anton"}}]);
+        items = items.concat([{ user: { id: 2, name: 'Anton' } }]);
         subj.next(items);
 
         expect(spy.callCount).toBe(2);
@@ -400,34 +399,31 @@ describe("lists", () => {
         spy.restore();
     });
 
-    it("should fetch values which are observables", async function () {
-        engine.registerList("MyItems", {
+    it('should fetch values which are observables', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         const n = new BehaviorSubject('Anton');
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: n}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: n } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
         const wrapper = mount(
-            <Layout
-                engine={engine}
-                content={getContent('verticalList')}
-            />
+            <Layout engine={engine} content={getContent('verticalList')} />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
 
@@ -436,22 +432,22 @@ describe("lists", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should allow setting fixed width or height for items", async function () {
-        engine.registerList("MyItems", {
+    it('should allow setting fixed width or height for items', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
@@ -497,27 +493,27 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should allow nested absolutes and stacks", async function () {
-        engine.registerList("MyItems", {
+    it('should allow nested absolutes and stacks', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
@@ -566,31 +562,33 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should support tappable items", async function () {
-        engine.registerList("MyItems", {
+    it('should support tappable items', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
-        engine.registerListButton('itemTapped', async item => console.log('item', item, 'tapped'));
+        engine.registerListButton('itemTapped', async item =>
+            console.log('item', item, 'tapped')
+        );
 
         const wrapper = mount(
             <Layout
@@ -638,31 +636,33 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should support tappable items inside hierarchy", async function () {
-        engine.registerList("MyItems", {
+    it('should support tappable items inside hierarchy', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
-        engine.registerListButton('itemTapped', async item => console.log('item', item, 'tapped'));
+        engine.registerListButton('itemTapped', async item =>
+            console.log('item', item, 'tapped')
+        );
 
         const wrapper = mount(
             <Layout
@@ -713,31 +713,35 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_button");
+        const node = wrapper.find('.vlayout_button');
 
         expect(node).toHaveLength(3);
     });
 
-    it("should support external views", async function () {
-        engine.registerList("MyItems", {
+    it('should support external views', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
-        engine.registerListView('myView', (x, item) => <SampleListView parentView={x} key={'123'} color={'#aa99cc'} user={item}/>);
+        engine.registerListView('myView', (x, item) => (
+            <LayoutComponent parentView={x} key={'123'}>
+                <UserView user={item} />
+            </LayoutComponent>
+        ));
 
         const wrapper = mount(
             <Layout
@@ -786,31 +790,35 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should support filtering", async function () {
-        engine.registerList("MyItems", {
+    it('should support filtering', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: "Denis"}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
             ])
         );
 
-        engine.registerListView('myView', (x, item) => <SampleListView parentView={x} key={'123'} color={'#aa99cc'} user={item}/>);
+        engine.registerListView('myView', (x, item) => (
+            <LayoutComponent parentView={x} key={'123'}>
+                <UserView user={item} />
+            </LayoutComponent>
+        ));
 
         const wrapper = mount(
             <Layout
@@ -860,28 +868,28 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should support dynamic filtering", async function () {
-        engine.registerList("MyItems", {
+    it('should support dynamic filtering', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         const s = new ReplaySubject<string>(1);
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: s}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: s } },
+                { newUser: { id: 'new' } },
             ])
         );
 
@@ -928,34 +936,34 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
 
-        s.next("Michael");
+        s.next('Michael');
         expect(node.getDOMNode()).toMatchSnapshot();
 
-        s.next("Denis");
+        s.next('Denis');
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should support collection count", async function () {
-        engine.registerList("MyItems", {
+    it('should support collection count', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
 
         const s = new ReplaySubject<string>(1);
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: s}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: s } },
+                { newUser: { id: 'new' } },
             ])
         );
 
@@ -988,29 +996,28 @@ describe("lists", () => {
             />
         );
 
-        expect(wrapper.find('.vlayout_label > span').text()).toBe("4");
+        expect(wrapper.find('.vlayout_label > span').text()).toBe('4');
     });
 
-
-    it("should support text field in items", async function () {
-        engine.registerList("MyItems", {
+    it('should support text field in items', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
         const spy = sandbox.spy();
-        engine.registerListTextField('itemText', spy );
+        engine.registerListTextField('itemText', spy);
 
         const s = new BehaviorSubject<string>('Michael');
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
+            'items',
+            engine.type('MyItems')!,
             of([
-                {user: {id: 1, name: "Alex"}},
-                {user: {id: 2, name: "Anton"}},
-                {user: {id: 3, name: s}},
-                {newUser: {id: "new"}}
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: s } },
+                { newUser: { id: 'new' } },
             ])
         );
 
@@ -1055,7 +1062,7 @@ describe("lists", () => {
             />
         );
 
-        const node = wrapper.find(".vlayout_verticalList");
+        const node = wrapper.find('.vlayout_verticalList');
 
         expect(node.getDOMNode()).toMatchSnapshot();
         s.next('Sergey');
@@ -1065,30 +1072,29 @@ describe("lists", () => {
         expect(spy.callCount).toBe(0);
         const third = node.find('.vlayout_textField').at(2);
         const input = third.find('input');
-        input.simulate('change', {target: {value: 'entered text'}});
+        input.simulate('change', { target: { value: 'entered text' } });
 
         expect(spy.callCount).toBe(1);
     });
 
-    it("should check for model inconsistencies", async function () {
-        engine.registerList("MyItems", {
+    it('should check for model inconsistencies', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.numberType()
+                name: engine.numberType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
-            of([
-                {newUser: {id: "new"}}
-            ])
+            'items',
+            engine.type('MyItems')!,
+            of([{ newUser: { id: 'new' } }])
         );
 
-        const wrapper = () => shallow(
-            <Layout
-                engine={engine}
-                content={`
+        const wrapper = () =>
+            shallow(
+                <Layout
+                    engine={engine}
+                    content={`
   types {
       MyItems: list (
           user {
@@ -1106,17 +1112,18 @@ describe("lists", () => {
   
   layout {
   }`}
-            />
-        );
+                />
+            );
 
         expect(wrapper).toThrowError(/String and Number do not match/);
     });
 
-    it("should check for missing model", async function () {
-        const wrapper = () => shallow(
-            <Layout
-                engine={engine}
-                content={`
+    it('should check for missing model', async function() {
+        const wrapper = () =>
+            shallow(
+                <Layout
+                    engine={engine}
+                    content={`
   types {
       MyItems: list (
           user {
@@ -1132,23 +1139,24 @@ describe("lists", () => {
       layer {
       }
   }`}
-            />
-        );
+                />
+            );
 
         expect(wrapper).toThrowError(/list MyItems is not registered/);
     });
 
-    it("should check for wrong model type", async function () {
-        engine.registerList("MyItems", {
+    it('should check for wrong model type', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.numberType()
+                name: engine.numberType(),
             },
-            newUser: {}
+            newUser: {},
         });
-        const wrapper = () => shallow(
-            <Layout
-                engine={engine}
-                content={`
+        const wrapper = () =>
+            shallow(
+                <Layout
+                    engine={engine}
+                    content={`
   types {
       MyItems: enum(first, second)
   }
@@ -1157,20 +1165,22 @@ describe("lists", () => {
       layer {
       }
   }`}
-            />
-        );
+                />
+            );
 
         expect(wrapper).toThrowError(/MyItems is not a enum definition/);
     });
 
-    it("should check for wrong engine model type", async function () {
-        engine.registerEnum("MyItems", {
-            key1: 1, key2: 2
+    it('should check for wrong engine model type', async function() {
+        engine.registerEnum('MyItems', {
+            key1: 1,
+            key2: 2,
         });
-        const wrapper = () => shallow(
-            <Layout
-                engine={engine}
-                content={`
+        const wrapper = () =>
+            shallow(
+                <Layout
+                    engine={engine}
+                    content={`
   types {
       MyItems: list (
           user {
@@ -1186,31 +1196,30 @@ describe("lists", () => {
       layer {
       }
   }`}
-            />
-        );
+                />
+            );
 
         expect(wrapper).toThrowError(/MyItems is not a list definition/);
     });
 
-    it("should check for missing type in engine model", async function () {
-        engine.registerList("MyItems", {
+    it('should check for missing type in engine model', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
-            of([
-                {newUser: {id: "new"}}
-            ])
+            'items',
+            engine.type('MyItems')!,
+            of([{ newUser: { id: 'new' } }])
         );
 
-        const wrapper = () => shallow(
-            <Layout
-                engine={engine}
-                content={`
+        const wrapper = () =>
+            shallow(
+                <Layout
+                    engine={engine}
+                    content={`
   types {
       MyItems: list (
           user {
@@ -1229,26 +1238,24 @@ describe("lists", () => {
   
   layout {
   }`}
-            />
-        );
+                />
+            );
 
         expect(wrapper).toThrowError(/extraField is missing in engine/);
     });
 
-    it("should check for missing type in definition", async function () {
-        engine.registerList("MyItems", {
+    it('should check for missing type in definition', async function() {
+        engine.registerList('MyItems', {
             user: {
                 name: engine.stringType(),
-                extraField: engine.stringType()
+                extraField: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
-            of([
-                {newUser: {id: "new"}}
-            ])
+            'items',
+            engine.type('MyItems')!,
+            of([{ newUser: { id: 'new' } }])
         );
 
         const wrapper = shallow(
@@ -1276,19 +1283,17 @@ describe("lists", () => {
         );
     });
 
-    it("should allow missing prototype in definition", async function () {
-        engine.registerList("MyItems", {
+    it('should allow missing prototype in definition', async function() {
+        engine.registerList('MyItems', {
             user: {
-                name: engine.stringType()
+                name: engine.stringType(),
             },
-            newUser: {}
+            newUser: {},
         });
         engine.registerInput(
-            "items",
-            engine.type("MyItems")!,
-            of([
-                {newUser: {id: "new"}}
-            ])
+            'items',
+            engine.type('MyItems')!,
+            of([{ newUser: { id: 'new' } }])
         );
 
         const wrapper = shallow(
@@ -1313,3 +1318,12 @@ describe("lists", () => {
         );
     });
 });
+
+interface User {
+    id: string;
+    name: string;
+}
+
+const UserView = connect(({ user }: { user: ListModelItem }) => (
+    <div style={{ backgroundColor: '#aa99cc' }}>{(user as User).name}</div>
+));
