@@ -21,6 +21,7 @@
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
+    "updateSnapshots": "tsdx test --passWithNoTests --updateSnapshot ",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "bump": "npm version patch && npm publish",

@@ -12,7 +12,7 @@ exports[`types should allow null to number inputs 1`] = `
   </span>
   <div
     class="vlayout_label_shadow"
-    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
       null
@@ -48,7 +48,7 @@ exports[`types should allow null to number inputs 2`] = `
   </span>
   <div
     class="vlayout_label_shadow"
-    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
       10
@@ -84,7 +84,7 @@ exports[`types should throw if invalid enum value is sent to input 1`] = `
   />
   <div
     class="vlayout_label_shadow"
-    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
       placeholder
@@ -120,7 +120,7 @@ exports[`types should throw if invalid enum value is sent to input 2`] = `
   </span>
   <div
     class="vlayout_label_shadow"
-    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
       a
@@ -156,7 +156,7 @@ exports[`types should throw if invalid value is sent to input 1`] = `
   />
   <div
     class="vlayout_label_shadow"
-    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
       placeholder
@@ -192,7 +192,7 @@ exports[`types should throw if invalid value is sent to input 2`] = `
   </span>
   <div
     class="vlayout_label_shadow"
-    style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
   >
     <span>
       abcde

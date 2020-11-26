@@ -37,26 +37,26 @@ describe('label', () => {
         const node = wrapper.find('.vlayout_label');
 
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
-                  <div
-                    class="vlayout_label"
-                    id="label1"
-                    style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                  >
-                    <span>
-                      test label
-                      <br />
-                    </span>
-                    <div
-                      class="vlayout_label_shadow"
-                      style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                    >
-                      <span>
-                        test label
-                        <br />
-                      </span>
-                    </div>
-                  </div>
-            `);
+            <div
+              class="vlayout_label"
+              id="label1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+            >
+              <span>
+                test label
+                <br />
+              </span>
+              <div
+                class="vlayout_label_shadow"
+                style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              >
+                <span>
+                  test label
+                  <br />
+                </span>
+              </div>
+            </div>
+        `);
     });
 
     it('should contain class if set', async function() {
@@ -80,25 +80,25 @@ describe('label', () => {
         const node = wrapper.find('.vlayout_label');
 
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
-                  <div
-                    class="vlayout_label custom_class"
-                    style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                  >
-                    <span>
-                      test label
-                      <br />
-                    </span>
-                    <div
-                      class="vlayout_label_shadow"
-                      style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                    >
-                      <span>
-                        test label
-                        <br />
-                      </span>
-                    </div>
-                  </div>
-            `);
+            <div
+              class="vlayout_label custom_class"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+            >
+              <span>
+                test label
+                <br />
+              </span>
+              <div
+                class="vlayout_label_shadow"
+                style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              >
+                <span>
+                  test label
+                  <br />
+                </span>
+              </div>
+            </div>
+        `);
     });
 
     it('should have wrapping shadow if width is set', async function() {
@@ -132,7 +132,7 @@ describe('label', () => {
               </span>
               <div
                 class="vlayout_label_shadow"
-                style="position: absolute; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; width: 100px; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+                style="position: absolute; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; width: 100px; text-align: start; overflow: hidden; text-overflow: ellipsis;"
               >
                 <span>
                   test label
@@ -164,26 +164,26 @@ describe('label', () => {
         const node = wrapper.find('.vlayout_label');
 
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
-                  <div
-                    class="vlayout_label"
-                    id="label1"
-                    style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                  >
-                    <span>
-                      test label
-                      <br />
-                    </span>
-                    <div
-                      class="vlayout_label_shadow"
-                      style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                    >
-                      <span>
-                        test label
-                        <br />
-                      </span>
-                    </div>
-                  </div>
-            `);
+            <div
+              class="vlayout_label"
+              id="label1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+            >
+              <span>
+                test label
+                <br />
+              </span>
+              <div
+                class="vlayout_label_shadow"
+                style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              >
+                <span>
+                  test label
+                  <br />
+                </span>
+              </div>
+            </div>
+        `);
     });
 
     it('localized string should work', async function() {
@@ -223,7 +223,7 @@ describe('label', () => {
               />
               <div
                 class="vlayout_label_shadow"
-                style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+                style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
               >
                 <span>
                   placeholder
@@ -235,49 +235,49 @@ describe('label', () => {
 
         source.next('string 1');
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
-                  <div
-                    class="vlayout_label"
-                    id="label1"
-                    style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                  >
-                    <span>
-                      test label string 1
-                      <br />
-                    </span>
-                    <div
-                      class="vlayout_label_shadow"
-                      style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                    >
-                      <span>
-                        test label string 1
-                        <br />
-                      </span>
-                    </div>
-                  </div>
-            `);
+            <div
+              class="vlayout_label"
+              id="label1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+            >
+              <span>
+                test label string 1
+                <br />
+              </span>
+              <div
+                class="vlayout_label_shadow"
+                style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              >
+                <span>
+                  test label string 1
+                  <br />
+                </span>
+              </div>
+            </div>
+        `);
 
         source.next('string 2');
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
-                  <div
-                    class="vlayout_label"
-                    id="label1"
-                    style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                  >
-                    <span>
-                      test label string 2
-                      <br />
-                    </span>
-                    <div
-                      class="vlayout_label_shadow"
-                      style="position: absolute; white-space: pre; opacity: 0; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
-                    >
-                      <span>
-                        test label string 2
-                        <br />
-                      </span>
-                    </div>
-                  </div>
-            `);
+            <div
+              class="vlayout_label"
+              id="label1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+            >
+              <span>
+                test label string 2
+                <br />
+              </span>
+              <div
+                class="vlayout_label_shadow"
+                style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              >
+                <span>
+                  test label string 2
+                  <br />
+                </span>
+              </div>
+            </div>
+        `);
     });
 
     it('should not accept label of wrong type', async function() {

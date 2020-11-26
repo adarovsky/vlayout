@@ -134,6 +134,7 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         }
 
         r.opacity = 0;
+        r.pointerEvents = 'none';
         return r;
     }
 
