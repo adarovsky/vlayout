@@ -1,4 +1,10 @@
-import { ReactContainer, ReactContainerState, ReactViewProps } from './react_views';
+import {
+    ReactContainer,
+    ReactContainerState,
+    ReactView,
+    ReactViewProps,
+    ReactViewState,
+} from './react_views';
 import { Container, ViewProperty } from './view';
 import React, { CSSProperties } from 'react';
 import { ReactStackLayout } from './react_stack';
@@ -8,45 +14,55 @@ import { map, startWith } from 'rxjs/operators';
 import ReactDOM from 'react-dom';
 import { identity, pick } from 'lodash';
 import { visibleChildrenSizes } from './react_absolute';
+import { isNotNull } from './utils';
 
-
-class ReactLinearLayout extends ReactContainer<ReactContainerState & {spacing: number}> {
-
+class ReactLinearLayout extends ReactContainer<
+    ReactContainerState & { spacing: number; alignment: string }
+> {
     constructor(props: ReactViewProps) {
         super(props);
-        this.state = {...this.state,
-            spacing: 0
-        }
+        this.state = { ...this.state, spacing: 0, alignment: 'fill' };
     }
 
     componentDidMount(): void {
         super.componentDidMount();
         this.wire('spacing', 'spacing', identity);
-    }
-
-    protected spacerStyle(): CSSProperties {
-        return {width: this.state.spacing + 'px'}
+        this.wire('alignment', 'alignment', identity);
     }
 
     render() {
         const extra = pick(this.state, 'id');
-        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
-            {(this.props.parentView as Container).views
-                .filter((v, index) => this.state.childrenVisible[index])
-                .flatMap( (v, index) => {
-                    const result = [v.target];
-                    if (index > 0 && this.state.spacing)
-                        result.unshift(<div style={this.spacerStyle()} key={index}/>);
-                    return result;
-                })}
-        </div>);
+        return (
+            <div
+                style={this.style()}
+                className={this.className}
+                ref={this.setViewRef}
+                {...extra}
+            >
+                {(this.props.parentView as Container).views
+                    .filter((v, index) => this.state.childrenVisible[index])
+                    .flatMap((v, index) => {
+                        const result = [v.target];
+                        if (index > 0 && this.state.spacing)
+                            result.unshift(
+                                <div style={this.spacerStyle()} key={index} />
+                            );
+                        return result;
+                    })}
+            </div>
+        );
+    }
+
+    protected spacerStyle(): CSSProperties {
+        return { width: this.state.spacing + 'px' };
     }
 }
 
 export class ReactHorizontalLayout extends ReactLinearLayout {
-
     styleProperties(): ViewProperty[] {
-        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));
+        return super
+            .styleProperties()
+            .concat(this.props.parentView.activePropertiesNamed('alignment'));
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -68,7 +84,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
                 case 'top':
                     r.alignItems = 'flex-start';
                     break;
-                case  'bottom':
+                case 'bottom':
                     r.alignItems = 'flex-end';
                     break;
                 case 'fill':
@@ -88,28 +104,41 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
                 let maxHeight = 0;
                 let maxWidth = 0;
 
-                sizes.forEach((size) => {
+                sizes.forEach(size => {
                     maxHeight = Math.max(maxHeight, size.height);
                     maxWidth += size.width;
                 });
 
                 return {
                     width: maxWidth + this.state.spacing * (sizes.length - 1),
-                    height: maxHeight
+                    height: maxHeight,
                 };
             })
         );
     }
 
+    definesChildWidth(
+        child: ReactView<ReactViewProps, ReactViewState>
+    ): boolean {
+        return child.state.sizePolicy === 'stretched';
+    }
+
+    definesChildHeight(
+        child: ReactView<ReactViewProps, ReactViewState>
+    ): boolean {
+        return this.state.alignment === 'fill';
+    }
+
     protected spacerStyle(): CSSProperties {
-        return {width: this.state.spacing + 'px'}
+        return { width: this.state.spacing + 'px' };
     }
 }
 
 export class ReactVerticalLayout extends ReactLinearLayout {
-
     styleProperties(): ViewProperty[] {
-        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('alignment'));
+        return super
+            .styleProperties()
+            .concat(this.props.parentView.activePropertiesNamed('alignment'));
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -131,7 +160,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                 case 'leading':
                     r.alignItems = 'flex-start';
                     break;
-                case  'trailing':
+                case 'trailing':
                     r.alignItems = 'flex-end';
                     break;
                 case 'fill':
@@ -151,67 +180,86 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                 let maxHeight = 0;
                 let maxWidth = 0;
 
-                sizes.forEach((size) => {
+                sizes.forEach(size => {
                     maxHeight += size.height;
                     maxWidth = Math.max(maxWidth, size.width);
                 });
 
                 return {
                     width: maxWidth,
-                    height: maxHeight + this.state.spacing * (sizes.length - 1)
+                    height: maxHeight + this.state.spacing * (sizes.length - 1),
                 };
             })
         );
     }
 
+    definesChildWidth(
+        child: ReactView<ReactViewProps, ReactViewState>
+    ): boolean {
+        return this.state.alignment === 'fill';
+    }
+
+    definesChildHeight(
+        child: ReactView<ReactViewProps, ReactViewState>
+    ): boolean {
+        return child.state.sizePolicy === 'stretched';
+    }
+
     protected spacerStyle(): CSSProperties {
-        return {height: this.state.spacing + 'px'}
+        return { height: this.state.spacing + 'px' };
     }
 }
 
-export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen: boolean}> {
-
+export class ReactLayer extends ReactContainer<
+    ReactContainerState & { fullscreen: boolean }
+> {
     constructor(props: ReactViewProps) {
         super(props);
-        this.state = {...this.state,
+        this.state = {
+            ...this.state,
             style: {
                 width: '100%',
                 height: '100%',
-                position: 'absolute'
+                position: 'absolute',
             },
-            fullscreen: false
-        }
+            fullscreen: false,
+        };
     }
 
     private static ensureModalExists(): HTMLElement {
         const e = document.getElementById('vlayout_modal');
         if (e) {
             return e;
-        }
-        else {
+        } else {
             const modal = document.createElement('div');
             modal.setAttribute('id', 'vlayout_modal');
             document.body.appendChild(modal);
-            fromEvent(window, 'resize').pipe(
-                startWith(null),
-                map(() => (document &&
-                    document.documentElement &&
-                    document.documentElement.clientHeight) ||
-                    window.innerHeight)
-            ).subscribe(height => modal.style.height = `${height}px`);
+            fromEvent(window, 'resize')
+                .pipe(
+                    startWith(null),
+                    map(
+                        () =>
+                            (document &&
+                                document.documentElement &&
+                                document.documentElement.clientHeight) ||
+                            window.innerHeight
+                    )
+                )
+                .subscribe(height => (modal.style.height = `${height}px`));
             return modal;
         }
     }
 
     styleProperties(): ViewProperty[] {
-        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('z_order'));
+        return super
+            .styleProperties()
+            .concat(this.props.parentView.activePropertiesNamed('z_order'));
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         let index = props.findIndex(x => x.name === 'z_order');
-        if (index >= 0)
-            r.zIndex = value[index];
+        if (index >= 0) r.zIndex = value[index];
         r.width = '100%';
         r.height = '100%';
         r.position = 'absolute';
@@ -222,9 +270,11 @@ export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen
         super.componentDidMount();
         const value = this.props.parentView.property('fullscreen').value;
         if (value) {
-            this.subscription.add(value.sink.subscribe((fs: boolean) => {
-                this.setState(s => ({...s, fullscreen: fs}));
-            }));
+            this.subscription.add(
+                value.sink.subscribe((fs: boolean) => {
+                    this.setState(s => ({ ...s, fullscreen: fs }));
+                })
+            );
         }
     }
 
@@ -236,15 +286,38 @@ export class ReactLayer extends ReactContainer<ReactContainerState & {fullscreen
         return true;
     }
 
+    definesChildWidth(
+        child: ReactView<ReactViewProps, ReactViewState>,
+    ): boolean {
+        // console.log('isWidthDefined(', this._viewRef.value, ', child state:', child.state, ') = ', this.isWidthDefined());
+        return this.isWidthDefined() &&
+            (isNotNull(child.state.size?.width) || (isNotNull(child.state.padding?.left) && isNotNull(child.state.padding?.right)));
+    }
+
+    definesChildHeight(
+        child: ReactView<ReactViewProps, ReactViewState>,
+    ): boolean {
+        return this.isHeightDefined() &&
+            (isNotNull(child.state.size?.height) || (isNotNull(child.state.padding?.top) && isNotNull(child.state.padding?.bottom)));
+    }
 
     render() {
         const extra = pick(this.state, 'id');
-        const content = (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
-            {(this.props.parentView as Container).views
-                .filter((v, index) => this.state.childrenVisible[index])
-                .map( v => v.target )}
-        </div>);
-        return this.state.fullscreen ? ReactDOM.createPortal(content, ReactLayer.ensureModalExists()) : content;
+        const content = (
+            <div
+                style={this.style()}
+                className={this.className}
+                ref={this.setViewRef}
+                {...extra}
+            >
+                {(this.props.parentView as Container).views
+                    .filter((v, index) => this.state.childrenVisible[index])
+                    .map(v => v.target)}
+            </div>
+        );
+        return this.state.fullscreen
+            ? ReactDOM.createPortal(content, ReactLayer.ensureModalExists())
+            : content;
     }
 }
 

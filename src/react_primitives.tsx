@@ -4,7 +4,7 @@ import { ViewProperty } from './view';
 import { ColorContainer, FontContainer, ImageContainer } from './types';
 import { ReactView, ReactViewProps, ReactViewState } from './react_views';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { filter, shareReplay, switchMap } from 'rxjs/operators';
+import { filter, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import deleteProperty = Reflect.deleteProperty;
 

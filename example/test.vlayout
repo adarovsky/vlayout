@@ -22,41 +22,179 @@ properties {
         hostIFBJoined: false
         hostIFBOn: false
     }
+    topOffset: 0
+    bottomOffset: 0
 }
 
 layout {
     layer {
         z_order: 1
         fullscreen: false
+        alpha: 0
 
-        vertical{
-          padding {left:0 top:0 right:0 bottom:0}
-            spacing: 20
-          //---------- players locked alert -------
-          absolute{
-            roundRect{
-              padding{left: 0 top: 0 bottom: 0 right: 0}
-              backgroundColor: #f5f5f6
-              cornerRadius: 10
+        absolute {
+            fixedSize { width: 30 height: 30 }
+            center { x: 0.5 y: 0.5 }
+            roundRect {
+                padding { left: 0 bottom: 0 right: 0 top: 0 }
+                cornerRadius: 0.5
+                backgroundColor: #1c192c
             }
-            vertical{
-              padding {left: 20 top: 20 bottom: 20 right: 20}
-              spacing: 20
-              alignment: .fill
+            label {
+                class: "SessionControl_roundedMarker"
+                textAlignment: .center
+                center { x: 0.5 y: 0.5 }
+                text: "A"
+                textColor: #ffffff
+                font:  Font("SFProDisplayHeavy",12)
+            }
+        }
+    }
 
-              label{
-                text: "Players locked"
-                font: Font(22)
-                textColor:#fa6d41
-              }
-              label{
-                maxLines: 20
-                textColor:#fa6d41
-                font: Font(20)
-                text: "All players are locked for sketch round. Click “Disconnect” to remove user. "
-              }
+    layer {
+        z_order: 2
+        fullscreen: false
+        alpha: 1
+        id: "layer_2"
+
+        absolute{
+            id: "outer_container"
+            center{x: 0.75}
+            size{width:0.5}
+            padding{top: topOffset bottom: bottomOffset+60}
+            vertical {
+                padding { top: 0 left: 10 right: 30 bottom: 0 }
+                spacing: 10
+
+                absolute{
+                    id: "inner_container"
+                    roundRect{
+                        padding{left: 0 top: 0 bottom: 0 right: 0}
+                        backgroundColor: #f5f5f6
+                        cornerRadius: 10
+                        strokeColor: #56e3b1
+                        strokeWidth: 1
+                    }
+                    vertical{
+                        spacing: 30
+                        padding {left: 20 top: 20 right: 20 bottom: 20}
+                        alignment: .fill
+                        roundRect{
+                            class: "ShadowControl"
+                            fixedSize{width: 16 height: 16}
+                            cornerRadius: 0.5
+                            backgroundColor: #ff2727
+                            alpha: 1
+                        }
+                        label {
+                            textColor: #1c192c
+                            font: Font("CentraNo2",22)
+                            text: @("Question $1:",String(0))
+                            textAlignment: .left
+                        }
+
+                        label {
+                            textColor: #3e3864
+                            font: Font("SFProDisplayLight",30)
+                            text: "test message long long long"
+                            maxLines: 5
+                            textAlignment: .left
+                        }
+                        vertical{
+                            absolute {
+                                horizontal {
+                                    alignment: .center
+                                    spacing: 10
+                                    padding { left: 0 bottom: 10 right: 10 top: 10 }
+                                    absolute {
+                                        fixedSize { width: 30 height: 30 }
+                                        roundRect {
+                                            padding { left: 0 bottom: 0 right: 0 top: 0 }
+                                            cornerRadius: 0.5
+                                            backgroundColor: #1c192c
+                                        }
+                                        label {
+                                            class: "SessionControl_roundedMarker"
+                                            textAlignment: .center
+                                            center { x: 0.5 y: 0.5 }
+                                            text: "A"
+                                            textColor: #ffffff
+                                            font:  Font("SFProDisplayHeavy",12)
+                                        }
+                                    }
+                                    label {
+                                        textColor: #3e3864
+                                        text: "answer 1"
+                                        font:  Font("SFProDisplayMedium",18)
+                                    }
+                                }
+                            }
+
+                            absolute {
+                                horizontal {
+                                    alignment: .center
+                                    spacing: 10
+                                    padding { left: 0 bottom: 10 right: 10 top: 10 }
+                                    absolute {
+                                        fixedSize { width: 30 height: 30 }
+                                        roundRect {
+                                            padding { left: 0 bottom: 0 right: 0 top: 0 }
+                                            cornerRadius: 0.5
+                                            backgroundColor: #1c192c
+                                        }
+                                        label {
+                                            class: "SessionControl_roundedMarker"
+                                            textAlignment: .center
+                                            center { x: 0.5 y: 0.5 }
+                                            text: "B"
+                                            textColor: #ffffff
+                                            font:  Font("SFProDisplayHeavy",12)
+                                        }
+                                    }
+                                    label {
+                                        textColor: #3e3864
+                                        text: "answer 2"
+                                        font:  Font("SFProDisplayMedium",18)
+                                    }
+                                }
+                            }
+
+                            absolute {
+                                horizontal {
+                                    alignment: .center
+                                    spacing: 10
+                                    padding { left: 0 bottom: 10 right: 10 top: 10 }
+                                    absolute {
+                                        fixedSize { width: 30 height: 30 }
+                                        roundRect {
+                                            padding { left: 0 bottom: 0 right: 0 top: 0 }
+                                            cornerRadius: 0.5
+                                            backgroundColor: #1c192c
+                                        }
+                                        label {
+                                            class: "SessionControl_roundedMarker"
+                                            textAlignment: .center
+                                            center { x: 0.5 y: 0.5 }
+                                            text: "C"
+                                            textColor: #ffffff
+                                            font:  Font("SFProDisplayHeavy",12)
+                                        }
+                                    }
+                                    label {
+                                        textColor: #3e3864
+                                        text: "answer 3"
+                                        font:  Font("SFProDisplayMedium",18)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                absolute{
+                    sizePolicy: .stretched
+                }
             }
-          }
         }
     }
 }

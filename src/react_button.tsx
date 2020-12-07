@@ -1,7 +1,7 @@
 import { ViewProperty } from './view';
 import { combineLatest, Observable, of } from 'rxjs';
 import React, { CSSProperties } from 'react';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 import { ReactRoundRect } from './react_primitives';
 import { FontContainer, ImageContainer } from './types';
 import { map, switchMap } from 'rxjs/operators';
@@ -246,7 +246,7 @@ export class ReactButtonBase<S extends ReactButtonState = ReactButtonState> exte
                 {this.state.imageSrc && <img src={this.state.imageSrc} srcSet={this.state.imageSrcSet} style={{...this.state.imageStyle, opacity: 0}} alt={this.state.text}/>}
             </>) : text;
 
-        const extra = _.pick(this.state, 'id');
+        const extra = pick(this.state, 'id');
         return (<div {...extra}
                      style={this.currentStyle()}
                      className={this.className}
