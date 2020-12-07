@@ -120,13 +120,13 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
     definesChildWidth(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return child.state.sizePolicy === 'stretched';
+        return child.state.sizePolicy === 'stretched' && this.isWidthDefined();
     }
 
     definesChildHeight(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return this.state.alignment === 'fill';
+        return this.isHeightDefined();
     }
 
     protected spacerStyle(): CSSProperties {
@@ -196,13 +196,13 @@ export class ReactVerticalLayout extends ReactLinearLayout {
     definesChildWidth(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return this.state.alignment === 'fill';
+        return this.isWidthDefined();
     }
 
     definesChildHeight(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return child.state.sizePolicy === 'stretched';
+        return child.state.sizePolicy === 'stretched' && this.isHeightDefined();
     }
 
     protected spacerStyle(): CSSProperties {

@@ -5,6 +5,8 @@ import { ElementSize } from './resize_sensor';
 import { ReactList, ReactListState } from './react_list';
 import { absoluteIntrinsicSize } from './react_absolute';
 import { pick } from 'lodash';
+import { ReactView, ReactViewProps, ReactViewState } from './react_views';
+import { isNotNull } from './utils';
 
 export class ReactAbsoluteList extends ReactList<ReactListState> {
 
@@ -19,14 +21,19 @@ export class ReactAbsoluteList extends ReactList<ReactListState> {
         return this.children.pipe(absoluteIntrinsicSize());
     }
 
-    // render() {
-    //     const extra = pick(this.state, 'id');
-    //     return (<div style={this.style()} className={this.className} ref={this.updateRef} {...extra}>
-    //             {this.state.childItems.map(v => v.target)});
-    //                 return result;
-    //             })}
-    //     </div>);
-    // }
+    definesChildWidth(
+        child: ReactView<ReactViewProps, ReactViewState>,
+    ): boolean {
+        return this.isWidthDefined() &&
+            (isNotNull(child.state.size?.width) || (isNotNull(child.state.padding?.left) && isNotNull(child.state.padding?.right)));
+    }
+
+    definesChildHeight(
+        child: ReactView<ReactViewProps, ReactViewState>,
+    ): boolean {
+        return this.isHeightDefined() &&
+            (isNotNull(child.state.size?.height) || (isNotNull(child.state.padding?.top) && isNotNull(child.state.padding?.bottom)));
+    }
 
     render() {
         const extra = pick(this.state, 'id');
