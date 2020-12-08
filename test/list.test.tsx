@@ -11,6 +11,7 @@ import { BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
 import { List } from '../src/list';
 import sinon from 'sinon';
 import { ElementSize } from '../src/resize_sensor';
+import { ReactVerticalList } from '../src/react_vertical_list';
 
 let module = require('../src/resize_sensor');
 
@@ -873,6 +874,72 @@ describe('lists', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it('should support indexing', async function() {
+        engine.registerList('MyItems', {
+            user: {
+                name: engine.stringType(),
+            },
+            newUser: {},
+        });
+
+        engine.registerInput(
+            'items',
+            engine.type('MyItems')!,
+            of([
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          verticalList {
+              padding { left: 10 right: 10 top: 10 bottom: 10 }
+              model: items
+  
+              user {
+                  fixedSize { height: 44 }
+                  label {
+                      text: @("$1 - $2", String(index), name)
+                  }
+              }
+              newUser {
+                  label {
+                      text: "add new"
+                  }
+              }
+          }
+      }
+  }`}
+            />
+        );
+
+        const node = wrapper.find('.vlayout_verticalList');
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
     it('should support dynamic filtering', async function() {
         engine.registerList('MyItems', {
             user: {
@@ -1317,11 +1384,71 @@ describe('lists', () => {
             />
         );
     });
+
+    it('should allow custom instances as items', async function() {
+        const TEST_DATA = [
+            { user: new ComplexUser('id1', 'Complex User 1') },
+            { user: new ComplexUser('id2', 'Complex User 2') },
+        ];
+
+        engine.registerList('MyItems', {
+            user: {
+                name: engine.stringType(),
+                testProperty: engine.stringType(),
+            },
+        });
+        engine.registerInput('items', engine.type('MyItems')!, of(TEST_DATA));
+
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={`
+  types {
+      MyItems: list (
+          user {
+              name: String
+              testProperty: String
+          }
+      )
+  }
+
+  inputs {
+      items: MyItems
+  }
+
+  layout {
+    layer {
+        verticalList {
+            model: items
+            center { x: 0.5 y: 0.5 }
+            user {
+                label {
+                    text: testProperty
+                }
+            }
+        }
+    }
+  }`}
+            />
+        );
+
+        const node = wrapper.find(ReactVerticalList);
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
 });
 
 interface User {
     id: string;
     name: string;
+}
+
+class ComplexUser implements User {
+    constructor(readonly id: string, readonly name: string) {}
+
+    get testProperty(): string {
+        return this.name + ' custom suffix';
+    }
 }
 
 const UserView = connect(({ user }: { user: ListModelItem }) => (

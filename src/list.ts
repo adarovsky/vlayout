@@ -21,10 +21,15 @@ export interface ListModelItem extends Dictionary<any> {
     id: string;
 }
 
-class ListItemAccessor extends Expression {
-
-    constructor(readonly keyPath: string, type: TypeDefinition) {
+abstract class ListBasicAccessor extends Expression {
+    protected constructor(readonly keyPath: string) {
         super(0, 0);
+    }
+}
+
+class ListItemAccessor extends ListBasicAccessor {
+    constructor(keyPath: string, type: TypeDefinition) {
+        super(keyPath);
         this.typeDefinition = type;
     }
 
@@ -63,11 +68,38 @@ class ListItemAccessor extends Expression {
     }
 }
 
+class ListIndexAccessor extends ListBasicAccessor {
+
+    constructor() {
+        super('index');
+    }
+
+    instantiate(): this {
+        const v = new (this.constructor as typeof ListIndexAccessor)();
+        return v as this;
+    }
+
+
+    link(scope: Scope, hint: TypeDefinition | null): void {
+        this.typeDefinition = scope.engine.numberType();
+        if (scope instanceof ListItemPrototype) {
+            this.sink = scope.index;
+        } else {
+            throw new LinkError(this.line, this.column, `accessor should be in list prototype item, but got ${scope}`);
+        }
+    }
+
+    toString(): string {
+        return `<model>.index`;
+    }
+}
+
 export class ListItemPrototype extends AbsoluteLayout implements Scope {
 
-    accessors: Dictionary<ListItemAccessor> = {};
+    accessors: Dictionary<ListBasicAccessor> = {};
     modelItem = new ReplaySubject<ListModelItem>(1);
     modelItemSnapshot: ListModelItem | null = null;
+    index = new ReplaySubject<number>(1);
 
     constructor(readonly  name: LexIdentifier, readonly layout: Layout) {
         super();
@@ -121,9 +153,10 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         return this.accessors[keyPath] || this.layout.variableForKeyPath(keyPath);
     }
 
-    setModelItem(modelItem: ListModelItem): void {
+    setModelItem(modelItem: ListModelItem, index: number): void {
         // this._key = uuid_v1();
         this._key = modelItem.id;
+        this.index.next(index);
         this.modelItem.next(modelItem);
         this.modelItemSnapshot = modelItem;
     }
@@ -149,7 +182,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
                 this.buildAccessors(source, value, path);
             }
         });
-        this.accessors['index'] = new ListItemAccessor('index', this.engine.numberType());
+        this.accessors['index'] = new ListIndexAccessor();
     }
 }
 
@@ -211,17 +244,6 @@ export class List extends View {
             } else {
                 throw new LinkError(this.line, this.column, `model should be set for list to work`);
             }
-
-            this.model.sink = this.model.sink.pipe(
-                map((arr: Dictionary<ListModelItem>[]) => arr.map(
-                    (modelItem, index) => {
-                        const [key, v] = toPairs(modelItem)[0];
-                        const ret: { [x: string]: { index: number; id: string; }; } = {};
-                        ret[key] = { ...v, index };
-                        return ret;
-                    },
-                )),
-            );
         } else {
             throw new LinkError(this.line, this.column, `model should be set for list to work`);
         }
@@ -239,11 +261,11 @@ export class List extends View {
         if (hasFilter) {
             this.model.sink = this.model.sink.pipe(
                 switchMap((arr: Dictionary<ListModelItem>[]) =>
-                    combineLatest(arr.map(modelItem => {
+                    combineLatest(arr.map((modelItem, index) => {
                         const [key] = toPairs(modelItem)[0];
                         const prop = this.prototypes.find(p => p.name.content === key);
                         if (prop) {
-                            const p = this.requestReusableItem(modelItem);
+                            const p = this.requestReusableItem(modelItem, index);
                             const filter = p.property('filter')?.value?.sink ?? null;
 
                             if (filter) {
@@ -264,7 +286,7 @@ export class List extends View {
         return this.reusableItems.keys();
     }
 
-    requestReusableItem(modelItem: Dictionary<ListModelItem>): ListItemPrototype {
+    requestReusableItem(modelItem: Dictionary<ListModelItem>, index: number): ListItemPrototype {
         const [key, value] = toPairs(modelItem)[0];
         let item = this.reusableItems.take(value.id);
 
@@ -272,7 +294,7 @@ export class List extends View {
             item = this.createNewReusableItem(modelItem);
         }
 
-        item.setModelItem(value);
+        item.setModelItem(value, index);
         return item;
     }
 
