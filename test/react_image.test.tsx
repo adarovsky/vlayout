@@ -45,11 +45,6 @@ describe('image', () => {
               <img
                 alt=""
                 src="/test.png"
-                style="width: 100%; height: 100%; object-fit: fill; opacity: 0;"
-              />
-              <img
-                alt=""
-                src="/test.png"
                 style="width: 100%; height: 100%; object-fit: fill; position: absolute; left: 0px; top: 0px;"
               />
             </div>
@@ -81,11 +76,6 @@ describe('image', () => {
               class="vlayout_image custom_class"
               style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
             >
-              <img
-                alt=""
-                src="/test.png"
-                style="width: 100%; height: 100%; object-fit: fill; opacity: 0;"
-              />
               <img
                 alt=""
                 src="/test.png"
@@ -134,11 +124,6 @@ describe('image', () => {
               <img
                 alt=""
                 src="/test.png"
-                style="width: 100%; height: 100%; object-fit: scale-down; opacity: 0;"
-              />
-              <img
-                alt=""
-                src="/test.png"
                 style="width: 100%; height: 100%; object-fit: scale-down; position: absolute; left: 0px; top: 0px;"
               />
             </div>
@@ -150,11 +135,6 @@ describe('image', () => {
               id="image1"
               style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
             >
-              <img
-                alt=""
-                src="/test.png"
-                style="width: 100%; height: 100%; object-fit: cover; opacity: 0;"
-              />
               <img
                 alt=""
                 src="/test.png"
@@ -172,11 +152,6 @@ describe('image', () => {
               <img
                 alt=""
                 src="/test.png"
-                style="width: 100%; height: 100%; object-fit: none; opacity: 0;"
-              />
-              <img
-                alt=""
-                src="/test.png"
                 style="width: 100%; height: 100%; object-fit: none; position: absolute; left: 0px; top: 0px;"
               />
             </div>
@@ -188,11 +163,6 @@ describe('image', () => {
               id="image1"
               style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%;"
             >
-              <img
-                alt=""
-                src="/test.png"
-                style="width: 100%; height: 100%; object-fit: fill; opacity: 0;"
-              />
               <img
                 alt=""
                 src="/test.png"

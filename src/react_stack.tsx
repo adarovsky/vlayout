@@ -22,13 +22,13 @@ export class ReactStackLayout extends ReactContainer<ReactContainerState> {
     definesChildWidth(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return true;
+        return this.isWidthDefined();
     }
 
     definesChildHeight(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return true;
+        return this.isHeightDefined();
     }
 
     intrinsicSize(): Observable<ElementSize> {

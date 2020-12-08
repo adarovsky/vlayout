@@ -3,43 +3,47 @@ import { cloneDeep, forEach, identity, pick } from 'lodash';
 import { ViewProperty } from './view';
 import { ColorContainer, FontContainer, ImageContainer } from './types';
 import { ReactView, ReactViewProps, ReactViewState } from './react_views';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { filter, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, fromEvent, Observable, of } from 'rxjs';
+import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import deleteProperty = Reflect.deleteProperty;
+import { isNotNull } from './utils';
 
 interface ReactLabelState extends ReactViewState {
     style: CSSProperties;
-    text: string|null;
+    text: string | null;
     maxLines: number;
     shadowWidth: number;
 }
 
 export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
-    readonly _shadowRef = new BehaviorSubject<HTMLDivElement|null>(null);
-    setShadowRef(e: HTMLDivElement|null) {
-        if (e) this._shadowRef.next(e);
+    readonly _shadowRef = new BehaviorSubject<HTMLDivElement | null>(null);
+
+    constructor(props: ReactViewProps) {
+        super(props);
+        this.state = {
+            ...this.state,
+            text: null,
+            maxLines: 0,
+            shadowWidth: 0,
+        };
+
+        this.setShadowRef = this.setShadowRef.bind(this);
     }
+
     get shadowRef() {
         return this._shadowRef.pipe(filter(x => x !== null)) as Observable<HTMLDivElement>;
     }
 
-    constructor(props: ReactViewProps) {
-        super(props);
-        this.state = {...this.state,
-            text: null,
-            maxLines: 0,
-            shadowWidth: 0
-        }
-
-        this.setShadowRef = this.setShadowRef.bind(this);
+    setShadowRef(e: HTMLDivElement | null) {
+        if (e) this._shadowRef.next(e);
     }
 
     componentDidMount(): void {
         super.componentDidMount();
         this.wire('text', 'text', identity);
         this.wire('maxLines', 'maxLines', identity);
-        this.subscription.add(this.intrinsicSize().subscribe(size => this.setState({shadowWidth: size.width})));
+        this.subscription.add(this.intrinsicSize().subscribe(size => this.setState({ shadowWidth: size.width })));
     }
 
     styleProperties(): ViewProperty[] {
@@ -105,18 +109,34 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         const extra = pick(this.state, 'id');
         const text = this.state.text ?? 'placeholder';
         const content = this.state.maxLines === 1 ?
-            <span style={{whiteSpace: 'nowrap'}}>{text}</span>
-            : text.split('\n').map(function (item, key) {
-            return <span key={key}>{item}<br/></span>;
-        });
+            <span style={{ whiteSpace: 'nowrap' }}>{text}</span>
+            : text.split('\n').map(function(item, key) {
+                return <span key={key}>{item}<br /></span>;
+            });
 
         return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
-            {this.state.text === null ? <div className={'vlayout_placeholder'} style={{minWidth: `${this.state.shadowWidth}px`}}/> : content}
-            <div style={this.shadowStyle()} key='shadow' className={'vlayout_'+this.props.parentView.viewType()+'_shadow'} ref={this.setShadowRef}>
+            {this.state.text === null ?
+                <div className={'vlayout_placeholder'} style={{ minWidth: `${this.state.shadowWidth}px` }} /> : content}
+            <div style={this.shadowStyle()} key='shadow'
+                 className={'vlayout_' + this.props.parentView.viewType() + '_shadow'} ref={this.setShadowRef}>
                 {content}
             </div>
         </div>);
     }
+
+    intrinsicSize(): Observable<ElementSize> {
+        return this.shadowRef.pipe(
+            switchMap(self => resizeObserver(self)),
+        );
+    }
+
+    protected isHeightDefined(): boolean {
+        return false;
+    }
+
+    // protected isWidthDefined(): boolean {
+    //     return false;
+    // }
 
     private shadowStyle(): CSSProperties {
         const r = cloneDeep(this.style());
@@ -137,35 +157,26 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         r.pointerEvents = 'none';
         return r;
     }
-
-    intrinsicSize(): Observable<ElementSize> {
-        return this.shadowRef.pipe(
-            switchMap(self => resizeObserver(self))
-        );
-    }
-
-    // protected isWidthDefined(): boolean {
-    //     return false;
-    // }
-
-    protected isHeightDefined(): boolean {
-        return false;
-    }
 }
 
 interface ReactImageState extends ReactViewState {
     src?: string;
     srcSet?: string;
     innerStyle: CSSProperties;
+    intrinsicSize: ElementSize;
 }
 
 export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
 
+    readonly _shadowRef = new BehaviorSubject<HTMLImageElement | null>(null);
+
     constructor(props: ReactViewProps) {
         super(props);
-        this.state = {...this.state,
-            innerStyle: { width: '100%', height: '100%', objectFit: 'fill' }
-        }
+        this.state = {
+            ...this.state,
+            intrinsicSize: { width: 0, height: 0 },
+            innerStyle: { width: '100%', height: '100%', objectFit: 'fill' },
+        };
     }
 
     componentDidMount(): void {
@@ -176,9 +187,10 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
 
         if (image) {
             this.subscription.add(image.sink.pipe(
-                switchMap((image: ImageContainer) => image.srcSet())
-            ).subscribe(srcSet => this.setState({srcSet})))
+                switchMap((image: ImageContainer) => image.srcSet()),
+            ).subscribe(srcSet => this.setState({ srcSet })));
         }
+
         this.wire('contentPolicy', 'innerStyle', v => {
             const s: CSSProperties = { width: '100%', height: '100%' };
 
@@ -200,6 +212,40 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
         });
     }
 
+    intrinsicSize(): Observable<ElementSize> {
+        const imageSize: Observable<ElementSize> = this._shadowRef.pipe(
+            filter(isNotNull),
+            switchMap(ref => fromEvent(ref, 'load').pipe(
+                map( () => ({width: ref.naturalWidth, height: ref.naturalHeight}))
+            ))
+        );
+
+        const contentPolicy: Observable<string> = this.props.parentView.property('contentPolicy').value?.sink ?? of('fill');
+
+        return combineLatest([imageSize, this.selfSize(), contentPolicy]).pipe(
+            map(([imageSize, outerSize, contentPolicy]) => {
+                let scale;
+                const scaleX = imageSize.width > 0 ? outerSize.width / imageSize.width : 0;
+                const scaleY = imageSize.height > 0 ? outerSize.height / imageSize.height : 0;
+                switch(contentPolicy) {
+                    case 'aspectFit':
+                        scale = Math.min(scaleX, scaleY) || scaleX || scaleY;
+                        break;
+                    case 'aspectFill':
+                        scale = Math.max(scaleX, scaleY);
+                        break;
+                    case 'center':
+                        scale = 1;
+                        break;
+                    default:
+                        return outerSize;
+                }
+
+                return {width: imageSize.width * scale, height: imageSize.height * scale};
+            })
+        )
+    }
+
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         if (!r.position)
@@ -207,31 +253,34 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
         return r;
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+    render() {
         const extra = pick(this.state, 'id');
         return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
-            <img style={{...this.state.innerStyle, opacity: 0}}
-                 src={this.state.src}
-                 srcSet={this.state.srcSet}
-                 alt=""/>
-            <img style={{...this.state.innerStyle,
+            {/*<img style={{ ...this.state.innerStyle, opacity: 0 }}*/}
+            {/*     src={this.state.src}*/}
+            {/*     srcSet={this.state.srcSet}*/}
+            {/*     ref={x => this._shadowRef.next(x)}*/}
+            {/*     alt="" />*/}
+            <img style={{
+                ...this.state.innerStyle,
                 position: 'absolute',
                 left: 0,
-                top: 0
+                top: 0,
             }}
                  src={this.state.src}
                  srcSet={this.state.srcSet}
-                 alt=""/>
+                 ref={x => this._shadowRef.next(x)}
+                 alt="" />
         </div>);
     }
 
-    protected isWidthDefined(): boolean {
-        return true;
-    }
-
-    protected isHeightDefined(): boolean {
-        return true;
-    }
+    // protected isWidthDefined(): boolean {
+    //     return true;
+    // }
+    //
+    // protected isHeightDefined(): boolean {
+    //     return true;
+    // }
 }
 
 export class ReactGradient extends ReactView<ReactViewProps, ReactViewState> {
@@ -281,19 +330,21 @@ export class ReactGradient extends ReactView<ReactViewProps, ReactViewState> {
 
 export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends ReactView<ReactViewProps, S> {
 
-    protected _cornerRadiusWatcher: Observable<[ElementSize, number]>|null = null;
+    protected _cornerRadiusWatcher: Observable<[ElementSize, number]> | null = null;
 
     get cornerRadiusWatcher(): Observable<[ElementSize, number]> {
         if (!this._cornerRadiusWatcher) {
             const p = this.props.parentView.property('cornerRadius');
             if (p.value) {
-                this._cornerRadiusWatcher = combineLatest([this.safeIntrinsicSize(), p.value.sink as Observable<number>]).pipe(
-                    shareReplay({refCount: true, bufferSize: 1})
+                const selfSize = this.viewRef.pipe(
+                    switchMap(self => resizeObserver(self)),
+                );
+                this._cornerRadiusWatcher = combineLatest([selfSize, p.value.sink as Observable<number>]).pipe(
+                    shareReplay({ refCount: true, bufferSize: 1 }),
                 );
                 return this._cornerRadiusWatcher;
-            }
-            else {
-                this._cornerRadiusWatcher = of([{width: 0, height: 0}, 0]);
+            } else {
+                this._cornerRadiusWatcher = of([{ width: 0, height: 0 }, 0]);
             }
         }
         return this._cornerRadiusWatcher;
@@ -310,11 +361,11 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
         const p = this.props.parentView.property('cornerRadius');
         if (p.value) {
             this.subscription.add(combineLatest([this.cornerRadiusWatcher, this.viewRef]).subscribe(
-                ([x, self])=> {
-                if (x[1] <= 0.5) {
-                    self.style.borderRadius = Math.min(x[0].width, x[0].height) * x[1] + 'px';
-                }
-            }));
+                ([x, self]) => {
+                    if (x[1] <= 0.5) {
+                        self.style.borderRadius = Math.min(x[0].width, x[0].height) * x[1] + 'px';
+                    }
+                }));
         }
     }
 
@@ -346,7 +397,7 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
     }
 }
 
-interface ReactProgressState extends ReactViewState{
+interface ReactProgressState extends ReactViewState {
     progressColor: string;
     style: CSSProperties;
 }
@@ -355,14 +406,15 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
 
     constructor(props: ReactViewProps) {
         super(props);
-        this.state = {...this.state,
-            progressColor: '#ffffff'
-        }
+        this.state = {
+            ...this.state,
+            progressColor: '#ffffff',
+        };
     }
 
     componentDidMount(): void {
         super.componentDidMount();
-        this.wire('color', 'progressColor', (x: ColorContainer) => x?.toString())
+        this.wire('color', 'progressColor', (x: ColorContainer) => x?.toString());
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -377,9 +429,10 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
         const extra = pick(this.state, 'id');
         return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
             <svg className="vlayout_spinner" viewBox="0 0 50 50">
-                <circle className="path" cx="50%" cy="50%" r="40%" fill="none" strokeWidth="2" stroke={this.state.progressColor}/>
+                <circle className="path" cx="50%" cy="50%" r="40%" fill="none" strokeWidth="2"
+                        stroke={this.state.progressColor} />
             </svg>
-            </div>);
+        </div>);
     }
 }
 
