@@ -238,7 +238,11 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
                         scale = 1;
                         break;
                     default:
-                        return outerSize;
+                        return outerSize.width == 0 && outerSize.height == 0 ? imageSize : outerSize;
+                }
+
+                if (scale <= 0.001) {
+                    scale = 1;
                 }
 
                 return {width: imageSize.width * scale, height: imageSize.height * scale};

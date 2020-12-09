@@ -30,31 +30,20 @@ layout {
     layer {
         z_order: 1
         fullscreen: false
-        alpha: 0
+        alpha: 1
 
-        absolute {
-            fixedSize { width: 30 height: 30 }
+        image {
             center { x: 0.5 y: 0.5 }
-            roundRect {
-                padding { left: 0 bottom: 0 right: 0 top: 0 }
-                cornerRadius: 0.5
-                backgroundColor: #1c192c
-            }
-            label {
-                class: "SessionControl_roundedMarker"
-                textAlignment: .center
-                center { x: 0.5 y: 0.5 }
-                text: "A"
-                textColor: #ffffff
-                font:  Font("SFProDisplayHeavy",12)
-            }
+            contentPolicy: .aspectFit
+            fixedSize { height: 200 }
+            image: Image("/geofence-red.png")
         }
     }
 
     layer {
         z_order: 2
         fullscreen: false
-        alpha: 1
+        alpha: 0
         id: "layer_2"
 
         absolute{
