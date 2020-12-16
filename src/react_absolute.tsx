@@ -14,7 +14,14 @@ export class ReactAbsoluteLayout<S extends ReactContainerState> extends ReactCon
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        return this.children.pipe(absoluteIntrinsicSize());
+        const selfSize = super.intrinsicSize();
+        const childSize = this.children.pipe(absoluteIntrinsicSize());
+        return combineLatest([selfSize, childSize]).pipe(
+            map(([self, children]) => ({
+                width: this.isWidthDefined() ? self.width : children.width,
+                height: this.isHeightDefined() ? self.height : children.height
+            }))
+        )
     }
 
     definesChildWidth(

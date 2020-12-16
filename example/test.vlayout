@@ -31,10 +31,9 @@ layout {
     layer {
         id: "test"
 
-        label {
+        absolute {
             aspect: 1
             padding { left: 16 right: 16 bottom: 50 }
-            text: "sample text"
             backgroundColor: #cceeff
         }
     }

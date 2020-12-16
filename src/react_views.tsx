@@ -1,5 +1,13 @@
 import React, { Component, CSSProperties } from 'react';
-import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
+import {
+    AbsoluteLayout,
+    Container,
+    LinearLayout,
+    LinearLayoutAxis,
+    StackLayout,
+    View,
+    ViewProperty,
+} from './view';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import {
     debounceTime,
@@ -13,7 +21,7 @@ import {
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
 import { assign, extend, forEach, identity, isEqual, omit, pick } from 'lodash';
-import { assignDeep } from './utils';
+import { assignDeep, isNotNull } from './utils';
 
 export interface ReactViewProps {
     parentView: View;
@@ -117,24 +125,48 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
         const p = this.props.parentView.property('aspect');
         if (p.value) {
-            this.subscription.add(combineLatest([this.safeIntrinsicSize(), p.value.sink, this.viewRef]).pipe(
-                debounceTime(1),
-                // tap(console.log),
-            ).subscribe(([size, aspect, self]) => {
-                this.setState({ aspect: aspect });
-                if (size.width && !size.height) {
-                    self.style.height = aspect !== null ? `${size.width / aspect}px` : '';
-                } else if (!size.width && size.height) {
-                    self.style.width = aspect !== null ? `${size.height * aspect}px` : '';
-                } else {
-                    if (!size.width && self.style.width) {
-                        self.style.width = '';
-                    }
-                    if (!size.height && self.style.height) {
-                        self.style.height = '';
-                    }
-                }
-            }));
+            const parent = this.props.parentView;
+            const widthDefined =
+                isNotNull(parent.property('size.width').value) ||
+                isNotNull(parent.property('fixedSize.width').value) ||
+                (isNotNull(parent.property('padding.left').value) &&
+                    isNotNull(parent.property('padding.right').value));
+
+            const heightDefined =
+                isNotNull(parent.property('size.height').value) ||
+                isNotNull(parent.property('fixedSize.height').value) ||
+                (isNotNull(parent.property('padding.top').value) &&
+                    isNotNull(parent.property('padding.bottom').value));
+
+            this.subscription.add(
+                combineLatest([
+                    this.safeIntrinsicSize(),
+                    p.value.sink,
+                    this.viewRef,
+                ])
+                    .pipe(debounceTime(1), tap(console.log))
+                    .subscribe(([size, aspect, self]) => {
+                        this.setState({ aspect: aspect });
+                        if (widthDefined && !heightDefined) {
+                            self.style.height =
+                                aspect !== null
+                                    ? `${size.width / aspect}px`
+                                    : '';
+                        } else if (!widthDefined && heightDefined) {
+                            self.style.width =
+                                aspect !== null
+                                    ? `${size.height * aspect}px`
+                                    : '';
+                        } else if (!widthDefined && !heightDefined) {
+                            if (self.style.width) {
+                                self.style.width = '';
+                            }
+                            if (self.style.height) {
+                                self.style.height = '';
+                            }
+                        }
+                    })
+            );
         }
 
         this.wire('id', 'id', identity);
