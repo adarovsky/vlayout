@@ -58,6 +58,10 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
         return this.isHeightDefined();
     }
 
+    isHorizontallyScrollable(): boolean {
+        return true;
+    }
+
     componentDidMount(): void {
         super.componentDidMount();
         const align = this.props.parentView.property('alignment');

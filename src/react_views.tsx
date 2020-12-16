@@ -359,6 +359,14 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         return false;
     }
 
+    isVerticallyScrollable(): boolean {
+        return false;
+    }
+
+    isHorizontallyScrollable(): boolean {
+        return false;
+    }
+
     protected isWidthDefined(): boolean {
         return !!this.state.fixedSize?.width ||
             (this.props.parentView.parent?.instance?.definesChildWidth(this) ?? false) ||

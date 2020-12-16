@@ -60,6 +60,10 @@ export class ReactVerticalList extends ReactList<ReactListState> {
         return this.isWidthDefined();
     }
 
+    isVerticallyScrollable(): boolean {
+        return true;
+    }
+
     render() {
         const extra = pick(this.state, 'id');
         return (

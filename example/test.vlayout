@@ -24,164 +24,87 @@ properties {
     }
     topOffset: 0
     bottomOffset: 0
+    prefix: ""
 }
 
 layout {
     layer {
-        z_order: 1
-        fullscreen: false
-        alpha: 1
+        id: "list"
 
-        image {
+        vertical {
             center { x: 0.5 y: 0.5 }
-            contentPolicy: .aspectFit
-            fixedSize { height: 200 }
-            image: Image("/geofence-red.png")
-        }
-    }
+            fixedSize { width: 400 height: 250 }
 
-    layer {
-        z_order: 2
-        fullscreen: false
-        alpha: 0
-        id: "layer_2"
-
-        absolute{
-            id: "outer_container"
-            center{x: 0.75}
-            size{width:0.5}
-            padding{top: topOffset bottom: bottomOffset+60}
-            vertical {
-                padding { top: 0 left: 10 right: 30 bottom: 0 }
+            horizontal {
+                alignment: .center
                 spacing: 10
-
-                absolute{
-                    id: "inner_container"
-                    roundRect{
-                        padding{left: 0 top: 0 bottom: 0 right: 0}
-                        backgroundColor: #f5f5f6
-                        cornerRadius: 10
-                        strokeColor: #56e3b1
-                        strokeWidth: 1
-                    }
-                    vertical{
-                        spacing: 30
-                        padding {left: 20 top: 20 right: 20 bottom: 20}
-                        alignment: .fill
-                        roundRect{
-                            class: "ShadowControl"
-                            fixedSize{width: 16 height: 16}
-                            cornerRadius: 0.5
-                            backgroundColor: #ff2727
-                            alpha: 1
-                        }
-                        label {
-                            textColor: #1c192c
-                            font: Font("CentraNo2",22)
-                            text: @("Question $1:",String(0))
-                            textAlignment: .left
-                        }
-
-                        label {
-                            textColor: #3e3864
-                            font: Font("SFProDisplayLight",30)
-                            text: "test message long long long"
-                            maxLines: 5
-                            textAlignment: .left
-                        }
-                        vertical{
-                            absolute {
-                                horizontal {
-                                    alignment: .center
-                                    spacing: 10
-                                    padding { left: 0 bottom: 10 right: 10 top: 10 }
-                                    absolute {
-                                        fixedSize { width: 30 height: 30 }
-                                        roundRect {
-                                            padding { left: 0 bottom: 0 right: 0 top: 0 }
-                                            cornerRadius: 0.5
-                                            backgroundColor: #1c192c
-                                        }
-                                        label {
-                                            class: "SessionControl_roundedMarker"
-                                            textAlignment: .center
-                                            center { x: 0.5 y: 0.5 }
-                                            text: "A"
-                                            textColor: #ffffff
-                                            font:  Font("SFProDisplayHeavy",12)
-                                        }
-                                    }
-                                    label {
-                                        textColor: #3e3864
-                                        text: "answer 1"
-                                        font:  Font("SFProDisplayMedium",18)
-                                    }
-                                }
-                            }
-
-                            absolute {
-                                horizontal {
-                                    alignment: .center
-                                    spacing: 10
-                                    padding { left: 0 bottom: 10 right: 10 top: 10 }
-                                    absolute {
-                                        fixedSize { width: 30 height: 30 }
-                                        roundRect {
-                                            padding { left: 0 bottom: 0 right: 0 top: 0 }
-                                            cornerRadius: 0.5
-                                            backgroundColor: #1c192c
-                                        }
-                                        label {
-                                            class: "SessionControl_roundedMarker"
-                                            textAlignment: .center
-                                            center { x: 0.5 y: 0.5 }
-                                            text: "B"
-                                            textColor: #ffffff
-                                            font:  Font("SFProDisplayHeavy",12)
-                                        }
-                                    }
-                                    label {
-                                        textColor: #3e3864
-                                        text: "answer 2"
-                                        font:  Font("SFProDisplayMedium",18)
-                                    }
-                                }
-                            }
-
-                            absolute {
-                                horizontal {
-                                    alignment: .center
-                                    spacing: 10
-                                    padding { left: 0 bottom: 10 right: 10 top: 10 }
-                                    absolute {
-                                        fixedSize { width: 30 height: 30 }
-                                        roundRect {
-                                            padding { left: 0 bottom: 0 right: 0 top: 0 }
-                                            cornerRadius: 0.5
-                                            backgroundColor: #1c192c
-                                        }
-                                        label {
-                                            class: "SessionControl_roundedMarker"
-                                            textAlignment: .center
-                                            center { x: 0.5 y: 0.5 }
-                                            text: "C"
-                                            textColor: #ffffff
-                                            font:  Font("SFProDisplayHeavy",12)
-                                        }
-                                    }
-                                    label {
-                                        textColor: #3e3864
-                                        text: "answer 3"
-                                        font:  Font("SFProDisplayMedium",18)
-                                    }
-                                }
-                            }
-                        }
-                    }
+                roundRect {
+                    fixedSize { width: 0 height: 60 }
                 }
-
-                absolute{
+                image {
+                    image: Image(prefix + "/images/simulcast/icon-facebook.png")
+                }
+                label {
+                    font: Font("CentraNo2", 16)
+                    textColor: #1c192c
+                    text: @("Out of $1 comments", ShortString(testList.count))
+                }
+                roundRect {
                     sizePolicy: .stretched
+                    fixedSize { height: 45 }
+                }
+            }
+            verticalList {
+                model: testList
+
+                item {
+                    backgroundColor: #ffffff
+                    label {
+                        text: String(index + 1)
+                        font: Font("CentraNo2", 16)
+                        center { y: 0.5 }
+                        textColor: #3e3864
+                        padding { left: 16 }
+                    }
+                    image {
+                        class: "avatar_image"
+                        image: Image("/geofence-red.png")
+                        fixedSize { width: 30 height: 30 }
+                        center { y: 0.5 }
+                        padding { left: 40 }
+                    }
+                    vertical {
+                        padding { left: 80 right: 40 top: 11 bottom: 8 }
+                        label {
+                            text: name
+                            font:  Font("SFProDisplayLight",12)
+                            textColor: #95929f
+                        }
+                        label {
+                            text: name
+                            font:  Font("SFProDisplayHeavy",12)
+                            textColor: #3e3864
+                        }
+                    }
+
+                    absolute {
+                        center { y : 0.5 }
+                        fixedSize { width: 20 height: 20 }
+                        padding { right: 10 }
+
+                        roundRect {
+                            class: "SessionControl_withShadow"
+                            padding{left: 0 top: 0 bottom: 0 right: 0}
+                            backgroundColor: #ffffff
+                            cornerRadius: 10
+                        }
+
+                        image {
+                            image: Image(prefix + "/images/simulcast/" + "icon-20-uncheck.png")
+                            center { x: 0.5 y: 0.5 }
+                            contentPolicy: .aspectFit
+                        }
+                    }
                 }
             }
         }

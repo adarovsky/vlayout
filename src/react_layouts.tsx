@@ -71,7 +71,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
         r.justifyContent = 'stretch';
         r.display = 'flex';
 
-        const index = props.findIndex(p => p.name === 'alignment');
+        const index = props.findIndex((p) => p.name === 'alignment');
         if (index >= 0) {
             switch (value[index]) {
                 case 'center':
@@ -100,11 +100,11 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
             visibleChildrenSizes(),
-            map(sizes => {
+            map((sizes) => {
                 let maxHeight = 0;
                 let maxWidth = 0;
 
-                sizes.forEach(size => {
+                sizes.forEach((size) => {
                     maxHeight = Math.max(maxHeight, size.height);
                     maxWidth += size.width;
                 });
@@ -120,7 +120,11 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
     definesChildWidth(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return child.state.sizePolicy === 'stretched' && this.isWidthDefined();
+        return (
+            (child.state.sizePolicy === 'stretched' ||
+                child.isHorizontallyScrollable()) &&
+            this.isWidthDefined()
+        );
     }
 
     definesChildHeight(
@@ -147,7 +151,7 @@ export class ReactVerticalLayout extends ReactLinearLayout {
         r.justifyContent = 'stretch';
         r.display = 'flex';
 
-        const index = props.findIndex(p => p.name === 'alignment');
+        const index = props.findIndex((p) => p.name === 'alignment');
         if (index >= 0) {
             switch (value[index]) {
                 case 'center':
@@ -176,11 +180,11 @@ export class ReactVerticalLayout extends ReactLinearLayout {
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
             visibleChildrenSizes(),
-            map(sizes => {
+            map((sizes) => {
                 let maxHeight = 0;
                 let maxWidth = 0;
 
-                sizes.forEach(size => {
+                sizes.forEach((size) => {
                     maxHeight += size.height;
                     maxWidth = Math.max(maxWidth, size.width);
                 });
@@ -202,7 +206,11 @@ export class ReactVerticalLayout extends ReactLinearLayout {
     definesChildHeight(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return child.state.sizePolicy === 'stretched' && this.isHeightDefined();
+        return (
+            (child.state.sizePolicy === 'stretched' ||
+                child.isVerticallyScrollable()) &&
+            this.isHeightDefined()
+        );
     }
 
     protected spacerStyle(): CSSProperties {
@@ -245,7 +253,7 @@ export class ReactLayer extends ReactContainer<
                             window.innerHeight
                     )
                 )
-                .subscribe(height => (modal.style.height = `${height}px`));
+                .subscribe((height) => (modal.style.height = `${height}px`));
             return modal;
         }
     }
@@ -258,7 +266,7 @@ export class ReactLayer extends ReactContainer<
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        let index = props.findIndex(x => x.name === 'z_order');
+        let index = props.findIndex((x) => x.name === 'z_order');
         if (index >= 0) r.zIndex = value[index];
         r.width = '100%';
         r.height = '100%';
@@ -272,7 +280,7 @@ export class ReactLayer extends ReactContainer<
         if (value) {
             this.subscription.add(
                 value.sink.subscribe((fs: boolean) => {
-                    this.setState(s => ({ ...s, fullscreen: fs }));
+                    this.setState((s) => ({ ...s, fullscreen: fs }));
                 })
             );
         }
@@ -287,18 +295,26 @@ export class ReactLayer extends ReactContainer<
     }
 
     definesChildWidth(
-        child: ReactView<ReactViewProps, ReactViewState>,
+        child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
         // console.log('isWidthDefined(', this._viewRef.value, ', child state:', child.state, ') = ', this.isWidthDefined());
-        return this.isWidthDefined() &&
-            (isNotNull(child.state.size?.width) || (isNotNull(child.state.padding?.left) && isNotNull(child.state.padding?.right)));
+        return (
+            this.isWidthDefined() &&
+            (isNotNull(child.state.size?.width) ||
+                (isNotNull(child.state.padding?.left) &&
+                    isNotNull(child.state.padding?.right)))
+        );
     }
 
     definesChildHeight(
-        child: ReactView<ReactViewProps, ReactViewState>,
+        child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return this.isHeightDefined() &&
-            (isNotNull(child.state.size?.height) || (isNotNull(child.state.padding?.top) && isNotNull(child.state.padding?.bottom)));
+        return (
+            this.isHeightDefined() &&
+            (isNotNull(child.state.size?.height) ||
+                (isNotNull(child.state.padding?.top) &&
+                    isNotNull(child.state.padding?.bottom)))
+        );
     }
 
     render() {
@@ -312,7 +328,7 @@ export class ReactLayer extends ReactContainer<
             >
                 {(this.props.parentView as Container).views
                     .filter((v, index) => this.state.childrenVisible[index])
-                    .map(v => v.target)}
+                    .map((v) => v.target)}
             </div>
         );
         return this.state.fullscreen

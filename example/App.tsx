@@ -24,43 +24,63 @@ class App extends Component {
         this.engine.registerList('TestList', {
             item: {
                 name: this.engine.stringType(),
-            }
+            },
         });
 
-        this.engine.registerInput('testList', this.engine.type('TestList')!, interval(1000).pipe(
-            startWith(0),
-            scan((acc, one) => {
-                const [cur, delta] = acc;
-                let d = delta;
-                if (cur + d > 8 || cur + d < 0) {
-                    d = -d;
-                }
-                return [cur + d, d];
-            }, [1, -1]),
-            pluck(0),
-            map(counter => Array(counter).fill(null).map((value, index) => ({
-                item: {
-                    id: index,
-                    name: `Item-${index}`
-                }
-            }))),
-            take(4)
-        ));
+        // this.engine.registerInput('testList', this.engine.type('TestList')!, interval(1000).pipe(
+        //     startWith(0),
+        //     scan((acc, one) => {
+        //         const [cur, delta] = acc;
+        //         let d = delta;
+        //         if (cur + d > 8 || cur + d < 0) {
+        //             d = -d;
+        //         }
+        //         return [cur + d, d];
+        //     }, [1, -1]),
+        //     pluck(0),
+        //     map(counter => Array(counter).fill(null).map((value, index) => ({
+        //         item: {
+        //             id: index,
+        //             name: `Item-${index}`
+        //         }
+        //     }))),
+        //     take(4)
+        // ));
 
-        this.engine.registerInput('counter', this.engine.numberType(), interval(1000).pipe(
-            map(v => v % 5)
-        ));
-        this.engine.registerInput('test', this.engine.stringType(), of('sample text').pipe(
-            delay(5000),
-            // startWith(null)
-        ));
+        this.engine.registerInput(
+            'testList',
+            this.engine.type('TestList')!,
+            of(
+                Array(20)
+                    .fill(null)
+                    .map((value, index) => ({
+                        item: { id: index, name: `Item-${index + 1}` },
+                    }))
+            )
+        );
+
+        this.engine.registerInput(
+            'counter',
+            this.engine.numberType(),
+            interval(1000).pipe(map(v => v % 5))
+        );
+        this.engine.registerInput(
+            'test',
+            this.engine.stringType(),
+            of('sample text').pipe(
+                delay(5000)
+                // startWith(null)
+            )
+        );
 
         this.engine.registerButton('inviteHostIFB', async () => {});
         this.engine.registerButton('toggleHostIFB', async () => {});
     }
 
     render() {
-        return <Layout engine={this.engine} content={layout} key={'content1'}/>;
+        return (
+            <Layout engine={this.engine} content={layout} key={'content1'} />
+        );
     }
 }
 
