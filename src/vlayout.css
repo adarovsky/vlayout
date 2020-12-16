@@ -54,7 +54,7 @@
     user-select: text;
 }
 
-.vlayout_label span {
+.vlayout_label > span {
     pointer-events: auto;
     user-select: text;
 }
