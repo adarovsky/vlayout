@@ -29,84 +29,12 @@ properties {
 
 layout {
     layer {
-        id: "list"
+        id: "test"
 
-        vertical {
-            center { x: 0.5 y: 0.5 }
-            fixedSize { width: 400 height: 250 }
-
-            horizontal {
-                alignment: .center
-                spacing: 10
-                roundRect {
-                    fixedSize { width: 0 height: 60 }
-                }
-                image {
-                    image: Image(prefix + "/images/simulcast/icon-facebook.png")
-                }
-                label {
-                    font: Font("CentraNo2", 16)
-                    textColor: #1c192c
-                    text: @("Out of $1 comments", ShortString(testList.count))
-                }
-                roundRect {
-                    sizePolicy: .stretched
-                    fixedSize { height: 45 }
-                }
-            }
-            verticalList {
-                model: testList
-
-                item {
-                    backgroundColor: #ffffff
-                    label {
-                        text: String(index + 1)
-                        font: Font("CentraNo2", 16)
-                        center { y: 0.5 }
-                        textColor: #3e3864
-                        padding { left: 16 }
-                    }
-                    image {
-                        class: "avatar_image"
-                        image: Image("/geofence-red.png")
-                        fixedSize { width: 30 height: 30 }
-                        center { y: 0.5 }
-                        padding { left: 40 }
-                    }
-                    vertical {
-                        padding { left: 80 right: 40 top: 11 bottom: 8 }
-                        label {
-                            text: name
-                            font:  Font("SFProDisplayLight",12)
-                            textColor: #95929f
-                        }
-                        label {
-                            text: name
-                            font:  Font("SFProDisplayHeavy",12)
-                            textColor: #3e3864
-                        }
-                    }
-
-                    absolute {
-                        center { y : 0.5 }
-                        fixedSize { width: 20 height: 20 }
-                        padding { right: 10 }
-
-                        roundRect {
-                            class: "SessionControl_withShadow"
-                            padding{left: 0 top: 0 bottom: 0 right: 0}
-                            backgroundColor: #ffffff
-                            cornerRadius: 10
-                        }
-
-                        image {
-                            image: Image(prefix + "/images/simulcast/" + "icon-20-uncheck.png")
-                            center { x: 0.5 y: 0.5 }
-                            contentPolicy: .aspectFit
-                        }
-                    }
-                }
-            }
+        roundRect {
+            aspect: 1
+            padding { left: 16 right: 16 bottom: 50 }
+            backgroundColor: #cceeff
         }
     }
 }

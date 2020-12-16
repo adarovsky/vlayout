@@ -1,7 +1,15 @@
 import React, { Component, CSSProperties } from 'react';
 import { AbsoluteLayout, Container, LinearLayout, LinearLayoutAxis, StackLayout, View, ViewProperty } from './view';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
+import {
+    debounceTime,
+    distinctUntilChanged,
+    filter,
+    map,
+    startWith,
+    switchMap,
+    tap,
+} from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
 import { assign, extend, forEach, identity, isEqual, omit, pick } from 'lodash';
@@ -111,17 +119,18 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         if (p.value) {
             this.subscription.add(combineLatest([this.safeIntrinsicSize(), p.value.sink, this.viewRef]).pipe(
                 debounceTime(1),
+                // tap(console.log),
             ).subscribe(([size, aspect, self]) => {
                 this.setState({ aspect: aspect });
-                if (this.state.style.width && !this.state.style.height) {
+                if (size.width && !size.height) {
                     self.style.height = aspect !== null ? `${size.width / aspect}px` : '';
-                } else if (!this.state.style.width && this.state.style.height) {
+                } else if (!size.width && size.height) {
                     self.style.width = aspect !== null ? `${size.height * aspect}px` : '';
                 } else {
-                    if (!this.state.style.width && self.style.width) {
+                    if (!size.width && self.style.width) {
                         self.style.width = '';
                     }
-                    if (!this.state.style.height && self.style.height) {
+                    if (!size.height && self.style.height) {
                         self.style.height = '';
                     }
                 }
