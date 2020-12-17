@@ -31,10 +31,10 @@ layout {
     layer {
         id: "test"
 
-        absolute {
-            aspect: 1
+            roundRect {
             padding { left: 16 right: 16 bottom: 50 }
-            backgroundColor: #cceeff
-        }
+                aspect: 1
+                backgroundColor: #cceeff
+            }
     }
 }

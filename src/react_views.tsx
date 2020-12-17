@@ -47,7 +47,10 @@ function isAbsolute(view: View | null) {
     return view instanceof AbsoluteLayout || (view?.hasOwnProperty('axis') && view.axis === null);
 }
 
-export class ReactView<P extends ReactViewProps, S extends ReactViewState> extends Component<P, S> {
+export class ReactView<
+    P extends ReactViewProps,
+    S extends ReactViewState
+> extends Component<P, S> {
     readonly _viewRef = new BehaviorSubject<HTMLDivElement | null>(null);
     protected readonly subscription: Subscription = new Subscription();
 
@@ -57,7 +60,7 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         let id = null;
         const sink = props.parentView.property('id').value?.sink;
         if (sink) {
-            this.subscription.add(sink.subscribe(x => id = x));
+            this.subscription.add(sink.subscribe((x) => (id = x)));
         }
 
         // @ts-ignore
@@ -66,7 +69,9 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     get viewRef() {
-        return this._viewRef.pipe(filter(x => x !== null)) as Observable<HTMLDivElement>;
+        return this._viewRef.pipe(
+            filter((x) => x !== null)
+        ) as Observable<HTMLDivElement>;
     }
 
     get className(): string {
@@ -83,68 +88,88 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
         const props = this.styleProperties();
 
         this.subscription.add(
-            combineLatest(props.map(p => p.value!.sink)).pipe(
-                map(v => this.styleValue(props, v)),
-            ).subscribe(
-                style => {
+            combineLatest(props.map((p) => p.value!.sink))
+                .pipe(map((v) => this.styleValue(props, v)))
+                .subscribe((style) => {
                     this.setState({ style: style });
-                },
-            ),
+                })
         );
 
         this.subscription.add(
-            combineLatest(props.map(p => p.value!.sink.pipe(
-                map(value => ({ name: p.name, value })),
-            ))).pipe(
-                map(value => value.reduce((previousValue, currentValue) => assignDeep({ ...previousValue }, {
-                    [currentValue.name]: currentValue.value,
-                }), {})),
-            ).subscribe(
-                values => {
-                    this.setState(state => assign(omit(state, 'padding', 'center', 'fixedSize', 'size'), values));
-                },
-            ),
+            combineLatest(
+                props.map((p) =>
+                    p.value!.sink.pipe(
+                        map((value) => ({ name: p.name, value }))
+                    )
+                )
+            )
+                .pipe(
+                    map((value) =>
+                        value.reduce(
+                            (previousValue, currentValue) =>
+                                assignDeep(
+                                    { ...previousValue },
+                                    {
+                                        [currentValue.name]: currentValue.value,
+                                    }
+                                ),
+                            {}
+                        )
+                    )
+                )
+                .subscribe((values) => {
+                    this.setState((state) =>
+                        assign(
+                            omit(
+                                state,
+                                'padding',
+                                'center',
+                                'fixedSize',
+                                'size'
+                            ),
+                            values
+                        )
+                    );
+                })
         );
 
         const isInStack = this.props.parentView.parent instanceof StackLayout;
-        this.subscription.add(combineLatest([this.safeIntrinsicSize(), this.viewRef]).pipe(
-            debounceTime(1),
-        ).subscribe(([size, self]) => {
-            if (size.width > 0 && !this.isWidthDefined()) {
-                self.style.minWidth = size.width + 'px';
-            } else {
-                self.style.minWidth = isInStack ? '100%' : '';
-            }
+        this.subscription.add(
+            combineLatest([this.safeIntrinsicSize(), this.viewRef])
+                .pipe(debounceTime(1))
+                .subscribe(([size, self]) => {
+                    if (size.width > 0 && !this.isWidthDefined()) {
+                        self.style.minWidth = size.width + 'px';
+                    } else {
+                        self.style.minWidth = isInStack ? '100%' : '';
+                    }
 
-            if (size.height > 0 && !this.isHeightDefined()) {
-                self.style.minHeight = size.height + 'px';
-            } else {
-                self.style.minHeight = isInStack ? '100%' : '';
-            }
-        }));
+                    if (size.height > 0 && !this.isHeightDefined()) {
+                        self.style.minHeight = size.height + 'px';
+                    } else {
+                        self.style.minHeight = isInStack ? '100%' : '';
+                    }
+                })
+        );
 
         const p = this.props.parentView.property('aspect');
         if (p.value) {
             const parent = this.props.parentView;
             const widthDefined =
-                isNotNull(parent.property('size.width').value) ||
-                isNotNull(parent.property('fixedSize.width').value) ||
-                (isNotNull(parent.property('padding.left').value) &&
-                    isNotNull(parent.property('padding.right').value));
+                this.has('fixedSize.width') ||
+                !!parent.parent?.instance?.definesChildWidth(this);
 
             const heightDefined =
-                isNotNull(parent.property('size.height').value) ||
-                isNotNull(parent.property('fixedSize.height').value) ||
-                (isNotNull(parent.property('padding.top').value) &&
-                    isNotNull(parent.property('padding.bottom').value));
+                this.has('fixedSize.height') ||
+                !!parent.parent?.instance?.definesChildHeight(this);
 
             this.subscription.add(
                 combineLatest([
                     this.safeIntrinsicSize(),
-                    p.value.sink,
+                    p.value.sink.pipe(distinctUntilChanged((x, y) => Math.abs(x - y) < 0.01)),
                     this.viewRef,
                 ])
-                    .pipe(debounceTime(1), tap(console.log))
+                    .pipe(debounceTime(1))
                     .subscribe(([size, aspect, self]) => {
                         this.setState({ aspect: aspect });
                         if (widthDefined && !heightDefined) {
@@ -180,10 +205,21 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     wire(name: string, field: string, mapper: (v: any) => any) {
         const prop = this.props.parentView.property(name);
         if (prop.value) {
-            this.subscription.add(prop.value.sink.subscribe(value => {
-                this.setState(s => extend({ ...s }, { [field]: mapper ? mapper(value) : value }));
-            }));
+            this.subscription.add(
+                prop.value.sink.subscribe((value) => {
+                    this.setState((s) =>
+                        extend(
+                            { ...s },
+                            { [field]: mapper ? mapper(value) : value }
+                        )
+                    );
+                })
+            );
         }
+    }
+
+    has(property: string): boolean {
+        return isNotNull(this.props.parentView.property(property).value);
     }
 
     style(): React.CSSProperties {
@@ -191,22 +227,26 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     styleProperties(): ViewProperty[] {
-        let props = this.props.parentView.activeProperties.filter(p =>
-            p.name.startsWith('padding') ||
-            p.name.startsWith('center') ||
-            p.name.startsWith('fixedSize') ||
-            p.name.startsWith('size.') ||
-            p.name === 'backgroundColor' ||
-            p.name === 'alpha');
+        let props = this.props.parentView.activeProperties.filter(
+            (p) =>
+                p.name.startsWith('padding') ||
+                p.name.startsWith('center') ||
+                p.name.startsWith('fixedSize') ||
+                p.name.startsWith('size.') ||
+                p.name === 'backgroundColor' ||
+                p.name === 'alpha'
+        );
         if (this.props.parentView.parent instanceof LinearLayout) {
-            props = props.concat(this.props.parentView.activePropertiesNamed('sizePolicy'));
+            props = props.concat(
+                this.props.parentView.activePropertiesNamed('sizePolicy')
+            );
         }
 
         return props;
     }
 
     styleValue(props: ViewProperty[], value: any[]): CSSProperties {
-        const propNames = props.map(p => p.name);
+        const propNames = props.map((p) => p.name);
         const r: CSSProperties = {};
         const view = this.props.parentView;
         if (isAbsolute(view.parent)) {
@@ -234,19 +274,26 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 case 'center.x':
                     if (isAbsolute(view.parent) && val !== null) {
                         // adjust width
-                        let index = propNames.findIndex(x => x === 'padding.left');
+                        let index = propNames.findIndex(
+                            (x) => x === 'padding.left'
+                        );
                         if (index >= 0 && value[index] !== null) {
-                            r.width = `calc(2*(${val * 100}% - ${value[index]}px))`;
+                            r.width = `calc(2*(${val * 100}% - ${
+                                value[index]
+                            }px))`;
                         } else {
-                            index = propNames.findIndex(x => x === 'padding.right');
+                            index = propNames.findIndex(
+                                (x) => x === 'padding.right'
+                            );
                             if (index >= 0 && value[index] !== null) {
-                                r.width = `calc(2*(${(1 - val) * 100}% - ${value[index]}px))`;
+                                r.width = `calc(2*(${(1 - val) * 100}% - ${
+                                    value[index]
+                                }px))`;
                             } else {
                                 r.left = `${val * 100}%`;
                                 if (r.transform)
                                     r.transform += ' translateX(-50%)';
-                                else
-                                    r.transform = ' translateX(-50%)';
+                                else r.transform = ' translateX(-50%)';
                             }
                         }
                     }
@@ -254,19 +301,26 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 case 'center.y':
                     if (isAbsolute(view.parent) && val !== null) {
                         // adjust width
-                        let index = propNames.findIndex(x => x === 'padding.top');
+                        let index = propNames.findIndex(
+                            (x) => x === 'padding.top'
+                        );
                         if (index >= 0 && value[index] !== null) {
-                            r.height = `calc(2*(${val * 100}% - ${value[index]}px))`;
+                            r.height = `calc(2*(${val * 100}% - ${
+                                value[index]
+                            }px))`;
                         } else {
-                            index = propNames.findIndex(x => x === 'padding.bottom');
+                            index = propNames.findIndex(
+                                (x) => x === 'padding.bottom'
+                            );
                             if (index >= 0 && value[index] !== null) {
-                                r.height = `calc(2*(${(1 - val) * 100}% - ${value[index]}px))`;
+                                r.height = `calc(2*(${(1 - val) * 100}% - ${
+                                    value[index]
+                                }px))`;
                             } else {
                                 r.top = `${val * 100}%`;
                                 if (r.transform)
                                     r.transform += ' translateY(-50%)';
-                                else
-                                    r.transform = ' translateY(-50%)';
+                                else r.transform = ' translateY(-50%)';
                             }
                         }
                     }
@@ -301,10 +355,15 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 case 'sizePolicy':
                     if (val === 'stretched') {
                         r.flexGrow = 1;
-                        if (this.props.parentView.parent instanceof LinearLayout) {
+                        if (
+                            this.props.parentView.parent instanceof LinearLayout
+                        ) {
                             // Workaround to make item shrink work properly. Otherwise it pushes
                             // out another content
-                            if (this.props.parentView.parent.axis == LinearLayoutAxis.Horizontal) {
+                            if (
+                                this.props.parentView.parent.axis ==
+                                LinearLayoutAxis.Horizontal
+                            ) {
                                 r.width = '1px';
                             } else {
                                 r.height = '1px';
@@ -322,7 +381,9 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
 
             if (this.props.parentView.parent instanceof StackLayout) {
                 r.position = 'absolute';
-                const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
+                const index = this.props.parentView.parent.views.indexOf(
+                    this.props.parentView
+                );
                 r.zIndex = index + 1;
 
                 r.minWidth = '100%';
@@ -330,50 +391,81 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
                 r.maxWidth = '100%';
                 r.maxHeight = '100%';
             } else if (this.props.parentView.parent instanceof AbsoluteLayout) {
-                const index = this.props.parentView.parent.views.indexOf(this.props.parentView);
+                const index = this.props.parentView.parent.views.indexOf(
+                    this.props.parentView
+                );
                 r.zIndex = index + 1;
             }
-
         });
         return r;
     }
 
     hasExplicitWidth(): boolean {
-        return this.props.parentView.activePropertiesNamed('fixedSize.width', 'size.width').length > 0;
+        return (
+            this.props.parentView.activePropertiesNamed(
+                'fixedSize.width',
+                'size.width'
+            ).length > 0
+        );
     }
 
     hasExplicitHeight(): boolean {
-        return this.props.parentView.activePropertiesNamed('fixedSize.height', 'size.height').length > 0;
+        return (
+            this.props.parentView.activePropertiesNamed(
+                'fixedSize.height',
+                'size.height'
+            ).length > 0
+        );
     }
 
     safeIntrinsicSize(): Observable<ElementSize> {
         if (this.hasExplicitHeight() && this.hasExplicitWidth()) {
             return this.selfSize();
         } else if (!this.hasExplicitHeight() && !this.hasExplicitWidth()) {
-            return this.intrinsicSize();
+            return this.intrinsicSize().pipe(
+                distinctUntilChanged(
+                    (x, y) =>
+                        Math.abs(x.width - y.width) < 0.5 &&
+                        Math.abs(x.height - y.height) < 0.5
+                )
+            );
         } else {
             return combineLatest([this.intrinsicSize(), this.selfSize()]).pipe(
                 map(([intrinsic, self]) => ({
-                    width: this.hasExplicitWidth() ? self.width : intrinsic.width,
-                    height: this.hasExplicitHeight() ? self.height : intrinsic.height,
+                    width: this.hasExplicitWidth()
+                        ? self.width
+                        : intrinsic.width,
+                    height: this.hasExplicitHeight()
+                        ? self.height
+                        : intrinsic.height,
                 })),
-                distinctUntilChanged((x, y) => x.width === y.width && x.height === y.height),
+                distinctUntilChanged(
+                    (x, y) =>
+                        Math.abs(x.width - y.width) < 0.5 &&
+                        Math.abs(x.height - y.height) < 0.5
+                )
             );
         }
     }
 
     selfSize(): Observable<ElementSize> {
         return this.viewRef.pipe(
-            switchMap(self => resizeObserver(self).pipe(
-                map(size => {
-                    return {
-                        width: this.isWidthDefined() ? size.width : 0,
-                        height: this.isHeightDefined() ? size.height : 0,
-                    };
-                })),
+            switchMap((self) =>
+                resizeObserver(self).pipe(
+                    map((size) => {
+                        return {
+                            width: this.isWidthDefined() ? size.width : 0,
+                            height: this.isHeightDefined() ? size.height : 0,
+                        };
+                    })
+                )
             ),
             startWith({ width: 0, height: 0 }),
-            distinctUntilChanged((x, y) => x.width === y.width && x.height === y.height),
+            distinctUntilChanged(
+                (x, y) =>
+                    Math.abs(x.width - y.width) < 0.5 &&
+                    Math.abs(x.height - y.height) < 0.5
+            )
         );
     }
 
@@ -382,21 +474,44 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     getClassName(): string {
-        return clsx(['vlayout_' + this.props.parentView.viewType(), this.props.className, this.state.className]);
+        return clsx([
+            'vlayout_' + this.props.parentView.viewType(),
+            this.props.className,
+            this.state.className,
+        ]);
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+    render():
+        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+        | string
+        | number
+        | {}
+        | React.ReactNodeArray
+        | React.ReactPortal
+        | boolean
+        | null
+        | undefined {
         const extra = pick(this.state, 'id');
         return (
-            <div style={this.style()} id={this.state.id} className={this.className}
-                 ref={this.setViewRef} {...extra} />);
+            <div
+                style={this.style()}
+                id={this.state.id}
+                className={this.className}
+                ref={this.setViewRef}
+                {...extra}
+            />
+        );
     }
 
-    definesChildWidth(child: ReactView<ReactViewProps, ReactViewState>): boolean {
+    definesChildWidth(
+        child: ReactView<ReactViewProps, ReactViewState>
+    ): boolean {
         return false;
     }
 
-    definesChildHeight(child: ReactView<ReactViewProps, ReactViewState>): boolean {
+    definesChildHeight(
+        child: ReactView<ReactViewProps, ReactViewState>
+    ): boolean {
         return false;
     }
 
@@ -409,17 +524,33 @@ export class ReactView<P extends ReactViewProps, S extends ReactViewState> exten
     }
 
     protected isWidthDefined(): boolean {
-        return !!this.state.fixedSize?.width ||
-            (this.props.parentView.parent?.instance?.definesChildWidth(this) ?? false) ||
-            ((!!this.state.size?.height || !!this.state.fixedSize?.height || (this.props.parentView.parent?.instance?.definesChildHeight(this) ?? false))
-                && !!this.state.aspect);
+        return (
+            !!this.state.fixedSize?.width ||
+            (this.props.parentView.parent?.instance?.definesChildWidth(this) ??
+                false) ||
+            ((!!this.state.size?.height ||
+                !!this.state.fixedSize?.height ||
+                (this.props.parentView.parent?.instance?.definesChildHeight(
+                    this
+                ) ??
+                    false)) &&
+                !!this.state.aspect)
+        );
     }
 
     protected isHeightDefined(): boolean {
-        return !!this.state.fixedSize?.height ||
-            (this.props.parentView.parent?.instance?.definesChildHeight(this) ?? false) ||
-            ((!!this.state.size?.width || !!this.state.fixedSize?.width || (this.props.parentView.parent?.instance?.definesChildWidth(this) ?? false))
-                && !!this.state.aspect);
+        return (
+            !!this.state.fixedSize?.height ||
+            (this.props.parentView.parent?.instance?.definesChildHeight(this) ??
+                false) ||
+            ((!!this.state.size?.width ||
+                !!this.state.fixedSize?.width ||
+                (this.props.parentView.parent?.instance?.definesChildWidth(
+                    this
+                ) ??
+                    false)) &&
+                !!this.state.aspect)
+        );
     }
 }
 

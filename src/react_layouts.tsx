@@ -295,26 +295,17 @@ export class ReactLayer extends ReactContainer<
     }
 
     definesChildWidth(
-        child: ReactView<ReactViewProps, ReactViewState>
+        child: ReactView<ReactViewProps, ReactViewState>,
     ): boolean {
-        // console.log('isWidthDefined(', this._viewRef.value, ', child state:', child.state, ') = ', this.isWidthDefined());
-        return (
-            this.isWidthDefined() &&
-            (isNotNull(child.state.size?.width) ||
-                (isNotNull(child.state.padding?.left) &&
-                    isNotNull(child.state.padding?.right)))
-        );
+        return this.isWidthDefined() &&
+            (child.has('size.width') || (child.has('padding.left') && child.has('padding.right')));
     }
 
     definesChildHeight(
-        child: ReactView<ReactViewProps, ReactViewState>
+        child: ReactView<ReactViewProps, ReactViewState>,
     ): boolean {
-        return (
-            this.isHeightDefined() &&
-            (isNotNull(child.state.size?.height) ||
-                (isNotNull(child.state.padding?.top) &&
-                    isNotNull(child.state.padding?.bottom)))
-        );
+        return this.isHeightDefined() &&
+            (child.has('size.height') || (child.has('padding.top') && child.has('padding.bottom')));
     }
 
     render() {
