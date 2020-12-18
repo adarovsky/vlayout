@@ -22,17 +22,25 @@ export class ReactAbsoluteList extends ReactList<ReactListState> {
     }
 
     definesChildWidth(
-        child: ReactView<ReactViewProps, ReactViewState>,
+        child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return this.isWidthDefined() &&
-            (child.has('size.width') || (child.has('padding.left') && child.has('padding.right')));
+        return (
+            this.isWidthDefined() &&
+            (isNotNull(child.state.size?.width) ||
+                (isNotNull(child.state.padding?.left) &&
+                    isNotNull(child.state.padding?.right)))
+        );
     }
 
     definesChildHeight(
-        child: ReactView<ReactViewProps, ReactViewState>,
+        child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return this.isHeightDefined() &&
-            (child.has('size.height') || (child.has('padding.top') && child.has('padding.bottom')));
+        return (
+            this.isHeightDefined() &&
+            (isNotNull(child.state.size?.height) ||
+                (isNotNull(child.state.padding?.top) &&
+                    isNotNull(child.state.padding?.bottom)))
+        );
     }
 
     render() {

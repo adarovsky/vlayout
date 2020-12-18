@@ -8,7 +8,13 @@ import {
     View,
     ViewProperty,
 } from './view';
-import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import {
+    animationFrameScheduler,
+    BehaviorSubject,
+    combineLatest,
+    Observable,
+    Subscription,
+} from 'rxjs';
 import {
     debounceTime,
     distinctUntilChanged,
@@ -88,7 +94,10 @@ export class ReactView<
 
         this.subscription.add(
             combineLatest(props.map((p) => p.value!.sink))
-                .pipe(map((v) => this.styleValue(props, v)))
+                .pipe(
+                    debounceTime(1, animationFrameScheduler),
+                    map((v) => this.styleValue(props, v))
+                )
                 .subscribe((style) => {
                     this.setState({ style: style });
                 })
@@ -135,7 +144,7 @@ export class ReactView<
         const isInStack = this.props.parentView.parent instanceof StackLayout;
         this.subscription.add(
             combineLatest([this.safeIntrinsicSize(), this.viewRef])
-                .pipe(debounceTime(1))
+                .pipe(debounceTime(1, animationFrameScheduler))
                 .subscribe(([size, self]) => {
                     if (size.width > 0 && !this.isWidthDefined()) {
                         self.style.minWidth = size.width + 'px';

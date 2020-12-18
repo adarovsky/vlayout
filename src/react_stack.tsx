@@ -5,7 +5,7 @@ import {
     ReactViewProps,
     ReactViewState,
 } from './react_views';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import React from 'react';
 import { ViewProperty } from './view';
 import { ElementSize } from './resize_sensor';
@@ -32,7 +32,8 @@ export class ReactStackLayout extends ReactContainer<ReactContainerState> {
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        return this.children.pipe(
+        const selfSize = super.intrinsicSize();
+        const childSize = this.children.pipe(
             visibleChildrenSizes(),
             map(sizes => {
                 let maxHeight = 0;
@@ -48,6 +49,13 @@ export class ReactStackLayout extends ReactContainer<ReactContainerState> {
                     height: maxHeight,
                 };
             })
+        );
+
+        return combineLatest([selfSize, childSize]).pipe(
+            map(([self, children]) => ({
+                width: this.isWidthDefined() ? self.width : children.width,
+                height: this.isHeightDefined() ? self.height : children.height,
+            }))
         );
     }
 }
