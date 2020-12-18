@@ -4,10 +4,18 @@ import React from 'react';
 
 export class LayoutComponent extends ReactView<ReactViewProps, ReactViewState> {
     render() {
-        return <div style={this.style()} className={this.className} ref={x => this.setViewRef(x)}>
-            {this.props.children}
-        </div>;
+        const style = this.style();
+        if (!style.position) {
+            style.position = 'relative';
+        }
+        return (
+            <div
+                style={style}
+                className={this.className}
+                ref={(x) => this.setViewRef(x)}
+            >
+                {this.props.children}
+            </div>
+        );
     }
 }
-
-

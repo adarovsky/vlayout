@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Component } from 'react';
 import './App.css';
-import { Engine, Layout } from '../';
+import { Engine, Layout, LayoutComponent } from '../';
 import { interval, of } from 'rxjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { readFileSync } from 'fs';
-import { delay, map, pluck, scan, startWith, take } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 
 const layout = readFileSync(__dirname + '/test.vlayout', 'utf8');
 
@@ -62,7 +62,7 @@ class App extends Component {
         this.engine.registerInput(
             'counter',
             this.engine.numberType(),
-            interval(1000).pipe(map(v => v % 5))
+            interval(1000).pipe(map((v) => v % 5))
         );
         this.engine.registerInput(
             'test',
@@ -72,6 +72,12 @@ class App extends Component {
                 // startWith(null)
             )
         );
+
+        this.engine.registerView('testView', (parent) => (
+            <LayoutComponent parentView={parent}>
+                <div style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: '#cceeff'}}/>
+            </LayoutComponent>
+        ));
 
         this.engine.registerButton('inviteHostIFB', async () => {});
         this.engine.registerButton('toggleHostIFB', async () => {});
