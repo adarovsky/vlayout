@@ -16,7 +16,6 @@ import {
     map,
     startWith,
     switchMap,
-    tap,
 } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
@@ -155,22 +154,32 @@ export class ReactView<
         const p = this.props.parentView.property('aspect');
         if (p.value) {
             const parent = this.props.parentView;
-            const widthDefined =
-                this.has('fixedSize.width') ||
-                !!parent.parent?.instance?.definesChildWidth(this);
-
-            const heightDefined =
-                this.has('fixedSize.height') ||
-                !!parent.parent?.instance?.definesChildHeight(this);
 
             this.subscription.add(
                 combineLatest([
                     this.safeIntrinsicSize(),
-                    p.value.sink.pipe(distinctUntilChanged((x, y) => Math.abs(x - y) < 0.01)),
+                    p.value.sink.pipe(
+                        distinctUntilChanged((x, y) => Math.abs(x - y) < 0.01)
+                    ),
                     this.viewRef,
                 ])
                     .pipe(debounceTime(1))
                     .subscribe(([size, aspect, self]) => {
+                        const widthDefined =
+                            isNotNull(this.state.fixedSize?.width) ||
+                            !!parent.parent?.instance?.definesChildWidth(this);
+
+                        const heightDefined =
+                            isNotNull(this.state.fixedSize?.height) ||
+                            !!parent.parent?.instance?.definesChildHeight(this);
+
+                        console.log(
+                            'height defined:',
+                            heightDefined,
+                            'for',
+                            this._viewRef.value
+                        );
+
                         this.setState({ aspect: aspect });
                         if (widthDefined && !heightDefined) {
                             self.style.height =
@@ -545,11 +554,13 @@ export class ReactView<
                 false) ||
             ((!!this.state.size?.width ||
                 !!this.state.fixedSize?.width ||
+                (isNotNull(this.state.padding?.left) &&
+                    isNotNull(this.state.padding?.right)) ||
                 (this.props.parentView.parent?.instance?.definesChildWidth(
                     this
                 ) ??
                     false)) &&
-                !!this.state.aspect)
+                isNotNull(this.state.aspect))
         );
     }
 }

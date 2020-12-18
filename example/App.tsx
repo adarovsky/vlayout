@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Component } from 'react';
 import './App.css';
 import { Engine, Layout, LayoutComponent } from '../';
-import { interval, of } from 'rxjs';
+import { fromEvent, interval, of } from 'rxjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { readFileSync } from 'fs';
-import { delay, map } from 'rxjs/operators';
+import { delay, map, startWith } from 'rxjs/operators';
 
 const layout = readFileSync(__dirname + '/test.vlayout', 'utf8');
 
@@ -20,6 +20,23 @@ class App extends Component {
 
     constructor(props: any) {
         super(props);
+
+        this.engine.registerInput(
+            'window.width',
+            this.engine.numberType(),
+            fromEvent(window, 'resize').pipe(
+                startWith(window.innerWidth),
+                map((e) => window.innerWidth)
+            )
+        );
+        this.engine.registerInput(
+            'window.height',
+            this.engine.numberType(),
+            fromEvent(window, 'resize').pipe(
+                startWith(window.innerHeight),
+                map((e) => window.innerHeight)
+            )
+        );
 
         this.engine.registerList('TestList', {
             item: {
@@ -75,7 +92,14 @@ class App extends Component {
 
         this.engine.registerView('testView', (parent) => (
             <LayoutComponent parentView={parent}>
-                <div style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: '#cceeff'}}/>
+                <div
+                    style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: '#cceeff',
+                    }}
+                />
             </LayoutComponent>
         ));
 
