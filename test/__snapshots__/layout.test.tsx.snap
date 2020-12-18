@@ -25,7 +25,7 @@ exports[`layout should center view when paddings explicitly set to nil 1`] = `
 exports[`layout should center view when paddings explicitly set to nil 2`] = `
 <div
   class="vlayout_roundRect"
-  style="position: absolute; z-index: 1; background-color: rgb(255, 204, 204); box-sizing: border-box; left: 50%; transform: translateX(-50%) translateY(-50%); top: 50%; width: 120px; height: 80px;"
+  style="position: absolute; left: 50%; z-index: 1; top: 50%; background-color: rgb(255, 204, 204); box-sizing: border-box; transform: translateX(-50%) translateY(-50%); width: 120px; height: 80px;"
 >
   <div
     style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"

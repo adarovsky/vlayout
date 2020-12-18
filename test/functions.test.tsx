@@ -1,6 +1,6 @@
 import { mount, shallow } from 'enzyme';
 import { Engine, Layout } from '../src';
-import { Subject } from 'rxjs';
+import { Subject, timer } from 'rxjs';
 import React from 'react';
 import { ReactLabel } from '../src/react_primitives';
 
@@ -257,6 +257,8 @@ it('function calls should be independent 1', async () => {
      }`}/>);
 
     test1.next(4);
+
+    await timer(10).toPromise();
 
     expect(wrapper.find(ReactLabel).at(0).state().style.top).toBe('25%');
     expect(wrapper.find(ReactLabel).at(1).state().style.top).toBe('25%');
