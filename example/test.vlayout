@@ -13,43 +13,41 @@ inputs {
     counter: Number
     test: String
     testList: TestList
+    window {
+        height: Number
+        width: Number
+    }
 }
 
 properties {
-    outerTickerHeadline: "Sample headline"
-    outerTickerContent: ""
-    session {
-        hostIFBJoined: false
-        hostIFBOn: false
-    }
-    topOffset: 0
-    bottomOffset: 0
     prefix: ""
+    screen {
+        bottomHeight: 100
+        aspect: window.width / (window.height - screen.bottomHeight)
+    }
 }
 
 layout {
     layer {
-        id: "test"
+        id: "main"
+        backgroundColor: #1c192c
 
-        vertical {
-            padding { top: 50 left: 16 right: 16 bottom: 50 }
-
-            absolute {
-                sizePolicy: .stretched
-
-                label {
-                    center { y: 0.5 }
-                    padding { left: 30 right: 30 }
-                    text: "game.final.question"
-                    textColor: #1c192c
-                    font: Font("helvetica,sans-serif", 24)
-                    textAlignment: .center
-                }
+        absolute {
+            center { x: 0.5 }
+            padding { top: 0 }
+            aspect: 2
+            size {
+                width: screen.aspect > 2 ? nil : 1
+                height: screen.aspect <= 2 ? nil : (window.height - screen.bottomHeight) / window.height
             }
 
-            testView {
-                aspect: 1
-            }
+            backgroundColor: #cceeff
+        }
+
+        absolute {
+            padding { left: 0 bottom: 0 right: 0 }
+            fixedSize { height: screen.bottomHeight }
+            backgroundColor: #323040
         }
     }
 }

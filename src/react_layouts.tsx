@@ -8,7 +8,7 @@ import {
 import { Container, ViewProperty } from './view';
 import React, { CSSProperties } from 'react';
 import { ReactStackLayout } from './react_stack';
-import { fromEvent, Observable } from 'rxjs';
+import { combineLatest, fromEvent, Observable } from 'rxjs';
 import { ElementSize } from './resize_sensor';
 import { map, startWith } from 'rxjs/operators';
 import ReactDOM from 'react-dom';
@@ -98,7 +98,8 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        return this.children.pipe(
+        const selfSize = super.intrinsicSize();
+        const childSize = this.children.pipe(
             visibleChildrenSizes(),
             map((sizes) => {
                 let maxHeight = 0;
@@ -115,6 +116,13 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
                 };
             })
         );
+
+        return combineLatest([selfSize, childSize]).pipe(
+            map(([self, children]) => ({
+                width: this.isWidthDefined() ? self.width : children.width,
+                height: this.isHeightDefined() ? self.height : children.height,
+            }))
+        );
     }
 
     definesChildWidth(
@@ -130,7 +138,7 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
     definesChildHeight(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return this.isHeightDefined();
+        return this.isHeightDefined() && this.state.alignment === 'fill';
     }
 
     protected spacerStyle(): CSSProperties {
@@ -178,7 +186,8 @@ export class ReactVerticalLayout extends ReactLinearLayout {
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        return this.children.pipe(
+        const selfSize = super.intrinsicSize();
+        const childSize = this.children.pipe(
             visibleChildrenSizes(),
             map((sizes) => {
                 let maxHeight = 0;
@@ -195,12 +204,19 @@ export class ReactVerticalLayout extends ReactLinearLayout {
                 };
             })
         );
+
+        return combineLatest([selfSize, childSize]).pipe(
+            map(([self, children]) => ({
+                width: this.isWidthDefined() ? self.width : children.width,
+                height: this.isHeightDefined() ? self.height : children.height,
+            }))
+        );
     }
 
     definesChildWidth(
         child: ReactView<ReactViewProps, ReactViewState>
     ): boolean {
-        return this.isWidthDefined();
+        return this.isWidthDefined() && this.state.alignment === 'fill';
     }
 
     definesChildHeight(

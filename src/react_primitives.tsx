@@ -152,6 +152,9 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
                 deleteProperty(r, t);
             }
         }
+        else {
+            r.width = '100%';
+        }
 
         r.opacity = 0;
         r.pointerEvents = 'none';

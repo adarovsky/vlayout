@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 describe('label', () => {
-    it('should contain id if set', async function() {
+    it('should contain id if set', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -59,7 +59,7 @@ describe('label', () => {
         `);
     });
 
-    it('should contain class if set', async function() {
+    it('should contain class if set', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -101,7 +101,7 @@ describe('label', () => {
         `);
     });
 
-    it('should have wrapping shadow if width is set', async function() {
+    it('should have wrapping shadow if width is set', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -132,7 +132,7 @@ describe('label', () => {
               </span>
               <div
                 class="vlayout_label_shadow"
-                style="position: absolute; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; width: 100px; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+                style="position: absolute; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; width: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
               >
                 <span>
                   test label
@@ -143,7 +143,7 @@ describe('label', () => {
         `);
     });
 
-    it('concatenated strings whould work', async function() {
+    it('concatenated strings whould work', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -186,7 +186,7 @@ describe('label', () => {
         `);
     });
 
-    it('localized string should work', async function() {
+    it('localized string should work', async function () {
         const source = new Subject<string>();
         engine!.registerInput('source', engine!.stringType(), source);
         const wrapper = mount(
@@ -280,7 +280,7 @@ describe('label', () => {
         `);
     });
 
-    it('should not accept label of wrong type', async function() {
+    it('should not accept label of wrong type', async function () {
         const wrapper = () =>
             shallow(
                 <Layout
