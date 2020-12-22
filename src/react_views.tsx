@@ -90,6 +90,8 @@ export class ReactView<
     componentDidMount(): void {
         this.props.parentView.instance = this;
 
+        this.wire('aspect', 'aspect', identity);
+
         const props = this.styleProperties();
 
         this.subscription.add(
@@ -170,9 +172,9 @@ export class ReactView<
                     p.value.sink.pipe(
                         distinctUntilChanged((x, y) => Math.abs(x - y) < 0.01)
                     ),
-                    this.viewRef,
+                    this.viewRef.pipe(distinctUntilChanged()),
                 ])
-                    .pipe(debounceTime(1))
+                    .pipe(debounceTime(1, animationFrameScheduler))
                     .subscribe(([size, aspect, self]) => {
                         const widthDefined =
                             isNotNull(this.state.fixedSize?.width) ||
@@ -182,30 +184,24 @@ export class ReactView<
                             isNotNull(this.state.fixedSize?.height) ||
                             !!parent.parent?.instance?.definesChildHeight(this);
 
-                        console.log(
-                            'height defined:',
-                            heightDefined,
-                            'for',
-                            this._viewRef.value
-                        );
-
-                        this.setState({ aspect: aspect });
                         if (widthDefined && !heightDefined) {
-                            self.style.height =
+                            self.style.height = self.style.minHeight = self.style.maxHeight =
                                 aspect !== null
                                     ? `${size.width / aspect}px`
                                     : '';
                         } else if (!widthDefined && heightDefined) {
-                            self.style.width =
+                            self.style.width = self.style.minWidth = self.style.maxWidth =
                                 aspect !== null
                                     ? `${size.height * aspect}px`
                                     : '';
                         } else if (!widthDefined && !heightDefined) {
                             if (self.style.width) {
-                                self.style.width = '';
+                                self.style.width = self.style.minWidth = self.style.maxWidth =
+                                    '';
                             }
                             if (self.style.height) {
-                                self.style.height = '';
+                                self.style.height = self.style.minHeight = self.style.maxHeight =
+                                    '';
                             }
                         }
                     })
@@ -296,7 +292,7 @@ export class ReactView<
                             (x) => x === 'padding.left'
                         );
                         if (index >= 0 && value[index] !== null) {
-                            r.width = `calc(2*(${val * 100}% - ${
+                            r.width = r.minWidth = r.maxWidth = `calc(2*(${val * 100}% - ${
                                 value[index]
                             }px))`;
                         } else {
@@ -304,7 +300,7 @@ export class ReactView<
                                 (x) => x === 'padding.right'
                             );
                             if (index >= 0 && value[index] !== null) {
-                                r.width = `calc(2*(${(1 - val) * 100}% - ${
+                                r.width = r.minWidth = r.maxWidth = `calc(2*(${(1 - val) * 100}% - ${
                                     value[index]
                                 }px))`;
                             } else {
@@ -323,7 +319,7 @@ export class ReactView<
                             (x) => x === 'padding.top'
                         );
                         if (index >= 0 && value[index] !== null) {
-                            r.height = `calc(2*(${val * 100}% - ${
+                            r.height = r.minHeight = r.maxHeight = `calc(2*(${val * 100}% - ${
                                 value[index]
                             }px))`;
                         } else {
@@ -331,7 +327,7 @@ export class ReactView<
                                 (x) => x === 'padding.bottom'
                             );
                             if (index >= 0 && value[index] !== null) {
-                                r.height = `calc(2*(${(1 - val) * 100}% - ${
+                                r.height = r.minHeight = r.maxHeight = `calc(2*(${(1 - val) * 100}% - ${
                                     value[index]
                                 }px))`;
                             } else {
@@ -345,22 +341,22 @@ export class ReactView<
                     break;
 
                 case 'fixedSize.width':
-                    if (val !== null) r.width = `${val}px`;
+                    if (val !== null) r.width = r.minWidth = r.maxWidth = `${val}px`;
                     break;
 
                 case 'fixedSize.height':
-                    if (val !== null) r.height = `${val}px`;
+                    if (val !== null) r.height = r.minHeight = r.maxHeight = `${val}px`;
                     break;
 
                 case 'size.width':
                     if (isAbsolute(view.parent) && val !== null) {
-                        r.width = `${val * 100}%`;
+                        r.width = r.minWidth = r.maxWidth = `${val * 100}%`;
                     }
                     break;
 
                 case 'size.height':
                     if (isAbsolute(view.parent) && val !== null) {
-                        r.height = `${val * 100}%`;
+                        r.height = r.minHeight = r.maxHeight = `${val * 100}%`;
                     }
                     break;
 

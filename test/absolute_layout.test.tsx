@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 describe('absolute', () => {
-    it('should autoresize to padded subview', async function() {
+    it('should autoresize to padded subview', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -45,7 +45,7 @@ describe('absolute', () => {
         expect(node.getDOMNode()).toHaveProperty('style.min-height', '40px');
     });
 
-    it('should not autoresize to padded subview if size is set', async function() {
+    it('should not autoresize to padded subview if size is set', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -75,7 +75,7 @@ describe('absolute', () => {
         expect(node.getDOMNode()).toHaveProperty('style.height', '20px');
     });
 
-    it("should give z-indexes to children when it's layer", async function() {
+    it("should give z-indexes to children when it's layer", async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -99,12 +99,12 @@ describe('absolute', () => {
 
         const node1 = wrapper.find('#rect1');
         expect(node1.getDOMNode()).toMatchInlineSnapshot(`
-                  <div
-                    class="vlayout_roundRect"
-                    id="rect1"
-                    style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; width: 30px; height: 20px; box-sizing: border-box;"
-                  />
-            `);
+            <div
+              class="vlayout_roundRect"
+              id="rect1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-width: 30px; min-width: 30px; width: 30px; max-height: 20px; min-height: 20px; height: 20px; box-sizing: border-box;"
+            />
+        `);
 
         const node2 = wrapper.find('#rect2');
         expect(node2.getDOMNode()).toMatchInlineSnapshot(`
@@ -116,7 +116,7 @@ describe('absolute', () => {
             `);
     });
 
-    it('should give z-indexes to children', async function() {
+    it('should give z-indexes to children', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -142,12 +142,12 @@ describe('absolute', () => {
 
         const node1 = wrapper.find('#rect1');
         expect(node1.getDOMNode()).toMatchInlineSnapshot(`
-                  <div
-                    class="vlayout_roundRect"
-                    id="rect1"
-                    style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; width: 30px; height: 20px; box-sizing: border-box;"
-                  />
-            `);
+            <div
+              class="vlayout_roundRect"
+              id="rect1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-width: 30px; min-width: 30px; width: 30px; max-height: 20px; min-height: 20px; height: 20px; box-sizing: border-box;"
+            />
+        `);
 
         const node2 = wrapper.find('#rect2');
         expect(node2.getDOMNode()).toMatchInlineSnapshot(`
@@ -159,7 +159,7 @@ describe('absolute', () => {
             `);
     });
 
-    it('should support interactive option', async function() {
+    it('should support interactive option', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -186,7 +186,7 @@ describe('absolute', () => {
             >
               <div
                 class="vlayout_roundRect"
-                style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; width: 30px; height: 20px; box-sizing: border-box;"
+                style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-width: 30px; min-width: 30px; width: 30px; max-height: 20px; min-height: 20px; height: 20px; box-sizing: border-box;"
               />
             </div>
         `);

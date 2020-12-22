@@ -30,24 +30,20 @@ properties {
 layout {
     layer {
         id: "main"
-        backgroundColor: #1c192c
 
         absolute {
-            center { x: 0.5 }
-            padding { top: 0 }
-            aspect: 2
-            size {
-                width: screen.aspect > 2 ? nil : 1
-                height: screen.aspect <= 2 ? nil : (window.height - screen.bottomHeight) / window.height
+            padding { left: 0 top: 0 bottom: 0 }
+            size { width: 0.5 }
+            id: "instructing_users"
+
+            testView {
+                //backgroundColor: #1c192c
+
+                padding { top: 56 bottom: 56 }
+                aspect: 9/16
+                center { x: 0.5 y: 0.5 }
             }
-
-            backgroundColor: #cceeff
         }
 
-        absolute {
-            padding { left: 0 bottom: 0 right: 0 }
-            fixedSize { height: screen.bottomHeight }
-            backgroundColor: #323040
-        }
     }
 }

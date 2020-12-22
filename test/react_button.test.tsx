@@ -62,7 +62,7 @@ describe('button', () => {
         let done: (() => void) | null = null;
         engine!.registerButton(
             'myButton',
-            () => new Promise<void>(x => (done = x))
+            () => new Promise<void>((x) => (done = x))
         );
         const spy = sinon.spy(ReactButton.prototype, 'setState');
         const wrapper = mount(
@@ -134,7 +134,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -199,7 +199,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -273,7 +273,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row-reverse; justify-content: stretch;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row-reverse; justify-content: stretch;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -343,7 +343,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -369,7 +369,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -395,7 +395,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button disabled"
-              style="pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: not-allowed; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+              style="pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; box-sizing: border-box; display: flex; cursor: not-allowed; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -451,7 +451,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -477,7 +477,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -508,7 +508,7 @@ describe('button', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; box-sizing: border-box; display: flex; cursor: pointer; align-items: center; text-decoration: none; flex-direction: row; justify-content: center;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
@@ -570,7 +570,7 @@ describe('button', () => {
             <div
               class="vlayout_button"
               id="my_button"
-              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
+              style="pointer-events: auto; position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-height: 50px; min-height: 50px; height: 50px; border-color: rgb(204, 221, 238); border-width: 3px; border-style: solid; box-sizing: border-box; display: flex; cursor: pointer; padding: 15px 10px 10px 10px; align-items: center; text-decoration: none; flex-direction: row; justify-content: stretch;"
             >
               <div
                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"

@@ -124,7 +124,7 @@ describe('label', () => {
         expect(node.getDOMNode()).toMatchInlineSnapshot(`
             <div
               class="vlayout_label"
-              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; width: 100px; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; max-width: 100px; min-width: 100px; width: 100px; text-align: start; overflow: hidden; text-overflow: ellipsis;"
             >
               <span>
                 test label
@@ -132,7 +132,7 @@ describe('label', () => {
               </span>
               <div
                 class="vlayout_label_shadow"
-                style="position: absolute; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; width: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+                style="position: absolute; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; max-width: 100px; min-width: 100px; width: 100%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
               >
                 <span>
                   test label
