@@ -148,16 +148,16 @@ export class ReactView<
             combineLatest([this.safeIntrinsicSize(), this.viewRef])
                 .pipe(debounceTime(1, animationFrameScheduler))
                 .subscribe(([size, self]) => {
-                    if (size.width > 0 && !this.isWidthDefined()) {
-                        self.style.minWidth = size.width + 'px';
-                    } else {
-                        self.style.minWidth = isInStack ? '100%' : '';
+                    if (!this.isWidthDefined()) {
+                        self.style.minWidth = size.width > 0 ? size.width + 'px' : '';
+                    } else if (isInStack) {
+                        self.style.minWidth = '100%';
                     }
 
-                    if (size.height > 0 && !this.isHeightDefined()) {
-                        self.style.minHeight = size.height + 'px';
-                    } else {
-                        self.style.minHeight = isInStack ? '100%' : '';
+                    if (!this.isHeightDefined()) {
+                        self.style.minHeight = size.height > 0 ? size.height + 'px' : '';
+                    } else if (isInStack) {
+                        self.style.minHeight = '100%';
                     }
                 })
         );

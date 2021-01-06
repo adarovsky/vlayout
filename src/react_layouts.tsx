@@ -142,7 +142,11 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
     }
 
     protected spacerStyle(): CSSProperties {
-        return { width: this.state.spacing + 'px' };
+        return {
+            width: this.state.spacing + 'px',
+            minWidth: this.state.spacing + 'px',
+            maxWidth: this.state.spacing + 'px',
+        };
     }
 }
 
@@ -230,7 +234,11 @@ export class ReactVerticalLayout extends ReactLinearLayout {
     }
 
     protected spacerStyle(): CSSProperties {
-        return { height: this.state.spacing + 'px' };
+        return {
+            height: this.state.spacing + 'px',
+            minHeight: this.state.spacing + 'px',
+            maxHeight: this.state.spacing + 'px',
+        };
     }
 }
 
