@@ -4,7 +4,7 @@ import {
     ReactViewProps,
     ReactViewState,
 } from './react_views';
-import { List, ListItemPrototype, ListModelItem, prototypeMatch } from './list';
+import { List, ListItemPrototype, ListModelItem, modelItemsEqual, prototypeMatch } from './list';
 import { ReactAbsoluteLayout } from './react_absolute';
 import React from 'react';
 import { Container, LinearLayoutAxis, ViewProperty } from './view';
@@ -14,7 +14,15 @@ import { ReactButtonBase, ReactButtonState } from './react_button';
 import { ViewListReference } from './view_reference';
 import { ReactTextFieldBase, ReactTextFieldState } from './react_text';
 import { Dictionary } from './types';
-import { identity, isEqual, partition, toPairs } from 'lodash';
+import {
+    identity,
+    isEqual,
+    isEqualWith,
+    isPlainObject,
+    partition,
+    toPairs,
+} from 'lodash';
+import { distinctUntilChanged, tap } from 'rxjs/operators';
 
 //import FlipMove from "react-flip-move";
 
@@ -134,27 +142,46 @@ export class ReactList<S extends ReactListState> extends ReactView<
             this.wire('spacing', 'spacing', identity);
         }
         this.subscription.add(
-            parentList.model!.sink.subscribe(arr => {
-                const newModelItems = arr as Dictionary<ListModelItem>[];
-                const [reuse, extra] = partition(
-                    this.state.childItems,
-                    x => newModelItems.findIndex(y => prototypeMatch(x, y)) >= 0
-                );
+            parentList
+                .model!.sink.pipe(
+                    distinctUntilChanged(
+                        (
+                            a1: Dictionary<ListModelItem>[],
+                            a2: Dictionary<ListModelItem>[]
+                        ) =>
+                            isEqualWith(a1, a2, (x, y) =>
+                                isPlainObject(x) && isPlainObject(y)
+                                    ? modelItemsEqual(x, y)
+                                    : undefined
+                            )
+                    )
+                )
+                .subscribe((arr) => {
+                    const newModelItems = arr as Dictionary<ListModelItem>[];
+                    const [reuse, extra] = partition(
+                        this.state.childItems,
+                        (x) =>
+                            newModelItems.findIndex((y) =>
+                                prototypeMatch(x, y)
+                            ) >= 0
+                    );
 
-                extra.forEach(p => parentList.returnReusableItem(p));
+                    extra.forEach((p) => parentList.returnReusableItem(p));
 
-                const newItems = newModelItems.map((m, index) => {
-                    let item = reuse.find(proto => prototypeMatch(proto, m));
-                    if (!item) {
-                        item = parentList.requestReusableItem(m, index);
-                    }
-                    const [key, v] = toPairs(m)[0];
-                    item.setModelItem(v as ListModelItem, index);
+                    const newItems = newModelItems.map((m, index) => {
+                        let item = reuse.find((proto) =>
+                            prototypeMatch(proto, m)
+                        );
+                        if (!item) {
+                            item = parentList.requestReusableItem(m, index);
+                        }
+                        const [key, v] = toPairs(m)[0];
+                        item.setModelItem(v as ListModelItem, index);
 
-                    return item;
-                });
-                this.setState({ childItems: newItems });
-            })
+                        return item;
+                    });
+                    this.setState({ childItems: newItems });
+                })
         );
     }
 

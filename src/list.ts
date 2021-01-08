@@ -16,9 +16,11 @@ import { ReactVerticalList } from './react_vertical_list';
 import { ReactAbsoluteList } from './react_absolute_list';
 import { PrototypeCache } from './prototype_cache';
 import { forIn, get, toPairs } from 'lodash';
+import { isNotNull } from './utils';
 
 export interface ListModelItem extends Dictionary<any> {
     id: string;
+    isEqual?: (other: ListModelItem) => boolean;
 }
 
 abstract class ListBasicAccessor extends Expression {
@@ -95,13 +97,12 @@ class ListIndexAccessor extends ListBasicAccessor {
 }
 
 export class ListItemPrototype extends AbsoluteLayout implements Scope {
-
     accessors: Dictionary<ListBasicAccessor> = {};
     modelItem = new ReplaySubject<ListModelItem>(1);
     modelItemSnapshot: ListModelItem | null = null;
     index = new ReplaySubject<number>(1);
 
-    constructor(readonly  name: LexIdentifier, readonly layout: Layout) {
+    constructor(readonly name: LexIdentifier, readonly layout: Layout) {
         super();
         this.line = name.line;
         this.column = name.column;
@@ -113,20 +114,34 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     }
 
     get target(): React.ReactElement {
-        return createElement(ReactListItemPrototype, { parentView: this, key: this.name.content + '-' + this.key });
+        return createElement(ReactListItemPrototype, {
+            parentView: this,
+            key: this.name.content + '-' + this.key,
+        });
     }
 
     linkPrototype(scope: Scope, model: Variable): void {
-        const modelItem = (model.typeDefinition! as ListDefinition).values[this.name.content];
+        const modelItem = (model.typeDefinition! as ListDefinition).values[
+            this.name.content
+        ];
         if (modelItem) {
             this.buildAccessors(model.sink, modelItem, '');
         } else {
-            throw new LinkError(this.line, this.column, `cannot find prototype ${this.name.content} in model ${model.typeDefinition!.typeName}`);
+            throw new LinkError(
+                this.line,
+                this.column,
+                `cannot find prototype ${this.name.content} in model ${
+                    model.typeDefinition!.typeName
+                }`
+            );
         }
     }
 
     instantiate(): this {
-        const v = new (this.constructor as typeof ListItemPrototype)(this.name, this.layout);
+        const v = new (this.constructor as typeof ListItemPrototype)(
+            this.name,
+            this.layout
+        );
         v.copyFrom(this);
         return v as this;
     }
@@ -134,31 +149,51 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
     copyFrom(what: this): void {
         super.copyFrom(what);
         this.accessors = {};
-        forIn(what.accessors, a => this.accessors[a.keyPath] = a.instantiate());
+        forIn(
+            what.accessors,
+            (a) => (this.accessors[a.keyPath] = a.instantiate())
+        );
     }
 
     linkModel(): void {
         super.link(this);
     }
 
-    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI {
+    functionFor(
+        name: string,
+        parameters: TypeDefinition[]
+    ): FunctionImplementationI {
         return this.layout.functionFor(name, parameters);
     }
 
-    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[] {
+    functionsLoose(
+        name: string,
+        parametersCount: number
+    ): FunctionImplementationI[] {
         return this.layout.functionsLoose(name, parametersCount);
     }
 
     variableForKeyPath(keyPath: string): Expression | null {
-        return this.accessors[keyPath] || this.layout.variableForKeyPath(keyPath);
+        return (
+            this.accessors[keyPath] || this.layout.variableForKeyPath(keyPath)
+        );
     }
 
     setModelItem(modelItem: ListModelItem, index: number): void {
         // this._key = uuid_v1();
-        this._key = modelItem.id;
+        const equal =
+            modelItem === this.modelItemSnapshot ||
+            (isNotNull(this.modelItemSnapshot) &&
+                modelItemsEqual(modelItem, this.modelItemSnapshot));
+
+        if (!equal) {
+            this._key = modelItem.id;
+        }
         this.index.next(index);
-        this.modelItem.next(modelItem);
-        this.modelItemSnapshot = modelItem;
+        if (!equal) {
+            this.modelItem.next(modelItem);
+            this.modelItemSnapshot = modelItem;
+        }
     }
 
     viewType(): string {
@@ -173,7 +208,11 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         return this.layout.viewForKey(key);
     }
 
-    private buildAccessors(source: Observable<any>, structure: ListDefinitionItem, prefix: string): void {
+    private buildAccessors(
+        source: Observable<any>,
+        structure: ListDefinitionItem,
+        prefix: string
+    ): void {
         forIn(structure, (value, key) => {
             const path = prefix.length > 0 ? prefix + '.' + key : key;
             if (value instanceof TypeDefinition) {
@@ -323,4 +362,18 @@ export class List extends View {
 export function prototypeMatch(proto: ListItemPrototype, modelItem: Dictionary<ListModelItem>) {
     const [key, value] = toPairs(modelItem)[0];
     return key === proto.name.content && value.id === proto.modelItemSnapshot?.id;
+}
+
+export function modelItemsEqual(
+    x: Dictionary<ListModelItem>,
+    y: Dictionary<ListModelItem>
+): boolean {
+    const [key1, value1] = toPairs(x)[0];
+    const [key2, value2] = toPairs(y)[0];
+    return (
+        key1 === key2 &&
+        (value1 === value2 ||
+            (isNotNull(value1.isEqual) && value1.isEqual(value2)) ||
+            (isNotNull(value2.isEqual) && value2.isEqual(value1)))
+    );
 }
