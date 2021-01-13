@@ -184,7 +184,7 @@ export class ListItemPrototype extends AbsoluteLayout implements Scope {
         const equal =
             modelItem === this.modelItemSnapshot ||
             (isNotNull(this.modelItemSnapshot) &&
-                modelItemsEqual(modelItem, this.modelItemSnapshot));
+                modelItemsEqual({item: modelItem}, {item: this.modelItemSnapshot}));
 
         if (!equal) {
             this._key = modelItem.id;

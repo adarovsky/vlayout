@@ -1,4 +1,6 @@
 bindings {
+    confirmationRejectButton: button
+    confirmationAcceptButton: button
 }
 
 types {
@@ -29,22 +31,66 @@ properties {
 
 layout {
     layer {
-        id: "main"
-
-        verticalList {
-            padding { left: 0 right: 0 }
-            size { width: 0.5 height: 0.5 }
-            center { y: 0.5 }
-            model: testList
-
-            item {
-                fixedSize { height: 60 }
-                label {
-                    center { x: 0.5 y: 0.5 }
-                    text: name
+        id: "modal-dialogs"
+        z_order: 18
+        fullscreen: true
+        backgroundColor: Color(#000000, 0.5)
+        absolute{
+            center {x: 0.5 y: 0.5}
+            fixedSize {width: 500}
+            roundRect{
+                padding {left: 0 top: 0 bottom: 0 right: 0}
+                backgroundColor:#ffffff
+                cornerRadius: 16
+            }
+            vertical{
+                padding {left: 40 top: 40 bottom: 40 right: 40}
+                spacing: 30
+                //alignment: .center
+                label{
+                    text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book"
+                    textAlignment: .center
+                    textColor: #1c192c
+                    font: Font("CentraNo2", 22)
+                    maxLines: 5
+                    textAlignment: .center
+                }
+                label{
+                    text: "This action cannot be undone"
+                    textAlignment: .center
+                    textColor: #1c192c
+                    font: Font("SFProDisplayLight", 18)
+                }
+                roundRect{
+                    fixedSize{width: 10 height: 5}
+                }
+                horizontal{
+                    spacing: 20
+                    roundRect {
+                        sizePolicy: .stretched
+                    }
+                    confirmationRejectButton{
+                        text: "CANCEL"
+                        textColor: #fa6d41
+                        strokeColor: #fa6d41
+                        strokeWidth: 2
+                        font: Font("CentraNo2", 16)
+                        cornerRadius: 16
+                        contentPadding {left: 24 top: 16 right: 24 bottom: 16}
+                    }
+                    confirmationAcceptButton{
+                        text: "ACCEPT"
+                        textColor: #ffffff
+                        font: Font("CentraNo2", 16)
+                        cornerRadius: 16
+                        backgroundColor: #fa6d41
+                        contentPadding {left: 24 top: 16 right: 24 bottom: 16}
+                    }
+                    roundRect {
+                        sizePolicy: .stretched
+                    }
                 }
             }
         }
-
     }
 }

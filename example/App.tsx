@@ -20,16 +20,16 @@ class TestItem implements ListModelItem {
     internal: Observable<number>;
 
     constructor(readonly index: number) {
-        this.id = `${index}`
+        this.id = `${index}`;
         this.internal = of(Math.random());
     }
 
     get name() {
-        return `Item-${this.index + 1}`
+        return `Item-${this.index + 1}`;
     }
 
     isEqual(other: ListModelItem): boolean {
-        return other instanceof TestItem && other.id === this.id
+        return other instanceof TestItem && other.id === this.id;
     }
 }
 
@@ -123,8 +123,8 @@ class App extends Component {
             </LayoutComponent>
         ));
 
-        this.engine.registerButton('inviteHostIFB', async () => {});
-        this.engine.registerButton('toggleHostIFB', async () => {});
+        this.engine.registerButton('confirmationRejectButton', async () => {});
+        this.engine.registerButton('confirmationAcceptButton', async () => {});
     }
 
     render() {
