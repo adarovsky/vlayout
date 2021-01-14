@@ -151,13 +151,13 @@ export class ReactView<
                     if (!this.isWidthDefined()) {
                         self.style.minWidth = size.width > 0 ? size.width + 'px' : '';
                     } else if (isInStack) {
-                        self.style.minWidth = '100%';
+                        self.style.width = self.style.minWidth = '100%';
                     }
 
                     if (!this.isHeightDefined()) {
                         self.style.minHeight = size.height > 0 ? size.height + 'px' : '';
                     } else if (isInStack) {
-                        self.style.minHeight = '100%';
+                        self.style.height = self.style.minHeight = '100%';
                     }
                 })
         );
@@ -404,6 +404,8 @@ export class ReactView<
                 r.minHeight = '100%';
                 r.maxWidth = '100%';
                 r.maxHeight = '100%';
+                r.height = '100%';
+                r.width = '100%';
             } else if (this.props.parentView.parent instanceof AbsoluteLayout) {
                 const index = this.props.parentView.parent.views.indexOf(
                     this.props.parentView
