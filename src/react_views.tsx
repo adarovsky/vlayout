@@ -97,7 +97,7 @@ export class ReactView<
         this.subscription.add(
             combineLatest(props.map((p) => p.value!.sink))
                 .pipe(
-                    debounceTime(1, animationFrameScheduler),
+                    debounceTime(1),
                     map((v) => this.styleValue(props, v))
                 )
                 .subscribe((style) => {
@@ -146,18 +146,18 @@ export class ReactView<
         const isInStack = this.props.parentView.parent instanceof StackLayout;
         this.subscription.add(
             combineLatest([this.safeIntrinsicSize(), this.viewRef])
-                .pipe(debounceTime(1, animationFrameScheduler))
+                .pipe(debounceTime(1))
                 .subscribe(([size, self]) => {
                     if (!this.isWidthDefined()) {
                         self.style.minWidth = size.width > 0 ? size.width + 'px' : '';
                     } else if (isInStack) {
-                        self.style.width = self.style.minWidth = '100%';
+                        self.style.width = self.style.minWidth = self.style.maxWidth = '100%';
                     }
 
                     if (!this.isHeightDefined()) {
                         self.style.minHeight = size.height > 0 ? size.height + 'px' : '';
                     } else if (isInStack) {
-                        self.style.height = self.style.minHeight = '100%';
+                        self.style.height = self.style.minHeight = self.style.maxHeight = '100%';
                     }
                 })
         );
@@ -174,7 +174,7 @@ export class ReactView<
                     ),
                     this.viewRef.pipe(distinctUntilChanged()),
                 ])
-                    .pipe(debounceTime(1, animationFrameScheduler))
+                    .pipe(debounceTime(1))
                     .subscribe(([size, aspect, self]) => {
                         const widthDefined =
                             isNotNull(this.state.fixedSize?.width) ||
