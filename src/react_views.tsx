@@ -9,18 +9,18 @@ import {
     ViewProperty,
 } from './view';
 import {
-    animationFrameScheduler,
+    asyncScheduler,
     BehaviorSubject,
     combineLatest,
     Observable,
     Subscription,
 } from 'rxjs';
 import {
-    debounceTime,
     distinctUntilChanged,
     filter,
     map,
     startWith,
+    subscribeOn,
     switchMap,
 } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
@@ -97,7 +97,7 @@ export class ReactView<
         this.subscription.add(
             combineLatest(props.map((p) => p.value!.sink))
                 .pipe(
-                    debounceTime(1),
+                    // debounceTime(1),
                     map((v) => this.styleValue(props, v))
                 )
                 .subscribe((style) => {
@@ -146,7 +146,7 @@ export class ReactView<
         const isInStack = this.props.parentView.parent instanceof StackLayout;
         this.subscription.add(
             combineLatest([this.safeIntrinsicSize(), this.viewRef])
-                .pipe(debounceTime(1))
+                //.pipe(debounceTime(1))
                 .subscribe(([size, self]) => {
                     if (!this.isWidthDefined()) {
                         self.style.minWidth = size.width > 0 ? size.width + 'px' : '';
@@ -174,7 +174,7 @@ export class ReactView<
                     ),
                     this.viewRef.pipe(distinctUntilChanged()),
                 ])
-                    .pipe(debounceTime(1))
+                    .pipe(subscribeOn(asyncScheduler))
                     .subscribe(([size, aspect, self]) => {
                         const widthDefined =
                             isNotNull(this.state.fixedSize?.width) ||
