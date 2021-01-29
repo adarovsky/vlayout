@@ -304,6 +304,7 @@ export class ReactLayer extends ReactContainer<
         if (value) {
             this.subscription.add(
                 value.sink.subscribe((fs: boolean) => {
+                    this.logValue('fullscreen', fs);
                     this.setState((s) => ({ ...s, fullscreen: fs }));
                 })
             );

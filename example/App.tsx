@@ -34,7 +34,7 @@ class TestItem implements ListModelItem {
 }
 
 class App extends Component {
-    private readonly engine = new Engine(true);
+    private readonly engine = new Engine(true, ["test_stack"]);
 
     constructor(props: any) {
         super(props);

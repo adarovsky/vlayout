@@ -13,7 +13,7 @@ import { ListButton, ListTextField } from './primitives';
 import { ReactButtonBase, ReactButtonState } from './react_button';
 import { ViewListReference } from './view_reference';
 import { ReactTextFieldBase, ReactTextFieldState } from './react_text';
-import { Dictionary } from './types';
+import { ColorContainer, Dictionary } from './types';
 import {
     identity,
     isEqual,
@@ -106,15 +106,21 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<
         const tapCallback = (this.props.parentView.parent as List).tapCallback;
         if (tapCallback) {
             if (this.state.running || self.modelItemSnapshot === null) return;
+            this.logValue('running', true);
             this.setState(s => ({ ...s, running: true }));
             e.preventDefault();
             e.stopPropagation();
             const promise = tapCallback(self.modelItemSnapshot);
             this.subscription.add(
                 from(promise).subscribe({
-                    error: () => this.setState(s => ({ ...s, running: false })),
-                    complete: () =>
-                        this.setState(s => ({ ...s, running: false })),
+                    error: () => {
+                        this.logValue('running', false);
+                        this.setState((s) => ({ ...s, running: false }));
+                    },
+                    complete: () => {
+                        this.logValue('running', false);
+                        this.setState((s) => ({ ...s, running: false }));
+                    },
                 })
             );
         }
@@ -141,6 +147,7 @@ export class ReactList<S extends ReactListState> extends ReactView<
         if (parentList.axis !== null) {
             this.wire('spacing', 'spacing', identity);
         }
+
         this.subscription.add(
             parentList
                 .model!.sink.pipe(
@@ -231,15 +238,21 @@ export class ReactListButton extends ReactButtonBase<
         if (this.state.running) return;
         const parent = this.props.parentView as ListButton;
         if (this.state.modelItem !== null) {
+            this.logValue('running', true);
             this.setState(s => Object.assign(s, { running: true }));
             e.preventDefault();
             e.stopPropagation();
             const promise = parent.onClick(this.state.modelItem);
             this.subscription.add(
                 from(promise).subscribe({
-                    error: () => this.setState(s => ({ ...s, running: false })),
-                    complete: () =>
-                        this.setState(s => ({ ...s, running: false })),
+                    error: () => {
+                        this.logValue('running', false);
+                        this.setState((s) => ({ ...s, running: false }));
+                    },
+                    complete: () => {
+                        this.logValue('running', false);
+                        this.setState((s) => ({ ...s, running: false }));
+                    },
                 })
             );
         }

@@ -370,6 +370,7 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
             this.subscription.add(combineLatest([this.cornerRadiusWatcher, this.viewRef]).subscribe(
                 ([x, self]) => {
                     if (x[1] <= 0.5) {
+                        this.logValue('cornerRadius', Math.min(x[0].width, x[0].height) * x[1]);
                         self.style.borderRadius = Math.min(x[0].width, x[0].height) * x[1] + 'px';
                     }
                 }));

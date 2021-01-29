@@ -71,9 +71,10 @@ export class ReactButtonBase<
             this.subscription.add(
                 image.value.sink
                     .pipe(switchMap((image: ImageContainer) => image.srcSet()))
-                    .subscribe((srcSet) =>
-                        this.setState({ imageSrcSet: srcSet })
-                    )
+                    .subscribe((srcSet) => {
+                        this.logValue('imageSrcSet', srcSet);
+                        this.setState({ imageSrcSet: srcSet });
+                    })
             );
         }
 
@@ -122,14 +123,16 @@ export class ReactButtonBase<
                             return r;
                         })
                     )
-                    .subscribe((x) =>
-                        this.setState((s) => ({ ...s, imageStyle: x }))
-                    )
+                    .subscribe((x) => {
+                        this.logValue('imageStyle', x);
+                        this.setState((s) => ({ ...s, imageStyle: x }));
+                    })
             );
         }
 
         this.subscription.add(
             imagePositionProp.value!.sink.subscribe((pos) => {
+                this.logValue('imagePosition', pos);
                 this.setState((s) => ({ ...s, imagePosition: pos }));
             })
         );
@@ -333,11 +336,24 @@ export class ReactButton extends ReactButtonBase {
         if (this.state.running) return;
         e.preventDefault();
         e.stopPropagation();
-        this.setState(s => Object.assign(s, {running: true}));
+        this.logValue('running', true);
+        this.setState(s => ({...s, running: true}));
         const promise = (this.props.parentView as Button).onClick();
-        this.subscription.add(fromPromise(promise)
-            .subscribe({
-                error: () => this.setState(s => Object.assign(s, {running: false})),
-                complete: () => this.setState(s => Object.assign(s, {running: false})) }));
+        this.subscription.add(
+            fromPromise(promise).subscribe({
+                error: () => {
+                    this.logValue('running', false);
+                    this.setState((s) => {
+                        return { ...s, running: false };
+                    });
+                },
+                complete: () => {
+                    this.logValue('running', false);
+                    this.setState((s) => {
+                        return { ...s, running: false };
+                    });
+                },
+            })
+        );
     }
 }

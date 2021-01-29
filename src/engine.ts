@@ -36,7 +36,7 @@ export class Engine {
         properties: {}
     };
 
-    constructor(readonly debug = false) {
+    constructor(readonly debug = false, readonly verboseIds: string[] = []) {
         this.functions = [
             new LocalizedNumber(this),
             new ShortLocalizedNumber(this),

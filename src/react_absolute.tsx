@@ -11,6 +11,7 @@ import { ViewProperty } from './view';
 import { ElementSize } from './resize_sensor';
 import { map, switchMap } from 'rxjs/operators';
 import { isNotNull } from './utils';
+import { ColorContainer } from './types';
 
 export class ReactAbsoluteLayout<
     S extends ReactContainerState

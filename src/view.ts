@@ -62,6 +62,7 @@ export class View {
     column: number = 0;
 
     parent: View | null = null;
+    scope: Scope | null = null;
 
     protected properties: Dictionary<ViewProperty> = {};
     protected _key: string;
@@ -104,6 +105,8 @@ export class View {
     }
 
     link(scope: Scope): void {
+        this.scope = scope;
+
         if (!this.property('alpha').value) {
             const n = new LexNumber(0, 0);
             n.content = '1';

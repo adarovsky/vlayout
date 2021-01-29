@@ -25,7 +25,16 @@ import {
 } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
-import { assign, extend, forEach, identity, isEqual, omit, pick } from 'lodash';
+import {
+    assign,
+    extend,
+    forEach,
+    forIn,
+    identity,
+    isEqual,
+    omit,
+    pick,
+} from 'lodash';
 import { assignDeep, isNotNull } from './utils';
 
 export interface ReactViewProps {
@@ -48,8 +57,10 @@ export interface ReactViewState {
 }
 
 function isAbsolute(view: View | null) {
-    // @ts-ignore
-    return view instanceof AbsoluteLayout || (view?.hasOwnProperty('axis') && view.axis === null);
+    return (
+        view instanceof AbsoluteLayout ||
+        (view?.hasOwnProperty('axis') && (view as any).axis === null)
+    );
 }
 
 export class ReactView<
@@ -101,6 +112,7 @@ export class ReactView<
                     map((v) => this.styleValue(props, v))
                 )
                 .subscribe((style) => {
+                    this.logValue('style', style);
                     this.setState({ style: style });
                 })
         );
@@ -128,6 +140,8 @@ export class ReactView<
                     )
                 )
                 .subscribe((values) => {
+                    forIn(values, (val, key) => this.logValue(key, val));
+
                     this.setState((state) =>
                         assign(
                             omit(
@@ -149,15 +163,19 @@ export class ReactView<
                 //.pipe(debounceTime(1))
                 .subscribe(([size, self]) => {
                     if (!this.isWidthDefined()) {
-                        self.style.minWidth = size.width > 0 ? size.width + 'px' : '';
+                        self.style.minWidth =
+                            size.width > 0 ? size.width + 'px' : '';
                     } else if (isInStack) {
-                        self.style.width = self.style.minWidth = self.style.maxWidth = '100%';
+                        self.style.width = self.style.minWidth = self.style.maxWidth =
+                            '100%';
                     }
 
                     if (!this.isHeightDefined()) {
-                        self.style.minHeight = size.height > 0 ? size.height + 'px' : '';
+                        self.style.minHeight =
+                            size.height > 0 ? size.height + 'px' : '';
                     } else if (isInStack) {
-                        self.style.height = self.style.minHeight = self.style.maxHeight = '100%';
+                        self.style.height = self.style.minHeight = self.style.maxHeight =
+                            '100%';
                     }
                 })
         );
@@ -218,17 +236,24 @@ export class ReactView<
 
     wire(name: string, field: string, mapper: (v: any) => any) {
         const prop = this.props.parentView.property(name);
-        if (prop.value) {
+        if (prop?.value) {
             this.subscription.add(
                 prop.value.sink.subscribe((value) => {
-                    this.setState((s) =>
-                        extend(
-                            { ...s },
-                            { [field]: mapper ? mapper(value) : value }
-                        )
-                    );
+                    const val = mapper ? mapper(value) : value;
+                    this.logValue(field, val);
+                    this.setState((s) => extend({ ...s }, { [field]: val }));
                 })
             );
+        }
+    }
+
+    protected logValue(field: string, val: any) {
+        const id = this.state.id;
+        if (
+            isNotNull(id) &&
+            this.props.parentView.scope?.engine.verboseIds?.includes(id)
+        ) {
+            console.log(`${id}: setState( ${field},`, val, `)`);
         }
     }
 
@@ -292,17 +317,17 @@ export class ReactView<
                             (x) => x === 'padding.left'
                         );
                         if (index >= 0 && value[index] !== null) {
-                            r.width = r.minWidth = r.maxWidth = `calc(2*(${val * 100}% - ${
-                                value[index]
-                            }px))`;
+                            r.width = r.minWidth = r.maxWidth = `calc(2*(${
+                                val * 100
+                            }% - ${value[index]}px))`;
                         } else {
                             index = propNames.findIndex(
                                 (x) => x === 'padding.right'
                             );
                             if (index >= 0 && value[index] !== null) {
-                                r.width = r.minWidth = r.maxWidth = `calc(2*(${(1 - val) * 100}% - ${
-                                    value[index]
-                                }px))`;
+                                r.width = r.minWidth = r.maxWidth = `calc(2*(${
+                                    (1 - val) * 100
+                                }% - ${value[index]}px))`;
                             } else {
                                 r.left = `${val * 100}%`;
                                 if (r.transform)
@@ -319,17 +344,17 @@ export class ReactView<
                             (x) => x === 'padding.top'
                         );
                         if (index >= 0 && value[index] !== null) {
-                            r.height = r.minHeight = r.maxHeight = `calc(2*(${val * 100}% - ${
-                                value[index]
-                            }px))`;
+                            r.height = r.minHeight = r.maxHeight = `calc(2*(${
+                                val * 100
+                            }% - ${value[index]}px))`;
                         } else {
                             index = propNames.findIndex(
                                 (x) => x === 'padding.bottom'
                             );
                             if (index >= 0 && value[index] !== null) {
-                                r.height = r.minHeight = r.maxHeight = `calc(2*(${(1 - val) * 100}% - ${
-                                    value[index]
-                                }px))`;
+                                r.height = r.minHeight = r.maxHeight = `calc(2*(${
+                                    (1 - val) * 100
+                                }% - ${value[index]}px))`;
                             } else {
                                 r.top = `${val * 100}%`;
                                 if (r.transform)
@@ -341,11 +366,13 @@ export class ReactView<
                     break;
 
                 case 'fixedSize.width':
-                    if (val !== null) r.width = r.minWidth = r.maxWidth = `${val}px`;
+                    if (val !== null)
+                        r.width = r.minWidth = r.maxWidth = `${val}px`;
                     break;
 
                 case 'fixedSize.height':
-                    if (val !== null) r.height = r.minHeight = r.maxHeight = `${val}px`;
+                    if (val !== null)
+                        r.height = r.minHeight = r.maxHeight = `${val}px`;
                     break;
 
                 case 'size.width':
@@ -576,8 +603,13 @@ export interface ReactContainerState extends ReactViewState {
     childrenVisible: boolean[];
 }
 
-export class ReactContainer<S extends ReactContainerState> extends ReactView<ReactViewProps, S> {
-    protected children = new BehaviorSubject<ReactView<ReactViewProps, ReactViewState>[]>([]);
+export class ReactContainer<S extends ReactContainerState> extends ReactView<
+    ReactViewProps,
+    S
+> {
+    protected children = new BehaviorSubject<
+        ReactView<ReactViewProps, ReactViewState>[]
+    >([]);
     protected subviewSubscription: Subscription = new Subscription();
 
     constructor(props: ReactViewProps) {
@@ -588,11 +620,15 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
     componentDidMount(): void {
         super.componentDidMount();
 
-        const props = (this.props.parentView as Container).views.map(v => v.property('alpha').value!.sink);
+        const props = (this.props.parentView as Container).views.map(
+            (v) => v.property('alpha').value!.sink
+        );
 
-        this.subscription.add(combineLatest(props).subscribe(childrenVisible => {
-            this.setState(s => ({ ...s, childrenVisible }));
-        }));
+        this.subscription.add(
+            combineLatest(props).subscribe((childrenVisible) => {
+                this.setState((s) => ({ ...s, childrenVisible }));
+            })
+        );
     }
 
     componentWillUnmount(): void {
@@ -602,21 +638,26 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
 
     componentDidUpdate(): void {
         const children = (this.props.parentView as Container).views
-            .map(v => v.instance)
-            .filter(v => v !== null) as ReactView<ReactViewProps, ReactViewState>[];
+            .map((v) => v.instance)
+            .filter((v) => v !== null) as ReactView<
+            ReactViewProps,
+            ReactViewState
+        >[];
         if (!isEqual(this.children.value, children)) {
             this.children.next(children);
         }
     }
 
     styleProperties(): ViewProperty[] {
-        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('interactive'));
+        return super
+            .styleProperties()
+            .concat(this.props.parentView.activePropertiesNamed('interactive'));
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
 
-        const index = props.findIndex(p => p.name === 'interactive');
+        const index = props.findIndex((p) => p.name === 'interactive');
         if (index >= 0 && value[index]) {
             r.pointerEvents = 'auto';
         } else {
@@ -627,17 +668,25 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<Rea
 
     render() {
         const extra = pick(this.state, 'id');
-        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
-            {(this.props.parentView as Container).views
-                .filter((v, index) => this.state.childrenVisible[index])
-                .map(v => v.target)}
-        </div>);
+        return (
+            <div
+                style={this.style()}
+                className={this.className}
+                ref={this.setViewRef}
+                {...extra}
+            >
+                {(this.props.parentView as Container).views
+                    .filter((v, index) => this.state.childrenVisible[index])
+                    .map((v) => v.target)}
+            </div>
+        );
     }
-
 }
 
-export class ReactViewReference<P extends ReactViewProps, S extends ReactViewState> extends ReactView<P, S> {
-
+export class ReactViewReference<
+    P extends ReactViewProps,
+    S extends ReactViewState
+> extends ReactView<P, S> {
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
         r.pointerEvents = 'auto';

@@ -11,6 +11,7 @@ import { ViewProperty } from './view';
 import { ElementSize } from './resize_sensor';
 import { map } from 'rxjs/operators';
 import { visibleChildrenSizes } from './react_absolute';
+import { ColorContainer } from './types';
 
 export class ReactStackLayout extends ReactContainer<ReactContainerState> {
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
