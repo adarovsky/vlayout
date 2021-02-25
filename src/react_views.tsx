@@ -25,6 +25,7 @@ import {
     startWith,
     subscribeOn,
     switchMap,
+    tap,
 } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
@@ -111,7 +112,9 @@ export class ReactView<
             this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
             of(false as boolean);
 
-        const propValues: Observable<any> = combineLatest(props.map((p) => p.value!.sink));
+        const propValues: Observable<any> = combineLatest(
+            props.map((p) => p.value!.sink)
+        );
 
         this.subscription.add(
             combineLatest([inputIsUpdating, propValues])
@@ -629,16 +632,22 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<
     componentDidMount(): void {
         super.componentDidMount();
 
-        const props = (this.props.parentView as Container).views.map(
-            (v) => v.property('alpha').value!.sink
+        const props = (this.props.parentView as Container).views.map((v) =>
+            v.property('alpha').value!.sink.pipe(map((x: number) => x > 0))
         );
 
         const inputIsUpdating =
             this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
             of(false as boolean);
 
-        const visible = inputIsUpdating.pipe(
-            switchMap((updating) => (updating ? EMPTY : combineLatest(props)))
+        const visible: Observable<boolean[]> = combineLatest([
+            inputIsUpdating,
+            combineLatest(props),
+        ]).pipe(
+            filter(([updating]) => !updating),
+            map(([, props]) => props),
+            distinctUntilChanged(isEqual)
+            // tap(console.log)
         );
 
         this.subscription.add(

@@ -58,8 +58,8 @@ export class Inputs {
                 return new Observable<typeof x>(subscriber => {
                     this.inputIsUpdating.next(true);
                     subscriber.next(x);
-                    subscriber.complete();
                     this.inputIsUpdating.next(false);
+                    subscriber.complete();
                 });
             }),
             shareReplay({bufferSize: 1, refCount: true} )

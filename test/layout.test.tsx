@@ -111,7 +111,7 @@ describe("layout", () => {
                      text: "asd1"                 
                  }
                  button2 {
-                     id: "button1"
+                     id: "button2"
                      alpha: test1 == 1 ? 1 : 0
                      text: "asd2"                 
                  }
@@ -124,7 +124,9 @@ describe("layout", () => {
         let node = wrapper.find(".vlayout_button");
         expect(node.getDOMNode().childElementCount).toBe(3);
         expect(node.text()).toBe('asd1');
+
         test1.next(1);
+        // await timer(10).toPromise();
         wrapper.update();
 
         node = wrapper.find(".vlayout_button");
