@@ -257,6 +257,7 @@ it('function calls should be independent 1', async () => {
      }`}/>);
 
     test1.next(4);
+    wrapper.update();
 
     await timer(10).toPromise();
 

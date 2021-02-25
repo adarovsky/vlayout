@@ -21,6 +21,7 @@ import {
     distinctUntilChanged,
     filter,
     map,
+    shareReplay,
     startWith,
     subscribeOn,
     switchMap,
@@ -110,18 +111,14 @@ export class ReactView<
             this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
             of(false as boolean);
 
-        const visible = inputIsUpdating.pipe(
-            switchMap((updating) => (updating ? EMPTY : combineLatest(props)))
+        const propValues = combineLatest(props.map((p) => p.value!.sink)).pipe(
+            shareReplay({bufferSize: 1, refCount: true})
         );
 
         this.subscription.add(
             inputIsUpdating
                 .pipe(
-                    switchMap((updating) =>
-                        updating
-                            ? EMPTY
-                            : combineLatest(props.map((p) => p.value!.sink))
-                    ),
+                    switchMap((updating) => (updating ? EMPTY : propValues)),
                     map((v) => this.styleValue(props, v)),
                     distinctUntilChanged(isEqual)
                 )
@@ -131,24 +128,21 @@ export class ReactView<
                 })
         );
 
+        const keyValues = combineLatest(
+            props.map((p) =>
+                p.value!.sink.pipe(
+                    map((value) => ({
+                        name: p.name,
+                        value,
+                    }))
+                )
+            )
+        ).pipe(shareReplay(1));
+
         this.subscription.add(
             inputIsUpdating
-
                 .pipe(
-                    switchMap((updating) =>
-                        updating
-                            ? EMPTY
-                            : combineLatest(
-                                  props.map((p) =>
-                                      p.value!.sink.pipe(
-                                          map((value) => ({
-                                              name: p.name,
-                                              value,
-                                          }))
-                                      )
-                                  )
-                              )
-                    ),
+                    switchMap((updating) => (updating ? EMPTY : keyValues)),
                     map((value) =>
                         value.reduce(
                             (previousValue, currentValue) =>
