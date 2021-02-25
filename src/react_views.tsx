@@ -111,14 +111,13 @@ export class ReactView<
             this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
             of(false as boolean);
 
-        const propValues = combineLatest(props.map((p) => p.value!.sink)).pipe(
-            shareReplay({bufferSize: 1, refCount: true})
-        );
+        const propValues: Observable<any> = combineLatest(props.map((p) => p.value!.sink));
 
         this.subscription.add(
-            inputIsUpdating
+            combineLatest([inputIsUpdating, propValues])
                 .pipe(
-                    switchMap((updating) => (updating ? EMPTY : propValues)),
+                    filter(([updating]) => !updating),
+                    map(([, v]) => v),
                     map((v) => this.styleValue(props, v)),
                     distinctUntilChanged(isEqual)
                 )
@@ -137,12 +136,13 @@ export class ReactView<
                     }))
                 )
             )
-        ).pipe(shareReplay(1));
+        );
 
         this.subscription.add(
-            inputIsUpdating
+            combineLatest([inputIsUpdating, keyValues])
                 .pipe(
-                    switchMap((updating) => (updating ? EMPTY : keyValues)),
+                    filter(([updating]) => !updating),
+                    map(([, v]) => v),
                     map((value) =>
                         value.reduce(
                             (previousValue, currentValue) =>
