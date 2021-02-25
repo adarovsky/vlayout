@@ -100,16 +100,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
         }
     }
 
-    render():
-        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-        | string
-        | number
-        | {}
-        | React.ReactNodeArray
-        | React.ReactPortal
-        | boolean
-        | null
-        | undefined {
+    render() {
         const extra = pick(this.state, 'id');
         return (
             <div

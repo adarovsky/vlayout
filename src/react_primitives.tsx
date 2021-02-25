@@ -433,7 +433,7 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
         return r;
     }
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+    render() {
         const extra = pick(this.state, 'id');
         return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
             <svg className="vlayout_spinner" viewBox="0 0 50 50">

@@ -1,9 +1,20 @@
 import { Engine } from './engine';
 import { Dictionary, ListDefinition, TypeDefinition } from './types';
 import { Expression } from './expression';
-import { concat, Observable, throwError, TimeoutError } from 'rxjs';
+import { BehaviorSubject, concat, Observable, throwError, TimeoutError } from 'rxjs';
 import { LinkError } from './errors';
-import { catchError, distinctUntilChanged, filter, map, shareReplay, skip, take, tap, timeout } from 'rxjs/operators';
+import {
+    catchError,
+    distinctUntilChanged,
+    filter,
+    map,
+    shareReplay,
+    skip,
+    switchMap,
+    take,
+    tap,
+    timeout,
+} from 'rxjs/operators';
 import { isEqual } from 'lodash';
 
 export class Input extends Expression {
@@ -16,11 +27,11 @@ export class Input extends Expression {
 }
 
 export class Inputs {
-    private inputs: Dictionary<Input> = {};
+    public readonly inputIsUpdating = new BehaviorSubject(false);
+
     constructor(public readonly engine: Engine) {
 
     }
-
     registerInput(name: string, type: TypeDefinition, sink: Observable<any>): void {
         if (this.input(name, 0, 0)) {
             throw new Error(`input ${name} is already registered`);
@@ -29,7 +40,7 @@ export class Inputs {
         const inp = new Input(name);
         inp.typeDefinition = type;
         inp.sink = sink.pipe(
-            distinctUntilChanged(isEqual),
+            distinctUntilChanged(),
             tap( x => this.engine.logInputValue(name, x)),
             filter(x => {
                 // pass through everything in release mode
@@ -43,14 +54,14 @@ export class Inputs {
 
                 return correct;
             }),
-            // switchMap( x => {
-            //     return new Observable<typeof x>(subscriber => {
-            //         pauseObserving();
-            //         subscriber.next(x);
-            //         resumeObserving();
-            //         subscriber.complete();
-            //     });
-            // }),
+            switchMap( x => {
+                return new Observable<typeof x>(subscriber => {
+                    this.inputIsUpdating.next(true);
+                    subscriber.next(x);
+                    this.inputIsUpdating.next(false);
+                    subscriber.complete();
+                });
+            }),
             shareReplay({bufferSize: 1, refCount: true} )
         );
 
@@ -115,4 +126,6 @@ export class Inputs {
 
         return null;
     }
+
+    private inputs: Dictionary<Input> = {};
 }

@@ -12,7 +12,9 @@ import {
     asyncScheduler,
     BehaviorSubject,
     combineLatest,
+    EMPTY,
     Observable,
+    of,
     Subscription,
 } from 'rxjs';
 import {
@@ -79,8 +81,7 @@ export class ReactView<
             this.subscription.add(sink.subscribe((x) => (id = x)));
         }
 
-        // @ts-ignore
-        this.state = { style: {}, aspect: null, id: id, className: '' };
+        this.state = { style: {}, aspect: null, id: id, className: '' } as any;
         this.setViewRef = this.setViewRef.bind(this);
     }
 
@@ -105,11 +106,24 @@ export class ReactView<
 
         const props = this.styleProperties();
 
+        const inputIsUpdating =
+            this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
+            of(false as boolean);
+
+        const visible = inputIsUpdating.pipe(
+            switchMap((updating) => (updating ? EMPTY : combineLatest(props)))
+        );
+
         this.subscription.add(
-            combineLatest(props.map((p) => p.value!.sink))
+            inputIsUpdating
                 .pipe(
-                    // debounceTime(1),
-                    map((v) => this.styleValue(props, v))
+                    switchMap((updating) =>
+                        updating
+                            ? EMPTY
+                            : combineLatest(props.map((p) => p.value!.sink))
+                    ),
+                    map((v) => this.styleValue(props, v)),
+                    distinctUntilChanged(isEqual)
                 )
                 .subscribe((style) => {
                     this.logValue('style', style);
@@ -118,14 +132,23 @@ export class ReactView<
         );
 
         this.subscription.add(
-            combineLatest(
-                props.map((p) =>
-                    p.value!.sink.pipe(
-                        map((value) => ({ name: p.name, value }))
-                    )
-                )
-            )
+            inputIsUpdating
+
                 .pipe(
+                    switchMap((updating) =>
+                        updating
+                            ? EMPTY
+                            : combineLatest(
+                                  props.map((p) =>
+                                      p.value!.sink.pipe(
+                                          map((value) => ({
+                                              name: p.name,
+                                              value,
+                                          }))
+                                      )
+                                  )
+                              )
+                    ),
                     map((value) =>
                         value.reduce(
                             (previousValue, currentValue) =>
@@ -137,7 +160,8 @@ export class ReactView<
                                 ),
                             {}
                         )
-                    )
+                    ),
+                    distinctUntilChanged(isEqual)
                 )
                 .subscribe((values) => {
                     forIn(values, (val, key) => this.logValue(key, val));
@@ -524,16 +548,7 @@ export class ReactView<
         ]);
     }
 
-    render():
-        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-        | string
-        | number
-        | {}
-        | React.ReactNodeArray
-        | React.ReactPortal
-        | boolean
-        | null
-        | undefined {
+    render() {
         const extra = pick(this.state, 'id');
         return (
             <div
@@ -624,8 +639,16 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<
             (v) => v.property('alpha').value!.sink
         );
 
+        const inputIsUpdating =
+            this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
+            of(false as boolean);
+
+        const visible = inputIsUpdating.pipe(
+            switchMap((updating) => (updating ? EMPTY : combineLatest(props)))
+        );
+
         this.subscription.add(
-            combineLatest(props).subscribe((childrenVisible) => {
+            visible.subscribe((childrenVisible) => {
                 this.setState((s) => ({ ...s, childrenVisible }));
             })
         );
