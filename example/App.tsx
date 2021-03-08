@@ -96,6 +96,8 @@ class App extends Component {
             )
         );
 
+        this.engine.registerListButton('testListButton', async (item) => console.log('tapped', item.id));
+
         this.engine.registerInput(
             'counter',
             this.engine.numberType(),

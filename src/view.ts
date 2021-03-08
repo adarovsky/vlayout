@@ -106,6 +106,7 @@ export class View {
 
     copyFrom(that: this) {
         this.properties = {};
+        this.tooltip = that.tooltip?.instantiate() ?? null
         forIn(that.properties, (p) => this.registerProperty(p.instantiate()));
     }
 
