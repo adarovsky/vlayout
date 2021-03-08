@@ -1,5 +1,12 @@
-import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
-import { distinctUntilChanged, finalize, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
+import {
+    distinctUntilChanged,
+    filter,
+    finalize,
+    map,
+    shareReplay,
+    switchMap,
+} from 'rxjs/operators';
 import { isEqual } from 'lodash';
 
 const observers: [Element, Observable<ElementSize>][] = [];
@@ -28,7 +35,7 @@ export function resizeObserver(element: HTMLDivElement): Observable<ElementSize>
         return obj[1];
     }
 
-    const innerObserver = new Observable<ElementSize>(subscriber => {
+    let innerObserver: Observable<ElementSize> = new Observable<ElementSize>(subscriber => {
         let style = getComputedStyle(element);
 
         const zIndex = ((style && style.zIndex) ? parseInt(style.zIndex)! : 0) - 1;
@@ -116,11 +123,12 @@ export function resizeObserver(element: HTMLDivElement): Observable<ElementSize>
             shrink.remove();
             shrinkChild.remove();
         };
-    }).pipe(distinctUntilChanged(isEqual), shareReplay({ bufferSize: 1, refCount: true }));
+    });
 
-    const observer = paused.pipe(
-        distinctUntilChanged(),
-        switchMap(paused => paused ? EMPTY : innerObserver),
+    const observer: Observable<ElementSize> = combineLatest([paused, innerObserver]).pipe(
+        filter(([paused]) => !paused),
+        map(([, inner]) => inner),
+        distinctUntilChanged(isEqual),
         finalize(() => {
             const index = observers.findIndex(o => o[0] === element);
             if (index >= 0) observers.splice(index, 1);

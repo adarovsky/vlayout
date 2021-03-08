@@ -10,11 +10,12 @@ import React, { CSSProperties } from 'react';
 import { ReactStackLayout } from './react_stack';
 import { combineLatest, fromEvent, Observable } from 'rxjs';
 import { ElementSize } from './resize_sensor';
-import { map, startWith } from 'rxjs/operators';
+import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import ReactDOM from 'react-dom';
-import { identity, pick } from 'lodash';
+import { identity, isEqual, pick } from 'lodash';
 import { visibleChildrenSizes } from './react_absolute';
 import { isNotNull } from './utils';
+import composeRefs from '@seznam/compose-react-refs';
 
 class ReactLinearLayout extends ReactContainer<
     ReactContainerState & { spacing: number; alignment: string }
@@ -36,7 +37,7 @@ class ReactLinearLayout extends ReactContainer<
             <div
                 style={this.style()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 {...extra}
             >
                 {(this.props.parentView as Container).views
@@ -303,7 +304,7 @@ export class ReactLayer extends ReactContainer<
         const value = this.props.parentView.property('fullscreen').value;
         if (value) {
             this.subscription.add(
-                value.sink.subscribe((fs: boolean) => {
+                value.sink.pipe(distinctUntilChanged()).subscribe((fs: boolean) => {
                     this.logValue('fullscreen', fs);
                     this.setState((s) => ({ ...s, fullscreen: fs }));
                 })
@@ -347,7 +348,7 @@ export class ReactLayer extends ReactContainer<
             <div
                 style={this.style()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 {...extra}
             >
                 {(this.props.parentView as Container).views

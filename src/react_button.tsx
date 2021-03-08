@@ -1,22 +1,24 @@
 import { ViewProperty } from './view';
 import { combineLatest, Observable, of } from 'rxjs';
 import React, { CSSProperties } from 'react';
-import { cloneDeep, pick } from 'lodash';
+import { cloneDeep, isEqual, pick } from 'lodash';
 import { ReactRoundRect } from './react_primitives';
 import { FontContainer, ImageContainer } from './types';
-import { map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Button } from './primitives';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { ReactViewProps, ReactViewState } from './react_views';
+import ReactTooltipComponent from 'react-tooltip';
+import composeRefs from '@seznam/compose-react-refs';
 
 export interface ReactButtonState extends ReactViewState {
     imageSrc?: string;
     imageSrcSet?: string;
     text: string;
-    imageStyle: CSSProperties,
-    imagePosition: string,
-    running: boolean,
-    enabled: boolean
+    imageStyle: CSSProperties;
+    imagePosition: string;
+    running: boolean;
+    enabled: boolean;
 }
 
 export class ReactButtonBase<
@@ -70,7 +72,10 @@ export class ReactButtonBase<
         if (image.value) {
             this.subscription.add(
                 image.value.sink
-                    .pipe(switchMap((image: ImageContainer) => image.srcSet()))
+                    .pipe(
+                        switchMap((image: ImageContainer) => image.srcSet()),
+                        distinctUntilChanged()
+                    )
                     .subscribe((srcSet) => {
                         this.logValue('imageSrcSet', srcSet);
                         this.setState({ imageSrcSet: srcSet });
@@ -123,6 +128,7 @@ export class ReactButtonBase<
                             return r;
                         })
                     )
+                    .pipe(distinctUntilChanged((x, y) => isEqual(x, y)))
                     .subscribe((x) => {
                         this.logValue('imageStyle', x);
                         this.setState((s) => ({ ...s, imageStyle: x }));
@@ -131,10 +137,12 @@ export class ReactButtonBase<
         }
 
         this.subscription.add(
-            imagePositionProp.value!.sink.subscribe((pos) => {
-                this.logValue('imagePosition', pos);
-                this.setState((s) => ({ ...s, imagePosition: pos }));
-            })
+            imagePositionProp
+                .value!.sink.pipe(distinctUntilChanged((x, y) => isEqual(x, y)))
+                .subscribe((pos) => {
+                    this.logValue('imagePosition', pos);
+                    this.setState((s) => ({ ...s, imagePosition: pos }));
+                })
         );
 
         const paddings = this.props.parentView.activePropertiesNamed(
@@ -308,13 +316,14 @@ export class ReactButtonBase<
                 text
             );
 
-        const extra = pick(this.state, 'id');
+        const extra = pick(this.state, 'id') as any;
+
         return (
             <div
                 {...extra}
                 style={this.currentStyle()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 onClick={(e) => this.handleClick(e)}
             >
                 {this.state.imageSrc && (
@@ -332,12 +341,14 @@ export class ReactButtonBase<
 }
 
 export class ReactButton extends ReactButtonBase {
-    protected handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
+    protected handleClick(
+        e: React.MouseEvent<HTMLDivElement, MouseEvent>
+    ): void {
         if (this.state.running) return;
         e.preventDefault();
         e.stopPropagation();
         this.logValue('running', true);
-        this.setState(s => ({...s, running: true}));
+        this.setState((s) => ({ ...s, running: true }));
         const promise = (this.props.parentView as Button).onClick();
         this.subscription.add(
             fromPromise(promise).subscribe({

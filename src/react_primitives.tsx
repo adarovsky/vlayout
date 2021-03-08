@@ -1,13 +1,27 @@
 import React, { CSSProperties } from 'react';
-import { cloneDeep, forEach, identity, pick } from 'lodash';
+import { cloneDeep, forEach, identity, isEqual, pick } from 'lodash';
 import { ViewProperty } from './view';
 import { ColorContainer, FontContainer, ImageContainer } from './types';
 import { ReactView, ReactViewProps, ReactViewState } from './react_views';
-import { BehaviorSubject, combineLatest, fromEvent, Observable, of } from 'rxjs';
-import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
+import {
+    BehaviorSubject,
+    combineLatest,
+    fromEvent,
+    Observable,
+    of,
+} from 'rxjs';
+import {
+    distinctUntilChanged,
+    filter,
+    map,
+    shareReplay,
+    switchMap,
+    tap,
+} from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import deleteProperty = Reflect.deleteProperty;
 import { isNotNull } from './utils';
+import composeRefs from '@seznam/compose-react-refs';
 
 interface ReactLabelState extends ReactViewState {
     style: CSSProperties;
@@ -32,7 +46,9 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     }
 
     get shadowRef() {
-        return this._shadowRef.pipe(filter(x => x !== null)) as Observable<HTMLDivElement>;
+        return this._shadowRef.pipe(
+            filter((x) => x !== null)
+        ) as Observable<HTMLDivElement>;
     }
 
     setShadowRef(e: HTMLDivElement | null) {
@@ -43,11 +59,24 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
         super.componentDidMount();
         this.wire('text', 'text', identity);
         this.wire('maxLines', 'maxLines', identity);
-        this.subscription.add(this.intrinsicSize().subscribe(size => this.setState({ shadowWidth: size.width })));
+        this.subscription.add(
+            this.intrinsicSize()
+                .pipe(distinctUntilChanged((x, y) => isEqual(x, y)))
+                .subscribe((size) => this.setState({ shadowWidth: size.width }))
+        );
     }
 
     styleProperties(): ViewProperty[] {
-        return super.styleProperties().concat(this.props.parentView.activePropertiesNamed('maxLines', 'textColor', 'font', 'textAlignment'));
+        return super
+            .styleProperties()
+            .concat(
+                this.props.parentView.activePropertiesNamed(
+                    'maxLines',
+                    'textColor',
+                    'font',
+                    'textAlignment'
+                )
+            );
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -80,8 +109,7 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
                     break;
                 case 'font':
                     const c = val as FontContainer;
-                    if (c.familyName)
-                        r.fontFamily = c.familyName;
+                    if (c.familyName) r.fontFamily = c.familyName;
                     switch (c.type) {
                         case 'bold':
                             r.fontWeight = 'bold';
@@ -108,26 +136,53 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
     render() {
         const extra = pick(this.state, 'id');
         const text = this.state.text ?? 'placeholder';
-        const content = this.state.maxLines === 1 ?
-            <span style={{ whiteSpace: 'nowrap' }}>{text}</span>
-            : text.split('\n').map(function(item, key) {
-                return <span key={key}>{item}<br /></span>;
-            });
+        const content =
+            this.state.maxLines === 1 ? (
+                <span style={{ whiteSpace: 'nowrap' }}>{text}</span>
+            ) : (
+                text.split('\n').map(function (item, key) {
+                    return (
+                        <span key={key}>
+                            {item}
+                            <br />
+                        </span>
+                    );
+                })
+            );
 
-        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
-            {this.state.text === null ?
-                <div className={'vlayout_placeholder'} style={{ minWidth: `${this.state.shadowWidth}px` }} /> : content}
-            <div style={this.shadowStyle()} key='shadow'
-                 className={'vlayout_' + this.props.parentView.viewType() + '_shadow'} ref={this.setShadowRef}>
-                {content}
+        return (
+            <div
+                style={this.style()}
+                className={this.className}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
+                {...extra}
+            >
+                {this.state.text === null ? (
+                    <div
+                        className={'vlayout_placeholder'}
+                        style={{ minWidth: `${this.state.shadowWidth}px` }}
+                    />
+                ) : (
+                    content
+                )}
+                <div
+                    style={this.shadowStyle()}
+                    key="shadow"
+                    className={
+                        'vlayout_' +
+                        this.props.parentView.viewType() +
+                        '_shadow'
+                    }
+                    ref={this.setShadowRef}
+                >
+                    {content}
+                </div>
             </div>
-        </div>);
+        );
     }
 
     intrinsicSize(): Observable<ElementSize> {
-        return this.shadowRef.pipe(
-            switchMap(self => resizeObserver(self)),
-        );
+        return this.shadowRef.pipe(switchMap((self) => resizeObserver(self)));
     }
 
     protected isHeightDefined(): boolean {
@@ -151,8 +206,7 @@ export class ReactLabel extends ReactView<ReactViewProps, ReactLabelState> {
             for (let t of ['width', 'height']) {
                 deleteProperty(r, t);
             }
-        }
-        else {
+        } else {
             r.width = '100%';
         }
 
@@ -170,7 +224,6 @@ interface ReactImageState extends ReactViewState {
 }
 
 export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
-
     readonly _shadowRef = new BehaviorSubject<HTMLImageElement | null>(null);
 
     constructor(props: ReactViewProps) {
@@ -189,12 +242,14 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
         const image = this.props.parentView.property('image').value;
 
         if (image) {
-            this.subscription.add(image.sink.pipe(
-                switchMap((image: ImageContainer) => image.srcSet()),
-            ).subscribe(srcSet => this.setState({ srcSet })));
+            this.subscription.add(
+                image.sink
+                    .pipe(switchMap((image: ImageContainer) => image.srcSet()))
+                    .subscribe((srcSet) => this.setState({ srcSet }))
+            );
         }
 
-        this.wire('contentPolicy', 'innerStyle', v => {
+        this.wire('contentPolicy', 'innerStyle', (v) => {
             const s: CSSProperties = { width: '100%', height: '100%' };
 
             switch (v) {
@@ -218,19 +273,30 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
     intrinsicSize(): Observable<ElementSize> {
         const imageSize: Observable<ElementSize> = this._shadowRef.pipe(
             filter(isNotNull),
-            switchMap(ref => fromEvent(ref, 'load').pipe(
-                map( () => ({width: ref.naturalWidth, height: ref.naturalHeight}))
-            ))
+            switchMap((ref) =>
+                fromEvent(ref, 'load').pipe(
+                    map(() => ({
+                        width: ref.naturalWidth,
+                        height: ref.naturalHeight,
+                    }))
+                )
+            )
         );
 
-        const contentPolicy: Observable<string> = this.props.parentView.property('contentPolicy').value?.sink ?? of('fill');
+        const contentPolicy: Observable<string> =
+            this.props.parentView.property('contentPolicy').value?.sink ??
+            of('fill');
 
         return combineLatest([imageSize, this.selfSize(), contentPolicy]).pipe(
             map(([imageSize, outerSize, contentPolicy]) => {
                 let scale;
-                const scaleX = imageSize.width > 0 ? outerSize.width / imageSize.width : 0;
-                const scaleY = imageSize.height > 0 ? outerSize.height / imageSize.height : 0;
-                switch(contentPolicy) {
+                const scaleX =
+                    imageSize.width > 0 ? outerSize.width / imageSize.width : 0;
+                const scaleY =
+                    imageSize.height > 0
+                        ? outerSize.height / imageSize.height
+                        : 0;
+                switch (contentPolicy) {
                     case 'aspectFit':
                         scale = Math.min(scaleX, scaleY) || scaleX || scaleY;
                         break;
@@ -241,44 +307,57 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
                         scale = 1;
                         break;
                     default:
-                        return outerSize.width == 0 && outerSize.height == 0 ? imageSize : outerSize;
+                        return outerSize.width == 0 && outerSize.height == 0
+                            ? imageSize
+                            : outerSize;
                 }
 
                 if (scale <= 0.001) {
                     scale = 1;
                 }
 
-                return {width: imageSize.width * scale, height: imageSize.height * scale};
+                return {
+                    width: imageSize.width * scale,
+                    height: imageSize.height * scale,
+                };
             })
-        )
+        );
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        if (!r.position)
-            r.position = 'relative';
+        if (!r.position) r.position = 'relative';
         return r;
     }
 
     render() {
         const extra = pick(this.state, 'id');
-        return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
-            {/*<img style={{ ...this.state.innerStyle, opacity: 0 }}*/}
-            {/*     src={this.state.src}*/}
-            {/*     srcSet={this.state.srcSet}*/}
-            {/*     ref={x => this._shadowRef.next(x)}*/}
-            {/*     alt="" />*/}
-            <img style={{
-                ...this.state.innerStyle,
-                position: 'absolute',
-                left: 0,
-                top: 0,
-            }}
-                 src={this.state.src}
-                 srcSet={this.state.srcSet}
-                 ref={x => this._shadowRef.next(x)}
-                 alt="" />
-        </div>);
+        return (
+            <div
+                style={this.style()}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
+                className={this.className}
+                {...extra}
+            >
+                {/*<img style={{ ...this.state.innerStyle, opacity: 0 }}*/}
+                {/*     src={this.state.src}*/}
+                {/*     srcSet={this.state.srcSet}*/}
+                {/*     ref={x => this._shadowRef.next(x)}*/}
+                {/*     alt="" />*/}
+                <img
+                    style={{
+                        ...this.state.innerStyle,
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                    }}
+                    src={this.state.src}
+                    srcSet={this.state.srcSet}
+                    ref={(x) => this._shadowRef.next(x)}
+                    alt=""
+                />
+            </div>
+        );
     }
 
     // protected isWidthDefined(): boolean {
@@ -291,10 +370,15 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
 }
 
 export class ReactGradient extends ReactView<ReactViewProps, ReactViewState> {
-
     public styleProperties(): ViewProperty[] {
         const sup = super.styleProperties();
-        return sup.concat(this.props.parentView.activePropertiesNamed('startColor', 'endColor', 'orientation'));
+        return sup.concat(
+            this.props.parentView.activePropertiesNamed(
+                'startColor',
+                'endColor',
+                'orientation'
+            )
+        );
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -335,20 +419,24 @@ export class ReactGradient extends ReactView<ReactViewProps, ReactViewState> {
     }
 }
 
-export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends ReactView<ReactViewProps, S> {
-
-    protected _cornerRadiusWatcher: Observable<[ElementSize, number]> | null = null;
+export class ReactRoundRect<
+    S extends ReactViewState = ReactViewState
+> extends ReactView<ReactViewProps, S> {
+    protected _cornerRadiusWatcher: Observable<
+        [ElementSize, number]
+    > | null = null;
 
     get cornerRadiusWatcher(): Observable<[ElementSize, number]> {
         if (!this._cornerRadiusWatcher) {
             const p = this.props.parentView.property('cornerRadius');
             if (p.value) {
                 const selfSize = this.viewRef.pipe(
-                    switchMap(self => resizeObserver(self)),
+                    switchMap((self) => resizeObserver(self))
                 );
-                this._cornerRadiusWatcher = combineLatest([selfSize, p.value.sink as Observable<number>]).pipe(
-                    shareReplay({ refCount: true, bufferSize: 1 }),
-                );
+                this._cornerRadiusWatcher = combineLatest([
+                    selfSize,
+                    p.value.sink as Observable<number>,
+                ]).pipe(shareReplay({ refCount: true, bufferSize: 1 }));
                 return this._cornerRadiusWatcher;
             } else {
                 this._cornerRadiusWatcher = of([{ width: 0, height: 0 }, 0]);
@@ -359,7 +447,13 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
 
     public styleProperties(): ViewProperty[] {
         const sup = super.styleProperties();
-        return sup.concat(this.props.parentView.activePropertiesNamed('strokeColor', 'strokeWidth', 'cornerRadius'));
+        return sup.concat(
+            this.props.parentView.activePropertiesNamed(
+                'strokeColor',
+                'strokeWidth',
+                'cornerRadius'
+            )
+        );
     }
 
     componentDidMount(): void {
@@ -367,13 +461,21 @@ export class ReactRoundRect<S extends ReactViewState = ReactViewState> extends R
 
         const p = this.props.parentView.property('cornerRadius');
         if (p.value) {
-            this.subscription.add(combineLatest([this.cornerRadiusWatcher, this.viewRef]).subscribe(
-                ([x, self]) => {
+            this.subscription.add(
+                combineLatest([
+                    this.cornerRadiusWatcher,
+                    this.viewRef,
+                ]).subscribe(([x, self]) => {
                     if (x[1] <= 0.5) {
-                        this.logValue('cornerRadius', Math.min(x[0].width, x[0].height) * x[1]);
-                        self.style.borderRadius = Math.min(x[0].width, x[0].height) * x[1] + 'px';
+                        this.logValue(
+                            'cornerRadius',
+                            Math.min(x[0].width, x[0].height) * x[1]
+                        );
+                        self.style.borderRadius =
+                            Math.min(x[0].width, x[0].height) * x[1] + 'px';
                     }
-                }));
+                })
+            );
         }
     }
 
@@ -410,8 +512,10 @@ interface ReactProgressState extends ReactViewState {
     style: CSSProperties;
 }
 
-export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState> {
-
+export class ReactProgress extends ReactView<
+    ReactViewProps,
+    ReactProgressState
+> {
     constructor(props: ReactViewProps) {
         super(props);
         this.state = {
@@ -422,32 +526,46 @@ export class ReactProgress extends ReactView<ReactViewProps, ReactProgressState>
 
     componentDidMount(): void {
         super.componentDidMount();
-        this.wire('color', 'progressColor', (x: ColorContainer) => x?.toString());
+        this.wire('color', 'progressColor', (x: ColorContainer) =>
+            x?.toString()
+        );
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        if (!r.position || r.position === 'static')
-            r.position = 'relative';
+        if (!r.position || r.position === 'static') r.position = 'relative';
 
         return r;
     }
 
     render() {
         const extra = pick(this.state, 'id');
-        return (<div style={this.style()} ref={this.setViewRef} className={this.className} {...extra}>
-            <svg className="vlayout_spinner" viewBox="0 0 50 50">
-                <circle className="path" cx="50%" cy="50%" r="40%" fill="none" strokeWidth="2"
-                        stroke={this.state.progressColor} />
-            </svg>
-        </div>);
+        return (
+            <div
+                style={this.style()}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
+                className={this.className}
+                {...extra}
+            >
+                <svg className="vlayout_spinner" viewBox="0 0 50 50">
+                    <circle
+                        className="path"
+                        cx="50%"
+                        cy="50%"
+                        r="40%"
+                        fill="none"
+                        strokeWidth="2"
+                        stroke={this.state.progressColor}
+                    />
+                </svg>
+            </div>
+        );
     }
 }
 
 export function fontStyle(font: FontContainer): CSSProperties {
     const r: CSSProperties = {};
-    if (font.familyName)
-        r.fontFamily = font.familyName;
+    if (font.familyName) r.fontFamily = font.familyName;
     switch (font.type) {
         case 'bold':
             r.fontWeight = 'bold';

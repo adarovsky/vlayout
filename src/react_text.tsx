@@ -5,7 +5,10 @@ import { fontStyle, ReactRoundRect } from './react_primitives';
 import { ColorContainer, Dictionary } from './types';
 import { TextField } from './primitives';
 import { ReactViewProps, ReactViewState } from './react_views';
-import { extend, omit, pick } from 'lodash';
+import { extend, isEqual, omit, pick } from 'lodash';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { ElementSize } from './resize_sensor';
+import composeRefs from '@seznam/compose-react-refs';
 
 export interface ReactTextFieldState extends ReactViewState {
     text: string;
@@ -51,6 +54,10 @@ export class ReactTextFieldBase<
     componentDidMount(): void {
         super.componentDidMount();
 
+        const inputIsUpdating =
+            this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
+            of(false as boolean);
+
         this.wire('text', 'text', (x) => x);
         this.wire('enabled', 'enabled', (x) => x);
         this.wire('font', 'fontStyle', fontStyle);
@@ -58,6 +65,7 @@ export class ReactTextFieldBase<
         this.wire('type', 'type', (x) => x);
         this.wire('placeholder', 'placeholder', (x) => x);
         const props = [
+            inputIsUpdating,
             this.safeIntrinsicSize(),
             this.props.parentView.property('contentPadding.top').value?.sink ??
                 of(0),
@@ -68,27 +76,34 @@ export class ReactTextFieldBase<
                 of(null),
         ];
         this.subscription.add(
-            combineLatest(props).subscribe((x) => {
-                if (super.isHeightDefined()) {
-                    const size = x[0];
-                    const top = x[1] || (0 as number);
-                    const bottom = x[2] || (0 as number);
-                    const strokeWidth = x[3] || (0 as number);
-                    const strokeColor = x[4] as ColorContainer | null;
-                    const strokeOffset =
-                        strokeWidth > 0 && strokeColor !== null
-                            ? strokeWidth
-                            : 0;
-                    this.logValue(
-                        'height',
-                        size.height - top - bottom - strokeOffset * 2
-                    );
-                    this.setState((s) => ({
-                        ...s,
-                        height: size.height - top - bottom - strokeOffset * 2,
-                    }));
-                }
-            })
+            combineLatest(props)
+                .pipe(
+                    filter(([updating]) => !updating),
+                    map(([, ...v]) => v),
+                    distinctUntilChanged((x, y) => isEqual(x, y))
+                )
+                .subscribe((x) => {
+                    if (super.isHeightDefined()) {
+                        const size = x[0] as ElementSize;
+                        const top = x[1] || (0 as number);
+                        const bottom = x[2] || (0 as number);
+                        const strokeWidth = x[3] || (0 as number);
+                        const strokeColor = x[4] as ColorContainer | null;
+                        const strokeOffset =
+                            strokeWidth > 0 && strokeColor !== null
+                                ? strokeWidth
+                                : 0;
+                        this.logValue(
+                            'height',
+                            size.height - top - bottom - strokeOffset * 2
+                        );
+                        this.setState((s) => ({
+                            ...s,
+                            height:
+                                size.height - top - bottom - strokeOffset * 2,
+                        }));
+                    }
+                })
         );
     }
 
@@ -230,7 +245,7 @@ export class ReactTextFieldBase<
                 {...extra}
                 style={this.style()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
             >
                 {input}
             </div>

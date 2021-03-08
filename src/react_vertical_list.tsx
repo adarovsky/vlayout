@@ -7,6 +7,7 @@ import { ReactList, ReactListState } from './react_list';
 import { pick } from 'lodash';
 import { visibleChildrenSizes } from './react_absolute';
 import { ReactView, ReactViewProps, ReactViewState } from './react_views';
+import composeRefs from '@seznam/compose-react-refs';
 
 export class ReactVerticalList extends ReactList<ReactListState> {
     styleProperties(): ViewProperty[] {
@@ -70,7 +71,7 @@ export class ReactVerticalList extends ReactList<ReactListState> {
             <div
                 style={this.style()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 {...extra}
             >
                 {/*<FlipMove key={'flip'} duration={250} easing="ease-in-out" enterAnimation="fade" leaveAnimation="fade">*/}

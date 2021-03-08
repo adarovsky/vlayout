@@ -3,10 +3,11 @@ import { ReactView, ReactViewProps, ReactViewState } from './react_views';
 import { ViewProperty } from './view';
 import { combineLatest, Observable } from 'rxjs';
 import { ElementSize, resizeObserver } from './resize_sensor';
-import { map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { ReactList, ReactListState } from './react_list';
-import { pick } from 'lodash';
+import { isEqual, pick } from 'lodash';
 import { visibleChildrenSizes } from './react_absolute';
+import composeRefs from '@seznam/compose-react-refs';
 
 interface ReactHorizontalListState extends ReactListState {
     scrollerStyle: CSSProperties;
@@ -33,11 +34,11 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
     intrinsicSize(): Observable<ElementSize> {
         return this.children.pipe(
             visibleChildrenSizes(),
-            map(sizes => {
+            map((sizes) => {
                 let maxHeight = 0;
                 let maxWidth = 0;
 
-                sizes.forEach(size => {
+                sizes.forEach((size) => {
                     maxHeight = Math.max(maxHeight, size.height);
                     maxWidth += size.width;
                 });
@@ -66,7 +67,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
         super.componentDidMount();
         const align = this.props.parentView.property('alignment');
         const currentSize = this.viewRef.pipe(
-            switchMap(self => resizeObserver(self))
+            switchMap((self) => resizeObserver(self))
         );
 
         if (align && align.value && this.scrollerRef.current) {
@@ -75,27 +76,31 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
                     align.value.sink,
                     currentSize,
                     resizeObserver(this.scrollerRef.current),
-                ]).subscribe(([align, containerSize, scrollerSize]) => {
-                    if (containerSize.width > scrollerSize.width) {
-                        switch (align) {
-                            case 'center':
-                                this.setState({
-                                    scrollerStyle: {
-                                        left: '50%',
-                                        transform: 'translateX(-50%)',
-                                    },
-                                });
-                                break;
-                            case 'trailing':
-                                this.setState({ scrollerStyle: { right: 0 } });
-                                break;
-                            default:
-                                this.setState({ scrollerStyle: {} });
+                ])
+                    .pipe(distinctUntilChanged((x, y) => isEqual(x, y)))
+                    .subscribe(([align, containerSize, scrollerSize]) => {
+                        if (containerSize.width > scrollerSize.width) {
+                            switch (align) {
+                                case 'center':
+                                    this.setState({
+                                        scrollerStyle: {
+                                            left: '50%',
+                                            transform: 'translateX(-50%)',
+                                        },
+                                    });
+                                    break;
+                                case 'trailing':
+                                    this.setState({
+                                        scrollerStyle: { right: 0 },
+                                    });
+                                    break;
+                                default:
+                                    this.setState({ scrollerStyle: {} });
+                            }
+                        } else {
+                            this.setState({ scrollerStyle: {} });
                         }
-                    } else {
-                        this.setState({ scrollerStyle: {} });
-                    }
-                })
+                    })
             );
         }
     }
@@ -106,7 +111,7 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
             <div
                 style={this.style()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 {...extra}
             >
                 <div

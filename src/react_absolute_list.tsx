@@ -7,6 +7,7 @@ import { absoluteIntrinsicSize } from './react_absolute';
 import { pick } from 'lodash';
 import { ReactView, ReactViewProps, ReactViewState } from './react_views';
 import { isNotNull } from './utils';
+import composeRefs from '@seznam/compose-react-refs';
 
 export class ReactAbsoluteList extends ReactList<ReactListState> {
 
@@ -45,7 +46,7 @@ export class ReactAbsoluteList extends ReactList<ReactListState> {
 
     render() {
         const extra = pick(this.state, 'id');
-        return (<div style={this.style()} className={this.className} ref={this.setViewRef} {...extra}>
+        return (<div style={this.style()} className={this.className} ref={composeRefs(this.setViewRef, this.props.innerRef)} {...extra}>
             {this.state.childItems.map( v => v.target )}
         </div>);
     }

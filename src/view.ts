@@ -20,6 +20,10 @@ import { take } from 'rxjs/operators';
 import { ReactStackLayout } from './react_stack';
 import { ReactAbsoluteLayout } from './react_absolute';
 import { forIn, values } from 'lodash';
+import { Tooltip } from './tooltip';
+import { ReactButton } from './react_button';
+import Tippy from '@tippyjs/react';
+import { TooltipComponent } from './react_tooltip';
 
 export class ViewProperty {
     line: number = 0;
@@ -62,6 +66,7 @@ export class View {
     column: number = 0;
 
     parent: View | null = null;
+    tooltip: Tooltip | null = null;
     scope: Scope | null = null;
 
     protected properties: Dictionary<ViewProperty> = {};
@@ -70,15 +75,15 @@ export class View {
 
     constructor() {
         this.registerProperty(new ViewProperty('id', 'String'));
-        ['left', 'right', 'top', 'bottom'].forEach(t => {
+        ['left', 'right', 'top', 'bottom'].forEach((t) => {
             this.registerProperty(new ViewProperty('padding.' + t, 'Number'));
         });
 
-        ['x', 'y'].forEach(t => {
+        ['x', 'y'].forEach((t) => {
             this.registerProperty(new ViewProperty('center.' + t, 'Number'));
         });
 
-        ['width', 'height'].forEach(t => {
+        ['width', 'height'].forEach((t) => {
             this.registerProperty(new ViewProperty('size.' + t, 'Number'));
             this.registerProperty(new ViewProperty('fixedSize.' + t, 'Number'));
         });
@@ -94,14 +99,14 @@ export class View {
         let key = this._key;
         const idProp = this.property('id');
         if (idProp.value)
-            idProp.value.sink.pipe(take(1)).subscribe(i => (key = i));
+            idProp.value.sink.pipe(take(1)).subscribe((i) => (key = i));
 
         return key;
     }
 
     copyFrom(that: this) {
         this.properties = {};
-        forIn(that.properties, p => this.registerProperty(p.instantiate()));
+        forIn(that.properties, (p) => this.registerProperty(p.instantiate()));
     }
 
     link(scope: Scope): void {
@@ -112,17 +117,34 @@ export class View {
             n.content = '1';
             this.property('alpha').value = new Constant(n);
         }
-        forIn(this.properties, p => {
+        forIn(this.properties, (p) => {
             p.link(scope);
         });
+
+        this.tooltip?.link(scope);
     }
 
     get target(): React.ReactElement {
-        return createElement('div', { key: this.key }, []);
+        if (this.tooltip) {
+            return createElement(
+                TooltipComponent,
+                {
+                    key: this.key,
+                    tooltip: this.tooltip,
+                    content: this
+                }
+            );
+        } else {
+            return this.getTargetWithRef(null);
+        }
+    }
+
+    getTargetWithRef(ref: React.Ref<HTMLDivElement>): React.ReactElement {
+        return createElement('div', { key: this.key, ref }, []);
     }
 
     get activeProperties(): ViewProperty[] {
-        return values(this.properties).filter(p => !!p.value);
+        return values(this.properties).filter((p) => !!p.value);
     }
 
     registerProperty(prop: ViewProperty): void {
@@ -140,7 +162,7 @@ export class View {
     }
 
     activePropertiesNamed(...names: string[]): ViewProperty[] {
-        return names.map(n => this.property(n)).filter(p => !!p.value);
+        return names.map((n) => this.property(n)).filter((p) => !!p.value);
     }
 
     viewType(): string {
@@ -181,7 +203,7 @@ export class Container extends View {
     copyFrom(what: this): void {
         super.copyFrom(what);
         this._views = [];
-        what._views.forEach(v => this.addManagedView(v.instantiate()));
+        what._views.forEach((v) => this.addManagedView(v.instantiate()));
     }
 
     get views(): View[] {
@@ -196,10 +218,11 @@ export class Container extends View {
         }
     }
 
-    get target(): React.ReactElement {
+    getTargetWithRef(ref: React.Ref<HTMLDivElement>): React.ReactElement {
         return createElement(ReactContainer, {
             parentView: this,
             key: this.key,
+            innerRef: ref,
         });
     }
 
@@ -236,10 +259,11 @@ export class AbsoluteLayout extends Container {
         return 'absolute';
     }
 
-    get target(): React.ReactElement {
+    getTargetWithRef(ref: React.Ref<HTMLDivElement>): React.ReactElement {
         return createElement(ReactAbsoluteLayout, {
             parentView: this,
             key: this.key,
+            innerRef: ref,
         });
     }
 }
@@ -331,14 +355,12 @@ export class LayoutView extends Container {
         return 'layout';
     }
 
-    get target(): React.ReactElement<
-        any,
-        string | React.JSXElementConstructor<any>
-    > {
+    getTargetWithRef(ref: React.Ref<HTMLDivElement>): React.ReactElement {
         return createElement(ReactTopLayout, {
             parentView: this,
             key: this.key,
             className: this.className,
+            innerRef: ref,
         });
     }
 }

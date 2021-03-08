@@ -48,6 +48,7 @@ import { Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDef
 import { FunctionImplementationI } from './builtin_functions';
 import { List, ListItemPrototype } from './list';
 import { extend, forIn, isEmpty } from 'lodash';
+import { Tooltip } from './tooltip';
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {
@@ -786,6 +787,8 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
             case 'aspect':
                 this.parsePropertyContents(view, name.content, name.content, name);
                 return true;
+            case 'tooltip':
+                return this.parseTooltip(name, view);
             default:
                 return false;
         }
@@ -918,6 +921,16 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
             while (this.parseViewContents(view!)) {
             }
         }
+    }
+
+    private parseTooltip(name: LexIdentifier, view: View): boolean {
+        const tooltip = new Tooltip();
+        this.matchOrFail('{');
+        this.setupView(tooltip, name);
+        this.matchOrFail('}');
+        view.tooltip = tooltip;
+        tooltip.parent = view;
+        return true;
     }
 
     private parseViewContents(view: View): boolean {

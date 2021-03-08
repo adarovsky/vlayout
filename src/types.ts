@@ -4,6 +4,7 @@ import { includes } from 'lodash';
 import { combineLatest, Observable, of } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { catchError, map, tap, timeout } from 'rxjs/operators';
+import { Placement } from 'tippy.js';
 
 export class TypeDefinition {
     readonly engine: Engine;
@@ -211,6 +212,16 @@ export class Types {
                 )
             )
         );
+
+        this.registerEnum(
+            new EnumDefinition(engine, 'TooltipPlacement', {
+                auto: 'auto',
+                left: 'left',
+                right: 'right',
+                top: 'top',
+                bottom: 'bottom',
+            } as Dictionary<Placement>)
+        );
     }
 
     registerEnum(e: EnumDefinition): void {
@@ -322,6 +333,6 @@ function scaledSource(
         ),
         tap((value) => cachedSources.set(src, value)),
         timeout(300),
-        catchError((err) => of('')),
+        catchError((err) => of(''))
     );
 }

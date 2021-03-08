@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Component } from 'react';
 import './App.css';
 import { Engine, Layout, LayoutComponent, ListModelItem } from '../';
-import { fromEvent, interval, Observable, of, Subject } from 'rxjs';
+import { fromEvent, interval, Observable, of } from 'rxjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { readFileSync } from 'fs';
-import { delay, map, startWith, tap } from 'rxjs/operators';
+import { delay, map, startWith } from 'rxjs/operators';
 
 const layout = readFileSync(__dirname + '/test.vlayout', 'utf8');
 
@@ -34,7 +34,7 @@ class TestItem implements ListModelItem {
 }
 
 class App extends Component {
-    private readonly engine = new Engine(true, ["test_stack"]);
+    private readonly engine = new Engine(true, ['test-tooltip']);
 
     constructor(props: any) {
         super(props);
@@ -124,7 +124,7 @@ class App extends Component {
         ));
 
         this.engine.registerButton('confirmationRejectButton', async () => {});
-        this.engine.registerButton('confirmationAcceptButton', async () => {});
+        this.engine.registerButton('confirmationAcceptButton', async () => {console.log('accept')});
     }
 
     render() {

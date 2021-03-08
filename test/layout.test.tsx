@@ -37,7 +37,7 @@ describe("layout", () => {
         expect(observers).toHaveLength(4);
         expect(node.getDOMNode().childElementCount).toBe(3);
         pauseObserving();
-        expect(node.getDOMNode().childElementCount).toBe(1);
+        expect(node.getDOMNode().childElementCount).toBe(3);
         resumeObserving();
         expect(observers).toHaveLength(4);
         expect(node.getDOMNode().childElementCount).toBe(3);

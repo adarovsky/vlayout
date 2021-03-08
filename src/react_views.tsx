@@ -25,7 +25,7 @@ import {
     startWith,
     subscribeOn,
     switchMap,
-    tap,
+    tap, throttleTime,
 } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
@@ -40,11 +40,13 @@ import {
     pick,
 } from 'lodash';
 import { assignDeep, isNotNull } from './utils';
+import composeRefs from '@seznam/compose-react-refs';
 
 export interface ReactViewProps {
     parentView: View;
     key?: string;
     className?: string;
+    innerRef?: React.Ref<HTMLDivElement>;
 }
 
 export interface ReactViewState {
@@ -180,9 +182,19 @@ export class ReactView<
 
         const isInStack = this.props.parentView.parent instanceof StackLayout;
         this.subscription.add(
-            combineLatest([this.safeIntrinsicSize(), this.viewRef])
-                //.pipe(debounceTime(1))
-                .subscribe(([size, self]) => {
+            combineLatest([
+                inputIsUpdating,
+                this.safeIntrinsicSize(),
+                this.viewRef,
+            ])
+                .pipe(
+                    filter(([updating]) => !updating),
+                    map(([, size, self]) => ({
+                        size,
+                        self,
+                    }))
+                )
+                .subscribe(({ size, self }) => {
                     if (!this.isWidthDefined()) {
                         self.style.minWidth =
                             size.width > 0 ? size.width + 'px' : '';
@@ -207,14 +219,23 @@ export class ReactView<
 
             this.subscription.add(
                 combineLatest([
+                    inputIsUpdating,
                     this.safeIntrinsicSize(),
                     p.value.sink.pipe(
                         distinctUntilChanged((x, y) => Math.abs(x - y) < 0.01)
                     ),
                     this.viewRef.pipe(distinctUntilChanged()),
                 ])
-                    .pipe(subscribeOn(asyncScheduler))
-                    .subscribe(([size, aspect, self]) => {
+                    .pipe(
+                        filter(([updating]) => !updating),
+                        map(([, size, aspect, self]) => ({
+                            size,
+                            aspect,
+                            self,
+                        })),
+                        throttleTime(5, asyncScheduler, {leading: true, trailing: true})
+                    )
+                    .subscribe(({ size, aspect, self }) => {
                         const widthDefined =
                             isNotNull(this.state.fixedSize?.width) ||
                             !!parent.parent?.instance?.definesChildWidth(this);
@@ -258,12 +279,24 @@ export class ReactView<
     wire(name: string, field: string, mapper: (v: any) => any) {
         const prop = this.props.parentView.property(name);
         if (prop?.value) {
+            const inputIsUpdating =
+                this.props.parentView.scope?.engine.inputs.inputIsUpdating ??
+                of(false as boolean);
+
             this.subscription.add(
-                prop.value.sink.subscribe((value) => {
-                    const val = mapper ? mapper(value) : value;
-                    this.logValue(field, val);
-                    this.setState((s) => extend({ ...s }, { [field]: val }));
-                })
+                combineLatest([inputIsUpdating, prop.value.sink])
+                    .pipe(
+                        filter(([upd]) => !upd),
+                        map(([, val]) => val),
+                        distinctUntilChanged((x, y) => isEqual(x, y))
+                    )
+                    .subscribe((value) => {
+                        const val = mapper ? mapper(value) : value;
+                        this.logValue(field, val);
+                        this.setState((s) =>
+                            extend({ ...s }, { [field]: val })
+                        );
+                    })
             );
         }
     }
@@ -552,7 +585,7 @@ export class ReactView<
                 style={this.style()}
                 id={this.state.id}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 {...extra}
             />
         );
@@ -698,7 +731,7 @@ export class ReactContainer<S extends ReactContainerState> extends ReactView<
             <div
                 style={this.style()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 {...extra}
             >
                 {(this.props.parentView as Container).views

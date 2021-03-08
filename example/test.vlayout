@@ -35,9 +35,9 @@ layout {
             center {
                 x: 0.5 y: 0.5
             }
-            fixedSize {
-                width: 490
-                height: 490
+            size {
+                width: 0.5
+                height: 0.5
             }
 
             backgroundColor: #eeffee
@@ -48,8 +48,24 @@ layout {
                 padding { left: 60 right: 10 }
                 aspect: 16/9
 
-                    backgroundColor: #ccddee
-                roundRect {
+                backgroundColor: #ccddee
+                absolute {
+                    confirmationAcceptButton {
+                        center { x: 0.5 y: 0.5 }
+                        text: "sample button"
+                        backgroundColor: #99ccff
+                        cornerRadius: 0.5
+
+                        tooltip {
+                            theme: "light-border"
+                            placement: .bottom
+                            label {
+                                id: "test-tooltip"
+                                text: "tooltip text"
+                                padding { left: 10 top: 10 bottom: 10 right: 10 }
+                            }
+                        }
+                    }
                 }
             }
         }

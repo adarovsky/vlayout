@@ -23,6 +23,7 @@ import {
     toPairs,
 } from 'lodash';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
+import composeRefs from '@seznam/compose-react-refs';
 
 //import FlipMove from "react-flip-move";
 
@@ -79,7 +80,7 @@ export class ReactListItemPrototype extends ReactAbsoluteLayout<
             <div
                 style={this.style()}
                 className={this.className}
-                ref={this.setViewRef}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
                 onClick={e => this.handleClick(e)}
             >
                 {(this.props.parentView as Container).views

@@ -1,5 +1,12 @@
 import { Inputs } from './inputs';
-import { Dictionary, EnumDefinition, ListDefinition, ListDefinitionItem, TypeDefinition, Types } from './types';
+import {
+    Dictionary,
+    EnumDefinition,
+    ListDefinition,
+    ListDefinitionItem,
+    TypeDefinition,
+    Types,
+} from './types';
 import { EnumValue, Expression } from './expression';
 import {
     ColorAlpha,
@@ -18,7 +25,12 @@ import { View } from './view';
 import { ReactViewProps } from './react_views';
 import { Button, TextField } from './primitives';
 import { Observable } from 'rxjs';
-import { ListClickHandler, ListEnterHandler, ListModelItem, ListTextChangeHandler } from './list';
+import {
+    ListClickHandler,
+    ListEnterHandler,
+    ListModelItem,
+    ListTextChangeHandler,
+} from './list';
 import { isEqual } from 'lodash';
 
 export class Engine {
@@ -27,13 +39,22 @@ export class Engine {
     readonly functions: FunctionImplementationI[];
     private readonly referencedViews: Dictionary<ViewReference> = {};
     private readonly buttons: Dictionary<() => Promise<void>> = {};
-    private readonly textFields: Dictionary<{onChange: (s: string) => void; onEnter: () => void; }> = {};
+    private readonly textFields: Dictionary<{
+        onChange: (s: string) => void;
+        onEnter: () => void;
+    }> = {};
     private readonly listButtons: Dictionary<ListClickHandler> = {};
-    private readonly listTextFields: Dictionary<{onChange: ListTextChangeHandler, onEnter: ListEnterHandler}> = {};
+    private readonly listTextFields: Dictionary<{
+        onChange: ListTextChangeHandler;
+        onEnter: ListEnterHandler;
+    }> = {};
     private readonly referencedListViews: Dictionary<ViewListReference> = {};
-    readonly valueSnapshot: { inputs: Dictionary<any>; properties: Dictionary<any> } = {
+    readonly valueSnapshot: {
+        inputs: Dictionary<any>;
+        properties: Dictionary<any>;
+    } = {
         inputs: {},
-        properties: {}
+        properties: {},
     };
 
     constructor(readonly debug = false, readonly verboseIds: string[] = []) {
@@ -44,11 +65,11 @@ export class Engine {
             new FontFamily(this),
             new FontTyped(this),
             new FontSized(this),
-            new ColorAlpha(this)
-        ]
+            new ColorAlpha(this),
+        ];
     }
 
-    type(name: string): TypeDefinition|null {
+    type(name: string): TypeDefinition | null {
         return this.types.type(name);
     }
 
@@ -76,7 +97,7 @@ export class Engine {
         return this.type('Image')!;
     }
 
-    variableForKeyPath(keyPath: string): Expression|null {
+    variableForKeyPath(keyPath: string): Expression | null {
         const kp = keyPath.split('.');
         if (kp.length === 2) {
             const enumType = this.type(kp[0]);
@@ -90,7 +111,10 @@ export class Engine {
         return this.inputs.input(keyPath, 0, 0);
     }
 
-    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI {
+    functionFor(
+        name: string,
+        parameters: TypeDefinition[]
+    ): FunctionImplementationI {
         if (name === '@') {
             for (let p of parameters) {
                 if (p !== this.stringType()) {
@@ -99,27 +123,43 @@ export class Engine {
             }
 
             return new LocalizedString(this);
-        }
-        else {
+        } else {
             for (let f of this.functions) {
                 if (f.name === name && isEqual(f.parameterTypes, parameters)) {
                     return f;
                 }
             }
 
-            throw new Error(`function ${name}(${parameters.map(p => p.toString()).join(', ')}) not found`);
+            throw new Error(
+                `function ${name}(${parameters
+                    .map((p) => p.toString())
+                    .join(', ')}) not found`
+            );
         }
     }
 
-    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[] {
-        return this.functions.filter(f => f.name === name && f.parameterTypes.length === parametersCount);
+    functionsLoose(
+        name: string,
+        parametersCount: number
+    ): FunctionImplementationI[] {
+        return this.functions.filter(
+            (f) =>
+                f.name === name && f.parameterTypes.length === parametersCount
+        );
     }
 
-    registerView(key: string, createComponent: (parent: View) => React.ReactElement<ReactViewProps>) {
+    registerView(
+        key: string,
+        createComponent: (parent: View) => React.ReactElement<ReactViewProps>
+    ) {
         this.referencedViews[key] = new ViewReference(createComponent);
     }
 
-    registerInput(name: string, type: TypeDefinition, sink: Observable<any>): void {
+    registerInput(
+        name: string,
+        type: TypeDefinition,
+        sink: Observable<any>
+    ): void {
         this.inputs.registerInput(name, type, sink);
     }
 
@@ -127,8 +167,13 @@ export class Engine {
         this.buttons[key] = onClick;
     }
 
-    registerTextField(key: string, onChange: (s: string) => void, sink: Observable<string>, onEnter: () => void = () => {}) {
-        this.textFields[key] = {onChange, onEnter};
+    registerTextField(
+        key: string,
+        onChange: (s: string) => void,
+        sink: Observable<string>,
+        onEnter: () => void = () => {}
+    ) {
+        this.textFields[key] = { onChange, onEnter };
         this.inputs.registerInput(key, this.stringType(), sink);
     }
 
@@ -136,47 +181,69 @@ export class Engine {
         this.types.registerEnum(new EnumDefinition(this, name, values));
     }
 
-    registerStandardEnum<EnumType>(name: string, e: StandardEnum<EnumType>): void {
-        this.types.registerEnum(new EnumDefinition(this, name, materializeEnum(e)));
+    registerStandardEnum<EnumType>(
+        name: string,
+        e: StandardEnum<EnumType>
+    ): void {
+        this.types.registerEnum(
+            new EnumDefinition(this, name, materializeEnum(e))
+        );
     }
 
     registerList(name: string, fields: Dictionary<ListDefinitionItem>): void {
         this.types.registerList(new ListDefinition(this, name, fields));
     }
 
-    registerListButton(name: string, onClick: (item: ListModelItem) => Promise<void>) {
+    registerListButton(
+        name: string,
+        onClick: (item: ListModelItem) => Promise<void>
+    ) {
         this.listButtons[name] = onClick;
     }
 
-    registerListTextField(name: string, onChange: ListTextChangeHandler, onEnter: ListEnterHandler = () => {}) {
-        this.listTextFields[name] = {onChange, onEnter};
+    registerListTextField(
+        name: string,
+        onChange: ListTextChangeHandler,
+        onEnter: ListEnterHandler = () => {}
+    ) {
+        this.listTextFields[name] = { onChange, onEnter };
     }
 
-    registerListView(name: string, createComponent: (parent: View, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
+    registerListView(
+        name: string,
+        createComponent: (
+            parent: View,
+            modelItem: Observable<ListModelItem>
+        ) => React.ReactElement<ReactViewProps>
+    ) {
         this.referencedListViews[name] = new ViewListReference(createComponent);
     }
 
-    viewForKey(key: string): View|null {
-        if (this.buttons[key])
-            return new Button(this.buttons[key]);
+    viewForKey(key: string): View | null {
+        if (this.buttons[key]) return new Button(this.buttons[key]);
         else if (this.textFields[key])
-            return new TextField(key, this.textFields[key].onChange, this.textFields[key].onEnter);
+            return new TextField(
+                key,
+                this.textFields[key].onChange,
+                this.textFields[key].onEnter
+            );
         else if (this.referencedViews[key])
             return new ViewReference(this.referencedViews[key].createComponent);
-        else
-            return null;
+        else return null;
     }
 
-    listButtonForKey(key: string) : ListClickHandler|null {
+    listButtonForKey(key: string): ListClickHandler | null {
         return this.listButtons[key] || null;
     }
 
-    listTextFieldForKey(key: string) : {onChange: ListTextChangeHandler, onEnter: ListEnterHandler}|null {
+    listTextFieldForKey(
+        key: string
+    ): { onChange: ListTextChangeHandler; onEnter: ListEnterHandler } | null {
         return this.listTextFields[key] || null;
     }
 
-    listViewForKey(key: string): ViewListReference|null {
-        const view =  this.referencedListViews[key];
+    listViewForKey(key: string): ViewListReference | null {
+        const view = this.referencedListViews[key];
         if (view) {
             return new ViewListReference(view.createComponent);
         }
@@ -187,24 +254,30 @@ export class Engine {
     logInputValue(name: string, value: any): void {
         this.valueSnapshot.inputs[name] = value;
     }
-}
 
+    beginUpdates() {
+        this.inputs.beginUpdates();
+    }
+
+    endUpdates() {
+        this.inputs.endUpdates();
+    }
+}
 
 export type StandardEnum<T> = {
     [id: string]: T | string;
     [nu: number]: string;
-}
-
+};
 
 function camelize(str: string) {
-    return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
-        if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+    return str.replace(/(?:^\w|[A-Z]|\b\w|-|\s+)/g, function (match, index) {
+        if (+match === 0) return ''; // or if (/\s+/.test(match)) for white spaces
         return index === 0 ? match.toLowerCase() : match.toUpperCase();
-    });
+    }).replace('-', '');
 }
 
 function materializeEnum<EnumType>(e: StandardEnum<EnumType>) {
-    return Object.keys(e).filter(x => isNaN(+x)).reduce((prev, cur) => ({...prev,
-        [camelize(cur)] : e[cur]
-    }), {})
+    return Object.keys(e)
+        .filter((x) => isNaN(+x))
+        .reduce((prev, cur) => ({ ...prev, [camelize(cur)]: e[cur] }), {});
 }
