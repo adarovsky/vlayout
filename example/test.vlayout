@@ -30,37 +30,10 @@ properties {
 
 layout {
     layer {
-        verticalList {
-            center {
-                x: 0.5 y: 0.5
-            }
-            size {
-                width: 0.5
-                height: 0.5
-            }
-            model: testList
 
-            backgroundColor: #eeffee
-
-            item {
-                fixedSize { height: 44 }
-                testListButton {
-                    center { x: 0.5 y: 0.5 }
-                    text: "sample button for " + name
-                    backgroundColor: #99ccff
-                    cornerRadius: 0.5
-
-                    tooltip {
-                        theme: "light-border"
-                        placement: .bottom
-                        label {
-                            text: "tooltip text for " + name
-                            padding { left: 10 top: 10 bottom: 10 right: 10 }
-                        }
-                    }
-                }
-
-            }
+        label {
+            center { x: 0.5 y: 0.5 }
+            text: @("width: $1, height: $2", String(viewport.width), String(viewport.height))
         }
     }
 }
