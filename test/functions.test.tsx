@@ -397,3 +397,101 @@ it('builtin function Min should fail without arguments', async () => {
 
     expect(wrapper).toThrowError(/cannot find function/);
 });
+
+it('builtin function Prefix should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : Prefix("abcdef", 3)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('abc');
+});
+
+it('builtin function Suffix should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : Suffix("abcdef", 3)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('def');
+});
+
+it('builtin function SubString should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : SubString("abcdef", 1, 3)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('bcd');
+});
+
+it('builtin function ToUpper should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : ToUpper("abcdef")
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('ABCDEF');
+});
+
+it('builtin function ToLower should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : ToLower("ABCDEF")
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('abcdef');
+});
+
+it('builtin function ToCapital should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : ToCapital("abcdef")
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('Abcdef');
+});
+
+it('builtin function ToCapital should keep trailing string case', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : ToCapital("abCdEf")
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('AbCdEf');
+});

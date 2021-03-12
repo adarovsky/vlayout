@@ -19,7 +19,7 @@ import {
     LocalizedString,
     Max,
     Min,
-    ShortLocalizedNumber,
+    ShortLocalizedNumber, StringPrefix, StringSuffix, SubString, ToCapitalCase, ToLower, ToUpper,
 } from './builtin_functions';
 import React from 'react';
 import { ViewListReference, ViewReference } from './view_reference';
@@ -68,6 +68,12 @@ export class Engine {
             new FontTyped(this),
             new FontSized(this),
             new ColorAlpha(this),
+            new StringPrefix(this),
+            new StringSuffix(this),
+            new SubString(this),
+            new ToUpper(this),
+            new ToLower(this),
+            new ToCapitalCase(this),
         ];
     }
 

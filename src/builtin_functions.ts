@@ -266,3 +266,169 @@ export class Max
         );
     }
 }
+
+export class StringPrefix
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'Prefix';
+        this.parameterTypes = [engine.stringType(), engine.numberType()];
+        this.returnType = engine.stringType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters).pipe(
+            map((params) => {
+                const s = params[0] as string;
+                const l = params[1] as number;
+                if (l >= s.length) {
+                    return s;
+                }
+                return s.substr(0, l);
+            })
+        );
+    }
+}
+
+export class StringSuffix
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'Suffix';
+        this.parameterTypes = [engine.stringType(), engine.numberType()];
+        this.returnType = engine.stringType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters).pipe(
+            map((params) => {
+                const s = params[0] as string;
+                const l = params[1] as number;
+                if (l >= s.length) {
+                    return s;
+                }
+                return s.slice(-l);
+            })
+        );
+    }
+}
+
+export class SubString
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'SubString';
+        this.parameterTypes = [
+            engine.stringType(),
+            engine.numberType(),
+            engine.numberType(),
+        ];
+        this.returnType = engine.stringType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters).pipe(
+            map((params) => {
+                const s = params[0] as string;
+                const start = params[1] as number;
+                const length = params[2] as number;
+                return s.substr(start, length);
+            })
+        );
+    }
+}
+
+export class ToUpper
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'ToUpper';
+        this.parameterTypes = [engine.stringType()];
+        this.returnType = engine.stringType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters).pipe(
+            map((params) => {
+                const s = params[0] as string;
+                return s.toLocaleUpperCase();
+            })
+        );
+    }
+}
+
+export class ToLower
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'ToLower';
+        this.parameterTypes = [engine.stringType()];
+        this.returnType = engine.stringType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters).pipe(
+            map((params) => {
+                const s = params[0] as string;
+                return s.toLocaleLowerCase();
+            })
+        );
+    }
+}
+
+export class ToCapitalCase
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'ToCapital';
+        this.parameterTypes = [engine.stringType()];
+        this.returnType = engine.stringType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters).pipe(
+            map((params) => {
+                const s = params[0] as string;
+                return s.length > 1
+                    ? s[0].toLocaleUpperCase() + s.slice(1)
+                    : s.toLocaleUpperCase();
+            })
+        );
+    }
+}
