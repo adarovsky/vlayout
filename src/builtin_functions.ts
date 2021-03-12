@@ -20,7 +20,8 @@ export class FunctionImplementation {
     constructor(public readonly engine: Engine) {}
 }
 
-export class LocalizedNumber extends FunctionImplementation
+export class LocalizedNumber
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -35,11 +36,12 @@ export class LocalizedNumber extends FunctionImplementation
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(map(x => `${x}`));
+        return parameters[0].pipe(map((x) => `${x}`));
     }
 }
 
-export class ShortLocalizedNumber extends FunctionImplementation
+export class ShortLocalizedNumber
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -55,7 +57,7 @@ export class ShortLocalizedNumber extends FunctionImplementation
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return parameters[0].pipe(
-            map(x => {
+            map((x) => {
                 if (x > 1000000) {
                     return `${Math.round(x / 100000) / 10} M`;
                 } else if (x > 1000) {
@@ -67,7 +69,8 @@ export class ShortLocalizedNumber extends FunctionImplementation
     }
 }
 
-export class LocalizedString extends FunctionImplementation
+export class LocalizedString
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -83,7 +86,7 @@ export class LocalizedString extends FunctionImplementation
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<string>[]).pipe(
-            map(params => {
+            map((params) => {
                 let key = params[0];
                 for (let i = params.length - 1; i >= 1; --i) {
                     key = key.replace(`$${i}`, params[i]);
@@ -95,7 +98,8 @@ export class LocalizedString extends FunctionImplementation
     }
 }
 
-export class Image extends FunctionImplementation
+export class Image
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -110,11 +114,12 @@ export class Image extends FunctionImplementation
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(map(x => new ImageContainer(x)));
+        return parameters[0].pipe(map((x) => new ImageContainer(x)));
     }
 }
 
-export class FontFamily extends FunctionImplementation
+export class FontFamily
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -130,12 +135,13 @@ export class FontFamily extends FunctionImplementation
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<any>[]).pipe(
-            map(params => new FontContainer(params[0], params[1], null))
+            map((params) => new FontContainer(params[0], params[1], null))
         );
     }
 }
 
-export class FontTyped extends FunctionImplementation
+export class FontTyped
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -151,12 +157,13 @@ export class FontTyped extends FunctionImplementation
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<any>[]).pipe(
-            map(params => new FontContainer(null, params[1], params[0]))
+            map((params) => new FontContainer(null, params[1], params[0]))
         );
     }
 }
 
-export class FontSized extends FunctionImplementation
+export class FontSized
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -172,12 +179,13 @@ export class FontSized extends FunctionImplementation
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return parameters[0].pipe(
-            map(params => new FontContainer(null, params, null))
+            map((params) => new FontContainer(null, params, null))
         );
     }
 }
 
-export class ColorAlpha extends FunctionImplementation
+export class ColorAlpha
+    extends FunctionImplementation
     implements FunctionImplementationI {
     name: string;
     parameterTypes: TypeDefinition[];
@@ -193,7 +201,7 @@ export class ColorAlpha extends FunctionImplementation
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<any>[]).pipe(
-            map(params => {
+            map((params) => {
                 const original = params[0] as ColorContainer;
                 const alpha = params[1] as number;
                 return new ColorContainer(
@@ -203,6 +211,58 @@ export class ColorAlpha extends FunctionImplementation
                     Math.max(0, Math.min(alpha, 1))
                 );
             })
+        );
+    }
+}
+
+export class Min
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'Min';
+        this.parameterTypes = [engine.numberType(), engine.numberType()];
+        this.returnType = engine.numberType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters as Observable<number>[]).pipe(
+            map((params) =>
+                params.reduce((previousValue, currentValue) =>
+                    Math.min(previousValue, currentValue)
+                )
+            )
+        );
+    }
+}
+
+export class Max
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'Max';
+        this.parameterTypes = [engine.numberType(), engine.numberType()];
+        this.returnType = engine.numberType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters as Observable<number>[]).pipe(
+            map((params) =>
+                params.reduce((previousValue, currentValue) =>
+                    Math.max(previousValue, currentValue)
+                )
+            )
         );
     }
 }

@@ -17,6 +17,8 @@ import {
     Image,
     LocalizedNumber,
     LocalizedString,
+    Max,
+    Min,
     ShortLocalizedNumber,
 } from './builtin_functions';
 import React from 'react';
@@ -123,7 +125,32 @@ export class Engine {
             }
 
             return new LocalizedString(this);
-        } else {
+        } else if (name === 'Min') {
+            for (let p of parameters) {
+                if (p !== this.numberType()) {
+                    throw new Error(`Min accepts only numbers`);
+                }
+            }
+            if (parameters.length == 0) {
+                throw new Error(`Not enough arguments to Min`);
+            }
+
+            return new Min(this);
+        }
+        else if (name === 'Max') {
+            for (let p of parameters) {
+                if (p !== this.numberType()) {
+                    throw new Error(`Max accepts only numbers`);
+                }
+            }
+
+            if (parameters.length == 0) {
+                throw new Error(`Not enough arguments to Max`);
+            }
+
+            return new Max(this);
+        }
+        else {
             for (let f of this.functions) {
                 if (f.name === name && isEqual(f.parameterTypes, parameters)) {
                     return f;

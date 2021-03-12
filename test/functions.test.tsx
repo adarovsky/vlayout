@@ -313,3 +313,87 @@ it('function call should fail to cast to wrong type', async () => {
 
     expect(wrapper).toThrowError(/cannot cast String to Number/);
 });
+
+it('builtin function Min should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Min(1, 2))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('1');
+});
+
+it('builtin function Min should accept any number of arguments', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Min(1, 2, 4, 3))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('1');
+});
+
+it('builtin function Max should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Max(1, 2))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('2');
+});
+
+it('builtin function Max should accept any number of arguments', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Max(1, 2, 4, 3))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('4');
+});
+
+it('builtin function Max should fail without arguments', async () => {
+    const wrapper = () => shallow(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Max())
+             }
+         }
+     }`}/>);
+
+    expect(wrapper).toThrowError(/cannot find function/);
+});
+
+it('builtin function Min should fail without arguments', async () => {
+    const wrapper = () => shallow(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Min())
+             }
+         }
+     }`}/>);
+
+    expect(wrapper).toThrowError(/cannot find function/);
+});

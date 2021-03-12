@@ -707,13 +707,11 @@ export class Layout extends Component<LayoutProps, LayoutState> implements Scope
                 let param: Expression|null;
                 while ((param = this.parseExpression())) {
                     parameters.push(param);
-                    if (this.match(')')) {
+                    if (!this.match(",")) {
                         break;
                     }
-                    else {
-                        this.matchOrFail(",");
-                    }
                 }
+                this.matchOrFail(')')
                 return new FunctionCall(unit.line, unit.column, unit.content, parameters);
             }
 
