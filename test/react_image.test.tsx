@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 describe('image', () => {
-    it('should contain id if set', async function() {
+    it('should contain id if set', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -51,7 +51,7 @@ describe('image', () => {
         `);
     });
 
-    it('should contain class if set', async function() {
+    it('should contain class if set', async function () {
         const wrapper = mount(
             <Layout
                 engine={engine!}
@@ -85,7 +85,7 @@ describe('image', () => {
         `);
     });
 
-    it('should switch scale mode', async function() {
+    it('should switch scale mode', async function () {
         const input = new Subject<number>();
         engine!.registerInput('counter', engine!.numberType(), input);
         const wrapper = mount(
@@ -124,7 +124,7 @@ describe('image', () => {
               <img
                 alt=""
                 src="/test.png"
-                style="width: 100%; height: 100%; object-fit: scale-down; position: absolute; left: 0px; top: 0px;"
+                style="width: 100%; height: 100%; object-fit: contain; position: absolute; left: 0px; top: 0px;"
               />
             </div>
         `);

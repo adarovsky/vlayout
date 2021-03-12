@@ -254,7 +254,7 @@ export class ReactImage extends ReactView<ReactViewProps, ReactImageState> {
 
             switch (v) {
                 case 'aspectFit':
-                    s.objectFit = 'scale-down';
+                    s.objectFit = 'contain';
                     break;
                 case 'aspectFill':
                     s.objectFit = 'cover';
