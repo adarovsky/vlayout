@@ -34,6 +34,7 @@ import {
     ListTextChangeHandler,
 } from './list';
 import { isEqual } from 'lodash';
+import invariant from 'ts-invariant';
 
 export class Engine {
     readonly inputs = new Inputs(this);
@@ -185,6 +186,7 @@ export class Engine {
         key: string,
         createComponent: (parent: View) => React.ReactElement<ReactViewProps>
     ) {
+        invariant(typeof createComponent === 'function', `createComponent for ${key} is empty`);
         this.referencedViews[key] = new ViewReference(createComponent);
     }
 
@@ -193,6 +195,7 @@ export class Engine {
         type: TypeDefinition,
         sink: Observable<any>
     ): void {
+        invariant(sink, `input sink for ${name} is empty`);
         this.inputs.registerInput(name, type, sink);
     }
 

@@ -25,7 +25,8 @@ import {
     startWith,
     subscribeOn,
     switchMap,
-    tap, throttleTime,
+    tap,
+    throttleTime,
 } from 'rxjs/operators';
 import { ElementSize, resizeObserver } from './resize_sensor';
 import clsx from 'clsx';
@@ -34,6 +35,7 @@ import {
     extend,
     forEach,
     forIn,
+    fromPairs,
     identity,
     isEqual,
     omit,
@@ -233,7 +235,10 @@ export class ReactView<
                             aspect,
                             self,
                         })),
-                        throttleTime(5, asyncScheduler, {leading: true, trailing: true})
+                        throttleTime(5, asyncScheduler, {
+                            leading: true,
+                            trailing: true,
+                        })
                     )
                     .subscribe(({ size, aspect, self }) => {
                         const widthDefined =
@@ -303,12 +308,12 @@ export class ReactView<
 
     protected logValue(field: string, val: any) {
         const id = this.state.id;
-        if (
-            isNotNull(id) &&
-            this.props.parentView.scope?.engine.verboseIds?.includes(id)
-        ) {
+        // if (
+        //     isNotNull(id) &&
+        //     this.props.parentView.scope?.engine.verboseIds?.includes(id)
+        // ) {
             console.log(`${id}: setState( ${field},`, val, `)`);
-        }
+        // }
     }
 
     has(property: string): boolean {

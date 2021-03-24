@@ -13,6 +13,12 @@ export class ViewReference extends View {
         super();
     }
 
+    instantiate(): this {
+        const v = new (this.constructor as typeof ViewReference)(this.createComponent);
+        v.copyFrom(this);
+        return v as this;
+    }
+
     get target(): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
         return this.createComponent(this);
     }
