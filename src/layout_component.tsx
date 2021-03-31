@@ -1,6 +1,7 @@
 import { ReactViewProps, ReactViewState } from './react_views';
 import { ReactView } from './index';
 import React from 'react';
+import composeRefs from '@seznam/compose-react-refs';
 
 export class LayoutComponent extends ReactView<ReactViewProps, ReactViewState> {
     render() {
@@ -12,7 +13,7 @@ export class LayoutComponent extends ReactView<ReactViewProps, ReactViewState> {
             <div
                 style={style}
                 className={this.className}
-                ref={(x) => this.setViewRef(x)}
+                ref={composeRefs(this.setViewRef, this.props.innerRef)}
             >
                 {this.props.children}
             </div>

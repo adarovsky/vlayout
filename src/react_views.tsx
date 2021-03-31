@@ -308,12 +308,12 @@ export class ReactView<
 
     protected logValue(field: string, val: any) {
         const id = this.state.id;
-        // if (
-        //     isNotNull(id) &&
-        //     this.props.parentView.scope?.engine.verboseIds?.includes(id)
-        // ) {
+        if (
+            isNotNull(id) &&
+            this.props.parentView.scope?.engine.verboseIds?.includes(id)
+        ) {
             console.log(`${id}: setState( ${field},`, val, `)`);
-        // }
+        }
     }
 
     has(property: string): boolean {

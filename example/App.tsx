@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import './App.css';
 import { Engine, Layout, LayoutComponent, ListModelItem } from '../';
-import { fromEvent, interval, Observable, of } from 'rxjs';
+import { BehaviorSubject, fromEvent, interval, Observable, of } from 'rxjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { readFileSync } from 'fs';
 import { delay, map, startWith } from 'rxjs/operators';
@@ -35,6 +35,7 @@ class TestItem implements ListModelItem {
 
 class App extends Component {
     private readonly engine = new Engine(true, ['test-tooltip']);
+    textContent = new BehaviorSubject('');
 
     constructor(props: any) {
         super(props);
@@ -96,12 +97,17 @@ class App extends Component {
             )
         );
 
-        this.engine.registerListButton('testListButton', async (item) => console.log('tapped', item.id));
+        this.engine.registerListButton('testListButton', async (item) =>
+            console.log('tapped', item.id)
+        );
 
         this.engine.registerInput(
             'counter',
             this.engine.numberType(),
-            interval(1000).pipe(map((v) => v % 5))
+            interval(1000).pipe(
+                startWith(0),
+                map((v) => v % 5)
+            )
         );
         this.engine.registerInput(
             'test',
@@ -125,8 +131,16 @@ class App extends Component {
             </LayoutComponent>
         ));
 
+        this.engine.registerTextField(
+            'testTextField',
+            (x) => this.textContent.next(x),
+            this.textContent
+        );
+
         this.engine.registerButton('confirmationRejectButton', async () => {});
-        this.engine.registerButton('confirmationAcceptButton', async () => {console.log('accept')});
+        this.engine.registerButton('confirmationAcceptButton', async () => {
+            console.log('accept');
+        });
     }
 
     render() {

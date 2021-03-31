@@ -55,7 +55,7 @@ describe('text', () => {
         spy.restore();
     });
 
-    it('should contain id if set', async function() {
+    it('should contain id if set', async function () {
         const text = new BehaviorSubject('');
         engine!.registerTextField('myText', async () => {}, text);
 
@@ -79,7 +79,7 @@ describe('text', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it('should change value', async function() {
+    it('should change value', async function () {
         const text = new BehaviorSubject('');
         engine!.registerTextField('myText', async () => {}, text);
 
@@ -106,7 +106,7 @@ describe('text', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it('should send changes back', async function() {
+    it('should send changes back', async function () {
         const text = new BehaviorSubject('');
         engine!.registerTextField(
             'myText',
@@ -136,7 +136,7 @@ describe('text', () => {
         expect(text.value).toBe('entered text');
     });
 
-    it('should display placeholder', async function() {
+    it('should display placeholder', async function () {
         const text = new BehaviorSubject('');
         engine!.registerTextField(
             'myText',
@@ -191,6 +191,62 @@ describe('text', () => {
         `);
     });
 
+    it('should set autofocus', async function () {
+        const text = new BehaviorSubject('');
+        engine!.registerTextField(
+            'myText',
+            async (s: string) => text.next(s),
+            text
+        );
+
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+     layout {
+         layer {
+             myText {
+                 id: "text1"
+                 center { x: 0.5 y: 0.5 }
+                 autoFocus: true
+             }
+         }
+     }`}
+            />
+        );
+
+        const node = wrapper.find('.vlayout_textField');
+        const input = node.find('input');
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_textField"
+              id="text1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; box-sizing: border-box; pointer-events: auto;"
+            >
+              <input
+                autofocus=""
+                placeholder=""
+                style="min-width: 0; width: 100%; box-sizing: border-box; padding: 0px 0px 0px 0px;"
+                value=""
+              />
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 10000000px; height: 10000000px;"
+                />
+              </div>
+              <div
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; z-index: -1; visibility: hidden;"
+              >
+                <div
+                  style="position: absolute; left: 0px; top: 0px; width: 200%; height: 200%;"
+                />
+              </div>
+            </div>
+        `);
+    });
+
     function prepareTextField(type: string) {
         engine!.registerTextField('myText', async () => {}, of(''));
         const wrapper = mount(
@@ -211,7 +267,7 @@ describe('text', () => {
         return wrapper;
     }
 
-    it('should set input mode to regular', async function() {
+    it('should set input mode to regular', async function () {
         const wrapper = prepareTextField('regular');
 
         const node = wrapper.find('.vlayout_textField');
@@ -219,7 +275,7 @@ describe('text', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it('should set input mode to go', async function() {
+    it('should set input mode to go', async function () {
         const wrapper = prepareTextField('go');
 
         const node = wrapper.find('.vlayout_textField');
@@ -227,7 +283,7 @@ describe('text', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it('should set input mode to numeric', async function() {
+    it('should set input mode to numeric', async function () {
         const wrapper = prepareTextField('numeric');
 
         const node = wrapper.find('.vlayout_textField');
@@ -235,7 +291,7 @@ describe('text', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it('should set input mode to search', async function() {
+    it('should set input mode to search', async function () {
         const wrapper = prepareTextField('search');
 
         const node = wrapper.find('.vlayout_textField');
@@ -243,7 +299,7 @@ describe('text', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it('should set input mode to phone', async function() {
+    it('should set input mode to phone', async function () {
         const wrapper = prepareTextField('phone');
 
         const node = wrapper.find('.vlayout_textField');
@@ -251,7 +307,7 @@ describe('text', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it('should set input mode to url', async function() {
+    it('should set input mode to url', async function () {
         const wrapper = prepareTextField('url');
 
         const node = wrapper.find('.vlayout_textField');

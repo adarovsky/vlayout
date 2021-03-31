@@ -1,5 +1,5 @@
 import { ViewProperty } from './view';
-import { combineLatest, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import React, { CSSProperties } from 'react';
 import { fontStyle, ReactRoundRect } from './react_primitives';
 import { ColorContainer, Dictionary } from './types';
@@ -18,12 +18,13 @@ export interface ReactTextFieldState extends ReactViewState {
     colorStyle: CSSProperties;
     height: number;
     type: string;
+    autoFocus: boolean;
 }
 
 export class ReactTextFieldBase<
     S extends ReactTextFieldState = ReactTextFieldState
 > extends ReactRoundRect<S> {
-    readonly inputRef = React.createRef<HTMLInputElement>();
+    readonly inputRef = new BehaviorSubject<HTMLInputElement | null>(null);
 
     constructor(props: ReactViewProps) {
         super(props);
@@ -36,6 +37,7 @@ export class ReactTextFieldBase<
             colorStyle: {},
             height: 0,
             type: 'regular',
+            autoFocus: false,
         };
     }
 
@@ -64,6 +66,7 @@ export class ReactTextFieldBase<
         this.wire('textColor', 'colorStyle', (x) => ({ color: x.toString() }));
         this.wire('type', 'type', (x) => x);
         this.wire('placeholder', 'placeholder', (x) => x);
+        this.wire('autoFocus', 'autoFocus', (x) => x);
         const props = [
             inputIsUpdating,
             this.safeIntrinsicSize(),
@@ -105,6 +108,20 @@ export class ReactTextFieldBase<
                     }
                 })
         );
+
+        const autoFocus = this.props.parentView.property('autoFocus').value
+            ?.sink;
+        if (autoFocus) {
+            this.subscription.add(
+                combineLatest([autoFocus, this.inputRef]).subscribe(
+                    ([autoFocus, ref]) => {
+                        if (autoFocus) {
+                            ref?.focus();
+                        }
+                    }
+                )
+            );
+        }
     }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
@@ -224,6 +241,7 @@ export class ReactTextFieldBase<
                 {...(inputMode as Dictionary<string>)}
                 placeholder={this.state.placeholder}
                 value={this.state.text}
+                autoFocus={this.state.autoFocus}
                 onChange={(e) => this.textEntered(e.target.value)}
                 onKeyPress={(e) => {
                     if (e.key === 'Enter') {
@@ -233,7 +251,7 @@ export class ReactTextFieldBase<
                         return false;
                     } else return undefined;
                 }}
-                ref={this.inputRef}
+                ref={x => this.inputRef.next(x)}
             />
         );
         if (this.state.type === 'go') {
