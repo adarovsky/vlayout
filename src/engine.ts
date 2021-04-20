@@ -9,7 +9,9 @@ import {
 } from './types';
 import { EnumValue, Expression } from './expression';
 import {
+    Ceil,
     ColorAlpha,
+    Floor,
     FontFamily,
     FontSized,
     FontTyped,
@@ -19,7 +21,14 @@ import {
     LocalizedString,
     Max,
     Min,
-    ShortLocalizedNumber, StringPrefix, StringSuffix, SubString, ToCapitalCase, ToLower, ToUpper,
+    Round,
+    ShortLocalizedNumber,
+    StringPrefix,
+    StringSuffix,
+    SubString,
+    ToCapitalCase,
+    ToLower,
+    ToUpper,
 } from './builtin_functions';
 import React from 'react';
 import { ViewListReference, ViewReference } from './view_reference';
@@ -75,6 +84,9 @@ export class Engine {
             new ToUpper(this),
             new ToLower(this),
             new ToCapitalCase(this),
+            new Round(this),
+            new Floor(this),
+            new Ceil(this),
         ];
     }
 
@@ -143,8 +155,7 @@ export class Engine {
             }
 
             return new Min(this);
-        }
-        else if (name === 'Max') {
+        } else if (name === 'Max') {
             for (let p of parameters) {
                 if (p !== this.numberType()) {
                     throw new Error(`Max accepts only numbers`);
@@ -156,8 +167,7 @@ export class Engine {
             }
 
             return new Max(this);
-        }
-        else {
+        } else {
             for (let f of this.functions) {
                 if (f.name === name && isEqual(f.parameterTypes, parameters)) {
                     return f;
@@ -186,7 +196,10 @@ export class Engine {
         key: string,
         createComponent: (parent: View) => React.ReactElement<ReactViewProps>
     ) {
-        invariant(typeof createComponent === 'function', `createComponent for ${key} is empty`);
+        invariant(
+            typeof createComponent === 'function',
+            `createComponent for ${key} is empty`
+        );
         this.referencedViews[key] = new ViewReference(createComponent);
     }
 
@@ -306,10 +319,12 @@ export type StandardEnum<T> = {
 };
 
 function camelize(str: string) {
-    return str.replace(/(?:^\w|[A-Z]|\b\w|-|\s+)/g, function (match, index) {
-        if (+match === 0) return ''; // or if (/\s+/.test(match)) for white spaces
-        return index === 0 ? match.toLowerCase() : match.toUpperCase();
-    }).replace('-', '');
+    return str
+        .replace(/(?:^\w|[A-Z]|\b\w|-|\s+)/g, function (match, index) {
+            if (+match === 0) return ''; // or if (/\s+/.test(match)) for white spaces
+            return index === 0 ? match.toLowerCase() : match.toUpperCase();
+        })
+        .replace('-', '');
 }
 
 function materializeEnum<EnumType>(e: StandardEnum<EnumType>) {

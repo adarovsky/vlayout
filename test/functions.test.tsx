@@ -440,6 +440,48 @@ it('builtin function SubString should work', async () => {
     expect(wrapper.find('.vlayout_label > span').text()).toBe('bcd');
 });
 
+it('builtin function Round should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Round(3.7))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('4');
+});
+
+it('builtin function Floor should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Floor(3.7))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('3');
+});
+
+it('builtin function Ceil should work', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(Ceil(3.1))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('4');
+});
+
 it('builtin function ToUpper should work', async () => {
     const wrapper = mount(<Layout engine={engine!} content={`
      layout {

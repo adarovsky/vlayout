@@ -267,6 +267,78 @@ export class Max
     }
 }
 
+export class Round
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'Round';
+        this.parameterTypes = [engine.numberType()];
+        this.returnType = engine.numberType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters as Observable<number>[]).pipe(
+            map((params) =>
+                Math.round(params[0])
+            )
+        );
+    }
+}
+
+export class Floor
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'Floor';
+        this.parameterTypes = [engine.numberType()];
+        this.returnType = engine.numberType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters as Observable<number>[]).pipe(
+            map((params) =>
+                Math.floor(params[0])
+            )
+        );
+    }
+}
+
+export class Ceil
+    extends FunctionImplementation
+    implements FunctionImplementationI {
+    name: string;
+    parameterTypes: TypeDefinition[];
+    returnType: TypeDefinition;
+
+    constructor(engine: Engine) {
+        super(engine);
+
+        this.name = 'Ceil';
+        this.parameterTypes = [engine.numberType()];
+        this.returnType = engine.numberType();
+    }
+
+    sink(parameters: Observable<any>[]): Observable<any> {
+        return combineLatest(parameters as Observable<number>[]).pipe(
+            map((params) =>
+                Math.ceil(params[0])
+            )
+        );
+    }
+}
+
 export class StringPrefix
     extends FunctionImplementation
     implements FunctionImplementationI {
