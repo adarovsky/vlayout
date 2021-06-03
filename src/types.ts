@@ -1,6 +1,6 @@
 import { Engine } from './engine';
 import { Color } from './index';
-import { includes } from 'lodash';
+import { includes, isEmpty } from 'lodash';
 import { combineLatest, Observable, of } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { catchError, map, tap, timeout } from 'rxjs/operators';
@@ -280,7 +280,15 @@ export class ColorContainer {
 }
 
 export class ImageContainer {
-    constructor(public readonly src: string) {}
+    constructor(private readonly url: string) {}
+
+    get src() {
+        if (/^https?:.*/.test(this.url)) {
+            return this.url;
+        }
+
+        return ImageContainer.prefix + (isEmpty(ImageContainer.prefix) || this.url[0] === '/' ? '' : '/') + this.url;
+    }
 
     srcSet(): Observable<string | undefined> {
         const result = /(.*)\.(png|jpe?g)/.exec(this.src);
@@ -298,6 +306,8 @@ export class ImageContainer {
         }
         return of(undefined);
     }
+
+    static prefix = '';
 }
 
 export class FontContainer {

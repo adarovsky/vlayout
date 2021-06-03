@@ -120,8 +120,8 @@ export class ReactHorizontalLayout extends ReactLinearLayout {
 
         return combineLatest([selfSize, childSize]).pipe(
             map(([self, children]) => ({
-                width: this.isWidthDefined() ? self.width : children.width,
-                height: this.isHeightDefined() ? self.height : children.height,
+                width: this.isWidthDefined() ? self.width : Math.max(self.width, children.width),
+                height: this.isHeightDefined() ? self.height : Math.max(self.height, children.height),
             }))
         );
     }
@@ -212,8 +212,8 @@ export class ReactVerticalLayout extends ReactLinearLayout {
 
         return combineLatest([selfSize, childSize]).pipe(
             map(([self, children]) => ({
-                width: this.isWidthDefined() ? self.width : children.width,
-                height: this.isHeightDefined() ? self.height : children.height,
+                width: this.isWidthDefined() ? self.width : Math.max(self.width, children.width),
+                height: this.isHeightDefined() ? self.height : Math.max(self.height, children.height),
             }))
         );
     }

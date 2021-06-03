@@ -2,11 +2,13 @@ import { mount, shallow } from 'enzyme';
 import { Engine, Layout } from '../src';
 import React from 'react';
 import { Subject } from 'rxjs';
+import { ImageContainer } from '../src/types';
 
 let engine = new Engine();
 
 beforeEach(() => {
     engine = new Engine(true);
+    ImageContainer.prefix = '';
 });
 
 beforeAll(() => {
@@ -191,6 +193,29 @@ describe("types", () => {
         );
 
         expect(() => wrapper).not.toThrow()
+    });
+
+    it('Image should support prefix for relative urls', async function () {
+        ImageContainer.prefix = '/prefix';
+        const i = new ImageContainer('/some/path.png');
+        expect(i.src).toBe('/prefix/some/path.png');
+    });
+
+    it('Image should include slash if missing for relative path', async function () {
+        ImageContainer.prefix = '/prefix';
+        const i = new ImageContainer('some/path.png');
+        expect(i.src).toBe('/prefix/some/path.png');
+    });
+
+    it('Image should not insert slash for relative path without slash', async function () {
+        const i = new ImageContainer('some/path.png');
+        expect(i.src).toBe('some/path.png');
+    });
+
+    it('Image should keep full url as is', async function () {
+        ImageContainer.prefix = '/prefix';
+        const i = new ImageContainer('http://server/some/path.png');
+        expect(i.src).toBe('http://server/some/path.png');
     });
 });
 
