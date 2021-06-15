@@ -54,7 +54,7 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
 
     variableForKeyPath(keyPath: string): Expression | null {
         const kp = keyPath.split('.');
-        if (kp.length !== 1) return this.engine.variableForKeyPath(keyPath);
+        if (kp.length !== 1) return this.layout.variableForKeyPath(keyPath);
 
         return this.arguments.find(x => x.name.content === kp[0]) || this.layout.variableForKeyPath(keyPath);
     }

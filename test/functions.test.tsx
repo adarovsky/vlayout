@@ -122,6 +122,40 @@ it('function call should access properties', async () => {
     expect(wrapper.find('.vlayout_label > span').text()).toBe('13');
 });
 
+it('function call should access compound properties', async () => {
+    const test1 = new Subject<number>();
+    engine!.registerInput('test1', engine!.numberType(), test1);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     inputs {
+        test1: Number
+     }
+     
+     properties {
+        some {
+            prop1: test1 + 10
+        }
+     }
+
+     functions {
+         testFunction(x: Number) => x +some.prop1
+     }
+
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(testFunction(1))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label').containsMatchingElement(<div
+        className={'vlayout_placeholder'}/>)).toBeTruthy();
+    test1.next(2);
+    wrapper.update();
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('13');
+});
+
 it('function call should be accessible from properties', async () => {
     const test1 = new Subject<number>();
     engine!.registerInput('test1', engine!.numberType(), test1);
