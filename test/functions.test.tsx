@@ -1,8 +1,9 @@
 import { mount, shallow } from 'enzyme';
 import { Engine, Layout } from '../src';
-import { Subject, timer } from 'rxjs';
+import { BehaviorSubject, Subject, timer } from 'rxjs';
 import React from 'react';
 import { ReactLabel } from '../src/react_primitives';
+import { ElementSize } from '../src/resize_sensor';
 
 let engine: Engine | null = null;
 
@@ -10,6 +11,10 @@ beforeEach(() => {
     engine = new Engine();
 });
 
+let module = require('../src/resize_sensor');
+
+const sizeChange = new BehaviorSubject<ElementSize>({width: 1280, height: 720});
+module.resizeObserver = jest.fn(() => sizeChange);
 
 it('function call should give result', async () => {
     const wrapper = mount(<Layout engine={engine!} content={`
@@ -154,6 +159,25 @@ it('function call should access compound properties', async () => {
     test1.next(2);
     wrapper.update();
     expect(wrapper.find('.vlayout_label > span').text()).toBe('13');
+});
+
+it('function call should access viewport', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     functions {
+         testFunction(x: Number) => x + viewport.width
+     }
+
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(testFunction(1))
+             }
+         }
+     }`}/>);
+
+    wrapper.update();
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('1281');
 });
 
 it('function call should be accessible from properties', async () => {

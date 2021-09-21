@@ -201,16 +201,20 @@ export class ReactView<
                         self.style.minWidth =
                             size.width > 0 ? size.width + 'px' : '';
                     } else if (isInStack) {
-                        self.style.width = self.style.minWidth = self.style.maxWidth =
-                            '100%';
+                        self.style.width =
+                            self.style.minWidth =
+                            self.style.maxWidth =
+                                '100%';
                     }
 
                     if (!this.isHeightDefined()) {
                         self.style.minHeight =
                             size.height > 0 ? size.height + 'px' : '';
                     } else if (isInStack) {
-                        self.style.height = self.style.minHeight = self.style.maxHeight =
-                            '100%';
+                        self.style.height =
+                            self.style.minHeight =
+                            self.style.maxHeight =
+                                '100%';
                     }
                 })
         );
@@ -250,23 +254,31 @@ export class ReactView<
                             !!parent.parent?.instance?.definesChildHeight(this);
 
                         if (widthDefined && !heightDefined) {
-                            self.style.height = self.style.minHeight = self.style.maxHeight =
-                                aspect !== null
-                                    ? `${size.width / aspect}px`
-                                    : '';
+                            self.style.height =
+                                self.style.minHeight =
+                                self.style.maxHeight =
+                                    aspect !== null
+                                        ? `${size.width / aspect}px`
+                                        : '';
                         } else if (!widthDefined && heightDefined) {
-                            self.style.width = self.style.minWidth = self.style.maxWidth =
-                                aspect !== null
-                                    ? `${size.height * aspect}px`
-                                    : '';
+                            self.style.width =
+                                self.style.minWidth =
+                                self.style.maxWidth =
+                                    aspect !== null
+                                        ? `${size.height * aspect}px`
+                                        : '';
                         } else if (!widthDefined && !heightDefined) {
                             if (self.style.width) {
-                                self.style.width = self.style.minWidth = self.style.maxWidth =
-                                    '';
+                                self.style.width =
+                                    self.style.minWidth =
+                                    self.style.maxWidth =
+                                        '';
                             }
                             if (self.style.height) {
-                                self.style.height = self.style.minHeight = self.style.maxHeight =
-                                    '';
+                                self.style.height =
+                                    self.style.minHeight =
+                                    self.style.maxHeight =
+                                        '';
                             }
                         }
                     })
@@ -376,17 +388,23 @@ export class ReactView<
                             (x) => x === 'padding.left'
                         );
                         if (index >= 0 && value[index] !== null) {
-                            r.width = r.minWidth = r.maxWidth = `calc(2*(${
-                                val * 100
-                            }% - ${value[index]}px))`;
+                            r.width =
+                                r.minWidth =
+                                r.maxWidth =
+                                    `calc(2*(${val * 100}% - ${
+                                        value[index]
+                                    }px))`;
                         } else {
                             index = propNames.findIndex(
                                 (x) => x === 'padding.right'
                             );
                             if (index >= 0 && value[index] !== null) {
-                                r.width = r.minWidth = r.maxWidth = `calc(2*(${
-                                    (1 - val) * 100
-                                }% - ${value[index]}px))`;
+                                r.width =
+                                    r.minWidth =
+                                    r.maxWidth =
+                                        `calc(2*(${(1 - val) * 100}% - ${
+                                            value[index]
+                                        }px))`;
                             } else {
                                 r.left = `${val * 100}%`;
                                 if (r.transform)
@@ -403,17 +421,23 @@ export class ReactView<
                             (x) => x === 'padding.top'
                         );
                         if (index >= 0 && value[index] !== null) {
-                            r.height = r.minHeight = r.maxHeight = `calc(2*(${
-                                val * 100
-                            }% - ${value[index]}px))`;
+                            r.height =
+                                r.minHeight =
+                                r.maxHeight =
+                                    `calc(2*(${val * 100}% - ${
+                                        value[index]
+                                    }px))`;
                         } else {
                             index = propNames.findIndex(
                                 (x) => x === 'padding.bottom'
                             );
                             if (index >= 0 && value[index] !== null) {
-                                r.height = r.minHeight = r.maxHeight = `calc(2*(${
-                                    (1 - val) * 100
-                                }% - ${value[index]}px))`;
+                                r.height =
+                                    r.minHeight =
+                                    r.maxHeight =
+                                        `calc(2*(${(1 - val) * 100}% - ${
+                                            value[index]
+                                        }px))`;
                             } else {
                                 r.top = `${val * 100}%`;
                                 if (r.transform)
@@ -751,9 +775,21 @@ export class ReactViewReference<
     P extends ReactViewProps,
     S extends ReactViewState
 > extends ReactView<P, S> {
+    styleProperties(): ViewProperty[] {
+        return super
+            .styleProperties()
+            .concat(this.props.parentView.activePropertiesNamed('interactive'));
+    }
+
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        r.pointerEvents = 'auto';
+
+        const index = props.findIndex((p) => p.name === 'interactive');
+        if (index >= 0 && !value[index]) {
+            r.pointerEvents = 'none';
+        } else {
+            r.pointerEvents = 'auto';
+        }
         return r;
     }
 }

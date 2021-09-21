@@ -1,4 +1,4 @@
-import {View} from "./view";
+import { View, ViewProperty } from './view';
 import React, {createElement} from "react";
 import {ReactViewProps} from "./react_views";
 import {ListItemPrototype, ListModelItem} from "./list";
@@ -11,6 +11,7 @@ export class ViewReference extends View {
     constructor(public readonly createComponent: (parent: ViewReference)
         => React.ReactElement<ReactViewProps> ) {
         super();
+        this.registerProperty(new ViewProperty('interactive', 'Bool'));
     }
 
     instantiate(): this {
