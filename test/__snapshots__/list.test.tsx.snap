@@ -1669,6 +1669,136 @@ exports[`lists should support indexing 1`] = `
 </div>
 `;
 
+exports[`lists should support non-interactive external views 1`] = `
+<div
+  class="vlayout_verticalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-y: auto;"
+>
+  <div
+    class="vlayout_listPrototype_user"
+    style="max-height: 44px; min-height: 44px; height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: none;"
+    >
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Alex
+      </div>
+    </div>
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Alex
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Alex
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="max-height: 44px; min-height: 44px; height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: none;"
+    >
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Anton
+      </div>
+    </div>
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Anton
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Anton
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_user"
+    style="max-height: 44px; min-height: 44px; height: 44px; pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_"
+      style="position: absolute; z-index: 1; pointer-events: none;"
+    >
+      <div
+        style="background-color: rgb(170, 153, 204);"
+      >
+        Denis
+      </div>
+    </div>
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        Denis
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 2; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Denis
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="vlayout_listPrototype_newUser"
+    style="pointer-events: none; position: relative; min-width: 100%;"
+  >
+    <div
+      class="vlayout_label"
+      style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+    >
+      <span>
+        add new
+        <br />
+      </span>
+      <div
+        class="vlayout_label_shadow"
+        style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should support tappable items 1`] = `
 <div
   class="vlayout_verticalList"

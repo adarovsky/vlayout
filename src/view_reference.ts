@@ -29,6 +29,7 @@ export class ViewListReference extends View {
     modelItem: Observable<ListModelItem> = EMPTY;
     constructor(public readonly createComponent: (parent: View, modelItem: Observable<ListModelItem>) => React.ReactElement<ReactViewProps>) {
         super();
+        this.registerProperty(new ViewProperty('interactive', 'Bool'));
     }
 
     instantiate(): this {

@@ -1,8 +1,7 @@
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import { Engine, Layout } from '../src';
-import { BehaviorSubject, ReplaySubject, Subject, timer } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import React from 'react';
-import { ReactLabel } from '../src/react_primitives';
 import { ElementSize } from '../src/resize_sensor';
 
 let engine: Engine | null = null;
@@ -23,16 +22,14 @@ describe('properties', () => {
                 engine={engine!}
                 content={`
      properties {
-        screenPadding: 100
-        bottomHeight: 100
-        test: (viewport.width-2*screenPadding)/(viewport.height-bottomHeight) 
+        w: viewport.width 
      }
 
      layout {
          layer {            
              label {
                  center { x : 0.5 y : 0.5 }
-                 text : String(test)
+                 text : @("$1x$2", String(viewport.width), String(viewport.height))
              }
          }
      }`}
@@ -41,6 +38,6 @@ describe('properties', () => {
 
         sizeChange.next({width: 1280, height: 720});
 
-        expect(wrapper.find('.vlayout_label > span').text()).toBe('640');
+        expect(wrapper.find('.vlayout_label > span').text()).toBe('1280x720');
     });
 });

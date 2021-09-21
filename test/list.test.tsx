@@ -796,6 +796,84 @@ describe('lists', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it('should support non-interactive external views', async function() {
+        engine.registerList('MyItems', {
+            user: {
+                name: engine.stringType(),
+            },
+            newUser: {},
+        });
+
+        engine.registerInput(
+            'items',
+            engine.type('MyItems')!,
+            of([
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
+            ])
+        );
+
+        engine.registerListView('myView', (x, item) => (
+            <LayoutComponent parentView={x} key={'123'}>
+                <UserView user={item} />
+            </LayoutComponent>
+        ));
+
+        const wrapper = mount(
+            <Layout
+                engine={engine}
+                content={`
+  bindings {
+      myView: listView
+  }
+  types {
+      MyItems: list (
+          user {
+              name: String
+          },
+          newUser {
+              // no fields required
+          }
+      )
+  }
+  
+  inputs {
+      items: MyItems
+  }
+  
+  layout {
+      layer {
+          verticalList {
+              padding { left: 10 right: 10 top: 10 bottom: 10 }
+              model: items
+  
+              user {
+                  fixedSize { height: 44 }
+                  myView {      
+                    interactive: false                
+                  }
+                  label {
+                      text: name
+                  }
+              }
+              newUser {
+                  label {
+                      text: "add new"
+                  }
+              }
+          }
+      }
+  }`}
+            />
+        );
+
+        const node = wrapper.find('.vlayout_verticalList');
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
     it('should support filtering', async function() {
         engine.registerList('MyItems', {
             user: {
