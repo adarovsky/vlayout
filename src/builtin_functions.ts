@@ -7,6 +7,7 @@ import {
 } from './types';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import Translations from './translations';
 
 export interface FunctionImplementationI {
     returnType: TypeDefinition;
@@ -22,7 +23,8 @@ export class FunctionImplementation {
 
 export class LocalizedNumber
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -42,7 +44,8 @@ export class LocalizedNumber
 
 export class ShortLocalizedNumber
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -71,12 +74,13 @@ export class ShortLocalizedNumber
 
 export class LocalizedString
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
 
-    constructor(engine: Engine) {
+    constructor(engine: Engine, readonly translations: Translations) {
         super(engine);
 
         this.name = 'String';
@@ -87,7 +91,8 @@ export class LocalizedString
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<string>[]).pipe(
             map((params) => {
-                let key = params[0];
+                let key = this.translations.getValue(params[0]);
+
                 for (let i = params.length - 1; i >= 1; --i) {
                     key = key.replace(`$${i}`, params[i]);
                 }
@@ -100,7 +105,8 @@ export class LocalizedString
 
 export class Image
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -120,7 +126,8 @@ export class Image
 
 export class FontFamily
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -142,7 +149,8 @@ export class FontFamily
 
 export class FontTyped
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -164,7 +172,8 @@ export class FontTyped
 
 export class FontSized
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -186,7 +195,8 @@ export class FontSized
 
 export class ColorAlpha
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -217,7 +227,8 @@ export class ColorAlpha
 
 export class Min
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -243,7 +254,8 @@ export class Min
 
 export class Max
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -269,7 +281,8 @@ export class Max
 
 export class Round
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -284,16 +297,15 @@ export class Round
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<number>[]).pipe(
-            map((params) =>
-                Math.round(params[0])
-            )
+            map((params) => Math.round(params[0]))
         );
     }
 }
 
 export class Floor
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -308,16 +320,15 @@ export class Floor
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<number>[]).pipe(
-            map((params) =>
-                Math.floor(params[0])
-            )
+            map((params) => Math.floor(params[0]))
         );
     }
 }
 
 export class Ceil
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -332,16 +343,15 @@ export class Ceil
 
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters as Observable<number>[]).pipe(
-            map((params) =>
-                Math.ceil(params[0])
-            )
+            map((params) => Math.ceil(params[0]))
         );
     }
 }
 
 export class StringPrefix
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -370,7 +380,8 @@ export class StringPrefix
 
 export class StringSuffix
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -399,7 +410,8 @@ export class StringSuffix
 
 export class SubString
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -430,7 +442,8 @@ export class SubString
 
 export class ToUpper
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -455,7 +468,8 @@ export class ToUpper
 
 export class ToLower
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;
@@ -480,7 +494,8 @@ export class ToLower
 
 export class ToCapitalCase
     extends FunctionImplementation
-    implements FunctionImplementationI {
+    implements FunctionImplementationI
+{
     name: string;
     parameterTypes: TypeDefinition[];
     returnType: TypeDefinition;

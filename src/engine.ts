@@ -136,15 +136,7 @@ export class Engine {
         name: string,
         parameters: TypeDefinition[]
     ): FunctionImplementationI {
-        if (name === '@') {
-            for (let p of parameters) {
-                if (p !== this.stringType()) {
-                    throw new Error(`localized string receives only strings`);
-                }
-            }
-
-            return new LocalizedString(this);
-        } else if (name === 'Min') {
+        if (name === 'Min') {
             for (let p of parameters) {
                 if (p !== this.numberType()) {
                     throw new Error(`Min accepts only numbers`);

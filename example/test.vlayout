@@ -30,14 +30,11 @@ properties {
 
 layout {
     layer {
-        testTextField {
-            alpha: counter > 0 ? 0 : 1
+        label {
             center { x: 0.5 y: 0.5 }
-            fixedSize { height: 44 }
-            size { width: 0.7 }
-            placeholder: "enter text"
-            autoFocus: true
-            backgroundColor: #ccddee
+            font: Font(50)
+            textColor: #000000
+            text: @("$1x$2", String(viewport.width), String(viewport.height))
         }
     }
 }

@@ -61,7 +61,7 @@ import {
     RoundRect,
 } from './primitives';
 import { LinkError } from './errors';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { FunctionDeclaration, Functions } from './functions';
 import {
     Dictionary,
@@ -70,14 +70,15 @@ import {
     ListDefinitionItem,
     TypeDefinition,
 } from './types';
-import { FunctionImplementationI } from './builtin_functions';
+import { FunctionImplementationI, LocalizedString } from './builtin_functions';
 import { List, ListItemPrototype } from './list';
 import { extend, forIn, isEmpty } from 'lodash';
 import { Tooltip } from './tooltip';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { ElementSize, resizeObserver } from './resize_sensor';
-import { pluck, switchMap } from 'rxjs/operators';
+import { pluck, shareReplay, switchMap } from 'rxjs/operators';
 import { BuiltinProperty } from './builtin_properties';
+import Translations from './translations';
 
 export class ParseError extends Error {
     constructor(line: number, column: number, message: string) {
@@ -88,6 +89,7 @@ export class ParseError extends Error {
 export interface LayoutProps {
     engine: Engine;
     content: string;
+    translations?: Dictionary<string>;
     className?: string;
 }
 
@@ -111,7 +113,8 @@ export interface Scope {
 
 export class Layout
     extends Component<LayoutProps, LayoutState>
-    implements Scope {
+    implements Scope
+{
     readonly bindings: Bindings;
     properties: CompoundPropertyDeclaration | null = null;
     functions: Functions | null = null;
@@ -1226,6 +1229,19 @@ export class Layout
             : null;
         if (f) return f;
 
+        if (name === '@') {
+            for (let p of parameters) {
+                if (p !== this.engine.stringType()) {
+                    throw new Error(`localized string receives only strings`);
+                }
+            }
+
+            return new LocalizedString(
+                this.engine,
+                new Translations(this.props.translations ?? {})
+            );
+        }
+
         return this.engine.functionFor(name, parameters);
     }
 
@@ -1321,8 +1337,14 @@ export class Layout
     get currentSize(): Observable<ElementSize> {
         return this._viewRef.pipe(
             switchMap((ref) =>
-                ref ? resizeObserver(ref) : of({ width: 0, height: 0 })
-            )
+                ref
+                    ? resizeObserver(ref)
+                    : of({
+                          width: window.innerWidth,
+                          height: window.innerHeight,
+                      })
+            ),
+            shareReplay({ bufferSize: 1, refCount: true })
         );
     }
 
