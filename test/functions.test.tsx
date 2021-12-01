@@ -470,6 +470,20 @@ it('builtin function Prefix should work', async () => {
     expect(wrapper.find('.vlayout_label > span').text()).toBe('abc');
 });
 
+it('builtin function Prefix should keep work for longer limits', async () => {
+    const wrapper = mount(<Layout engine={engine!} content={`
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : Prefix("abcdef", 13)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe('abcdef');
+});
+
 it('builtin function Suffix should work', async () => {
     const wrapper = mount(<Layout engine={engine!} content={`
      layout {
