@@ -142,6 +142,12 @@ export class ReactList<S extends ReactListState> extends ReactView<
         this.state = { ...this.state, childItems: [], spacing: 0 };
     }
 
+    styleProperties(): ViewProperty[] {
+        return super
+            .styleProperties()
+            .concat(this.props.parentView.activePropertiesNamed('interactive', 'scrollable'));
+    }
+
     componentDidMount(): void {
         super.componentDidMount();
         const parentList = this.props.parentView as List;

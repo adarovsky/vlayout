@@ -13,8 +13,18 @@ export class ReactAbsoluteList extends ReactList<ReactListState> {
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);
-        if (!r.position)
+
+        let i = props.findIndex((p) => p.name === 'interactive');
+        const interactive = i >= 0 && value[i];
+
+        i = props.findIndex((p) => p.name === 'scrollable');
+        const scrollable = i >= 0 && value[i];
+
+        r.pointerEvents = interactive || scrollable ? 'auto' : 'none';
+        if (!r.position) {
             r.position = 'relative';
+        }
+        r.overflow = scrollable ? 'auto' : 'hidden';
         return r;
     }
 

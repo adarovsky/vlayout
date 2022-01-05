@@ -241,6 +241,7 @@ export class List extends View {
         super();
         this.registerProperty(new ViewProperty('backgroundColor', 'Color'));
         this.registerProperty(new ViewProperty('scrollable', 'Bool'));
+        this.registerProperty(new ViewProperty('interactive', 'Bool'));
         if (this.axis !== null) {
             this.registerProperty(new ViewProperty('spacing', 'Number'));
         }

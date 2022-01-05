@@ -29,7 +29,7 @@ afterEach(() => {
     sandbox.restore();
 });
 
-function getContent(type: string) {
+function getContent(type: string, extra: string = '') {
     return `
   types {
       MyItems: list (
@@ -51,6 +51,7 @@ function getContent(type: string) {
           ${type} {
               padding { left: 10 right: 10 top: 10 bottom: 10 }
               model: items
+              ${extra}
   
               user {
                   label {
@@ -115,6 +116,60 @@ describe('lists', () => {
 
         const wrapper = mount(
             <Layout engine={engine} content={getContent('absoluteList')} />
+        );
+
+        const node = wrapper.find('.vlayout_absoluteList');
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
+    it('should make absolute list clickable', async function() {
+        engine.registerList('MyItems', {
+            user: {
+                name: engine.stringType(),
+            },
+            newUser: {},
+        });
+        engine.registerInput(
+            'items',
+            engine.type('MyItems')!,
+            of([
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout engine={engine} content={getContent('absoluteList', 'interactive: true')} />
+        );
+
+        const node = wrapper.find('.vlayout_absoluteList');
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
+    it('should make absolute list scrollable', async function() {
+        engine.registerList('MyItems', {
+            user: {
+                name: engine.stringType(),
+            },
+            newUser: {},
+        });
+        engine.registerInput(
+            'items',
+            engine.type('MyItems')!,
+            of([
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout engine={engine} content={getContent('absoluteList', 'scrollable: true')} />
         );
 
         const node = wrapper.find('.vlayout_absoluteList');
