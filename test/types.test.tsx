@@ -7,8 +7,7 @@ import { ImageContainer } from '../src/types';
 let engine = new Engine();
 
 beforeEach(() => {
-    engine = new Engine(true);
-    ImageContainer.prefix = '';
+    engine = new Engine({ debug: true });
 });
 
 beforeAll(() => {
@@ -196,25 +195,25 @@ describe("types", () => {
     });
 
     it('Image should support prefix for relative urls', async function () {
-        ImageContainer.prefix = '/prefix';
-        const i = new ImageContainer('/some/path.png');
+        engine = new Engine({ debug: true, prefix: '/prefix' });
+        const i = new ImageContainer('/some/path.png', engine);
         expect(i.src).toBe('/prefix/some/path.png');
     });
 
     it('Image should include slash if missing for relative path', async function () {
-        ImageContainer.prefix = '/prefix';
-        const i = new ImageContainer('some/path.png');
+        engine = new Engine({ debug: true, prefix: '/prefix' });
+        const i = new ImageContainer('some/path.png', engine);
         expect(i.src).toBe('/prefix/some/path.png');
     });
 
     it('Image should not insert slash for relative path without slash', async function () {
-        const i = new ImageContainer('some/path.png');
+        const i = new ImageContainer('some/path.png', engine);
         expect(i.src).toBe('some/path.png');
     });
 
     it('Image should keep full url as is', async function () {
-        ImageContainer.prefix = '/prefix';
-        const i = new ImageContainer('http://server/some/path.png');
+        engine = new Engine({ debug: true, prefix: '/prefix' });
+        const i = new ImageContainer('http://server/some/path.png', engine);
         expect(i.src).toBe('http://server/some/path.png');
     });
 });

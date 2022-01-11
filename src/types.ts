@@ -280,14 +280,14 @@ export class ColorContainer {
 }
 
 export class ImageContainer {
-    constructor(private readonly url: string) {}
+    constructor(private readonly url: string, readonly engine: Engine) {}
 
     get src() {
         if (/^https?:.*/.test(this.url)) {
             return this.url;
         }
 
-        return ImageContainer.prefix + (isEmpty(ImageContainer.prefix) || this.url[0] === '/' ? '' : '/') + this.url;
+        return this.engine.prefix + (isEmpty(this.engine.prefix) || this.url[0] === '/' ? '' : '/') + this.url;
     }
 
     srcSet(): Observable<string | undefined> {
@@ -306,8 +306,6 @@ export class ImageContainer {
         }
         return of(undefined);
     }
-
-    static prefix = '';
 }
 
 export class FontContainer {

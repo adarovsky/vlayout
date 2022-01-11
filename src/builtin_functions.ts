@@ -120,7 +120,7 @@ export class Image
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(map((x) => new ImageContainer(x)));
+        return parameters[0].pipe(map((x) => new ImageContainer(x, this.engine)));
     }
 }
 

@@ -69,7 +69,13 @@ export class Engine {
         properties: {},
     };
 
-    constructor(readonly debug = false, readonly verboseIds: string[] = []) {
+    constructor(
+        readonly options: Readonly<{
+            debug?: boolean;
+            verboseIds?: string[];
+            prefix?: string;
+        }> = {}
+    ) {
         this.functions = [
             new LocalizedNumber(this),
             new ShortLocalizedNumber(this),
@@ -116,6 +122,18 @@ export class Engine {
 
     imageType(): TypeDefinition {
         return this.type('Image')!;
+    }
+
+    get prefix(): string {
+        return this.options.prefix ?? '';
+    }
+
+    get debug(): boolean {
+        return this.options.debug ?? false;
+    }
+
+    get verboseIds(): string[] {
+        return this.options.verboseIds ?? [];
     }
 
     variableForKeyPath(keyPath: string): Expression | null {
