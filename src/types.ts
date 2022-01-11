@@ -283,7 +283,7 @@ export class ImageContainer {
     constructor(private readonly url: string, readonly engine: Engine) {}
 
     get src() {
-        if (/^https?:.*/.test(this.url)) {
+        if (/^https?:.*/.test(this.url) || isEmpty(this.engine.prefix)) {
             return this.url;
         }
 
@@ -293,7 +293,7 @@ export class ImageContainer {
 
         const url = this.url.startsWith('/') ? this.url.substr(1) : this.url;
 
-        return isEmpty(this.engine.prefix) ? this.url : prefix + '/' + url;
+        return prefix + '/' + url;
     }
 
     srcSet(): Observable<string | undefined> {

@@ -206,6 +206,12 @@ describe("types", () => {
         expect(i.src).toBe('/prefix/some/path.png');
     });
 
+    it('Image should include single slash if missing for relative path', async function () {
+        engine = new Engine({ debug: true, prefix: '/' });
+        const i = new ImageContainer('some/path.png', engine);
+        expect(i.src).toBe('/some/path.png');
+    });
+
     it('Image should not duplicate slashes if prefix ends with slash', async function () {
         engine = new Engine({ debug: true, prefix: '/prefix/' });
         const i = new ImageContainer('some/path.png', engine);
