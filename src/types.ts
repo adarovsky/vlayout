@@ -287,7 +287,13 @@ export class ImageContainer {
             return this.url;
         }
 
-        return this.engine.prefix + (isEmpty(this.engine.prefix) || this.url[0] === '/' ? '' : '/') + this.url;
+        const prefix = this.engine.prefix.endsWith('/')
+            ? this.engine.prefix.substr(0, this.engine.prefix.length - 1)
+            : this.engine.prefix;
+
+        const url = this.url.startsWith('/') ? this.url.substr(1) : this.url;
+
+        return isEmpty(this.engine.prefix) ? this.url : prefix + '/' + url;
     }
 
     srcSet(): Observable<string | undefined> {
