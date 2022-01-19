@@ -1,12 +1,11 @@
 import { ViewProperty } from './view';
-import { combineLatest, Observable, of } from 'rxjs';
+import { combineLatest, from, Observable, of } from 'rxjs';
 import React, { CSSProperties } from 'react';
 import { cloneDeep, isEqual, pick } from 'lodash';
 import { ReactRoundRect } from './react_primitives';
 import { FontContainer, ImageContainer } from './types';
 import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Button } from './primitives';
-import { fromPromise } from 'rxjs/internal-compatibility';
 import { ReactViewProps, ReactViewState } from './react_views';
 import ReactTooltipComponent from 'react-tooltip';
 import composeRefs from '@seznam/compose-react-refs';
@@ -351,7 +350,7 @@ export class ReactButton extends ReactButtonBase {
         this.setState((s) => ({ ...s, running: true }));
         const promise = (this.props.parentView as Button).onClick();
         this.subscription.add(
-            fromPromise(promise).subscribe({
+            from(promise).subscribe({
                 error: () => {
                     this.logValue('running', false);
                     this.setState((s) => {

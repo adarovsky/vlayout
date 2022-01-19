@@ -18,15 +18,15 @@
   "author": "Alexander Darovsky",
   "license": "ISC",
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
-    "updateSnapshots": "tsdx test --passWithNoTests --updateSnapshot ",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "start": "dts watch",
+    "build": "dts build",
+    "test": "dts test --passWithNoTests",
+    "updateSnapshots": "dts test --passWithNoTests --updateSnapshot ",
+    "lint": "dts lint",
+    "prepare": "dts build",
     "bump": "npm version patch && npm publish",
-    "prepublishOnly": "tsdx test",
-    "coveralls": "tsdx test --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "prepublishOnly": "dts test",
+    "coveralls": "dts test --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "@seznam/compose-react-refs": "^1.0.5",
@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "react": ">=16",
-    "rxjs": "^6.5.3"
+    "rxjs": ">=6"
   },
   "husky": {
     "hooks": {
@@ -58,28 +58,27 @@
   "module": "dist/vlayout.esm.js",
   "devDependencies": {
     "@testing-library/react": "^9.4.0",
-    "@types/enzyme": "^3.10.8",
+    "@types/enzyme": "^3.10.11",
     "@types/enzyme-adapter-react-16": "^1.0.6",
-    "@types/jest": "^24.0.25",
+    "@types/jest": "^27.4.0",
     "@types/lodash": "^4.14.168",
-    "@types/react": "^16.14.2",
-    "@types/react-dom": "^16.9.10",
-    "@types/sinon": "^9.0.10",
-    "@types/uuid": "^8.3.0",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@types/sinon": "^10.0.6",
+    "@types/uuid": "^8.3.4",
     "coveralls": "^3.0.9",
+    "dts-cli": "^1.2.0",
     "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.6",
     "enzyme-to-json": "^3.6.1",
     "husky": "^4.3.8",
     "jest": "^24.9.0",
     "prettier": "^2.2.1",
-    "react": "^16.14.0",
+    "react": "^17.0.2",
     "react-app-polyfill": "^1.0.6",
-    "react-dom": "^16.14.0",
+    "react-dom": "^17.0.2",
     "rollup-plugin-postcss": "^3.1.8",
     "sinon": "^7.5.0",
-    "tsdx": "^0.13.3",
     "tslib": "^1.14.1",
-    "typescript": "^4.3.2"
+    "typescript": "^4.5.4"
   }
 }
