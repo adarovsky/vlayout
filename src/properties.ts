@@ -59,7 +59,7 @@ export class ExpressionPropertyDeclaration extends PropertyDeclaration {
     link(scope: Scope, hint: TypeDefinition | null): void {
         this.expression.link(scope, hint);
         this.sink = this.expression.sink.pipe(
-            tap(v => scope.engine.valueSnapshot.properties[this.fullName] = v)
+            tap(v => scope.engine.logPropertyValue(this.fullName, v))
         );
         this.typeDefinition = this.expression.typeDefinition;
     }

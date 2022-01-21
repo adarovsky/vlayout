@@ -74,6 +74,7 @@ export class Engine {
             debug?: boolean;
             verboseIds?: string[];
             prefix?: string;
+            logInputs?: boolean;
         }> = {}
     ) {
         this.functions = [
@@ -312,6 +313,16 @@ export class Engine {
 
     logInputValue(name: string, value: any): void {
         this.valueSnapshot.inputs[name] = value;
+        if (this.options.logInputs) {
+            console.log(`input: ${name}:`, value);
+        }
+    }
+
+    logPropertyValue(name: string, value: any): void {
+        this.valueSnapshot.properties[name] = value;
+        if (this.options.logInputs) {
+            console.log(`property: ${name}:`, value);
+        }
     }
 
     beginUpdates() {

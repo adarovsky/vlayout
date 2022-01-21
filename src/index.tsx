@@ -20,3 +20,4 @@ export type { ListModelItem } from './list';
 export { LayoutComponent } from './layout_component';
 export { connect } from './connect';
 export type { ObservableMapObject } from './connect';
+export { isNotNull } from './utils';
