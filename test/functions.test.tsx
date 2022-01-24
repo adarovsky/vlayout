@@ -1,6 +1,6 @@
 import { mount, shallow } from 'enzyme';
 import { Engine, Layout } from '../src';
-import { BehaviorSubject, Subject, timer } from 'rxjs';
+import { BehaviorSubject, of, Subject, timer } from 'rxjs';
 import React from 'react';
 import { ReactLabel } from '../src/react_primitives';
 import { ElementSize } from '../src/resize_sensor';
@@ -609,3 +609,62 @@ it('builtin function ToCapital should keep trailing string case', async () => {
 
     expect(wrapper.find('.vlayout_label > span').text()).toBe('AbCdEf');
 });
+
+
+it('builtin function ToUpper should accept null', async () => {
+    const input = of(null);
+    engine!.registerInput('testInput', engine!.stringType(), input);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     inputs {
+         testInput: String
+     }
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : ToUpper(testInput)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label_shadow > span').text()).toBe('placeholder');
+});
+
+it('builtin function ToLower should accept null', async () => {
+    const input = of(null);
+    engine!.registerInput('testInput', engine!.stringType(), input);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     inputs {
+         testInput: String
+     }
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : ToLower(testInput)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label_shadow > span').text()).toBe('placeholder');
+});
+
+it('builtin function ToCapital should accept null', async () => {
+    const input = of(null);
+    engine!.registerInput('testInput', engine!.stringType(), input);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     inputs {
+         testInput: String
+     }
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : ToCapital(testInput)
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label_shadow > span').text()).toBe('placeholder');
+});
+

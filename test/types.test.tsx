@@ -1,13 +1,13 @@
 import { mount, shallow } from 'enzyme';
 import { Engine, Layout } from '../src';
 import React from 'react';
-import { Subject } from 'rxjs';
+import { Subject, timer } from 'rxjs';
 import { ImageContainer } from '../src/types';
 
 let engine = new Engine();
 
 beforeEach(() => {
-    engine = new Engine({ debug: true });
+    engine = new Engine({ debug: true, logInputs: true });
 });
 
 beforeAll(() => {
@@ -138,16 +138,15 @@ describe("types", () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
-    it("should warn about missing value", async function () {
-        jest.useFakeTimers();
+    it("should allow null to string inputs", async function () {
         const subj = new Subject<any>();
-        engine.registerInput('testInput', engine.numberType(), subj);
+        engine.registerInput('testInput', engine.stringType(), subj);
         const wrapper = mount(
             <Layout
                 engine={engine}
                 content={`
                  inputs {
-                    testInput: Number
+                    testInput: String
                  }
                  layout {
                      layer {
@@ -155,15 +154,54 @@ describe("types", () => {
                              id: "label1"
                              center { x: 0.5 y: 0.5 }
                              
-                             text: testInput == nil ? "null" : String(testInput)                 
+                             text: testInput == nil ? "null" : testInput                 
                          }
                      }
                  }`}
             />
         );
 
-        expect(() => jest.advanceTimersByTime(2000)).toThrow(/inconsistency for input testInput: no value came in/);
+        const node = wrapper.find(".vlayout_label");
+        subj.next(null);
+
+        expect(console.error).toHaveBeenCalledTimes(0);
+        expect(node.getDOMNode()).toMatchSnapshot();
+
+        subj.next(10);
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        subj.next('abcde');
+        expect(console.error).toHaveBeenCalledTimes(1);
+
+        expect(node.getDOMNode()).toMatchSnapshot();
     });
+
+    // it("should warn about missing value", async function () {
+    //     jest.useFakeTimers();
+    //     const subj = new Subject<any>();
+    //     engine.registerInput('testInput', engine.numberType(), subj);
+    //     const wrapper = mount(
+    //         <Layout
+    //             engine={engine}
+    //             content={`
+    //              inputs {
+    //                 testInput: Number
+    //              }
+    //              layout {
+    //                  layer {
+    //                      label {
+    //                          id: "label1"
+    //                          center { x: 0.5 y: 0.5 }
+    //
+    //                          text: testInput == nil ? "null" : String(testInput)
+    //                      }
+    //                  }
+    //              }`}
+    //         />
+    //     );
+    //
+    //     expect(() => jest.advanceTimersByTime(2000)).toThrow(/inconsistency for input testInput: no value came in/);
+    // });
 
     it("should accept nil values in functions", async function () {
         const subj = new Subject<any>();

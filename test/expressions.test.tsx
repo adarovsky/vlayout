@@ -583,24 +583,3 @@ it('compare with nil should work', async () => {
 
     expect(wrapper.find('.vlayout_label > span').text()).toBe('nil');
 });
-
-it('nil should not cast to string', async () => {
-    const test1 = new Subject<string>();
-    engine!.registerInput('test1', engine!.stringType(), test1);
-    const wrapper = () => shallow(<Layout engine={engine!} content={`
-     inputs {
-        test1: String
-     }
-
-     layout {
-         layer {            
-             label {
-                 center { x : 0.5 y : 0.5 }
-                 text : test1 == nil ? "nil" : "not nil"
-             }
-         }
-     }`}/>);
-
-    expect(wrapper).toThrowError(/cannot cast nil to String/);
-});
-

@@ -120,7 +120,9 @@ export class Image
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
-        return parameters[0].pipe(map((x) => new ImageContainer(x, this.engine)));
+        return parameters[0].pipe(
+            map((x) => new ImageContainer(x, this.engine))
+        );
     }
 }
 
@@ -459,8 +461,8 @@ export class ToUpper
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters).pipe(
             map((params) => {
-                const s = params[0] as string;
-                return s.toLocaleUpperCase();
+                const s = params[0] as string | null;
+                return s?.toLocaleUpperCase() ?? null;
             })
         );
     }
@@ -485,8 +487,8 @@ export class ToLower
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters).pipe(
             map((params) => {
-                const s = params[0] as string;
-                return s.toLocaleLowerCase();
+                const s = params[0] as string | null;
+                return s?.toLocaleLowerCase() ?? null;
             })
         );
     }
@@ -511,8 +513,10 @@ export class ToCapitalCase
     sink(parameters: Observable<any>[]): Observable<any> {
         return combineLatest(parameters).pipe(
             map((params) => {
-                const s = params[0] as string;
-                return s.length > 1
+                const s = params[0] as string | null;
+                return s === null
+                    ? null
+                    : s.length > 1
                     ? s[0].toLocaleUpperCase() + s.slice(1)
                     : s.toLocaleUpperCase();
             })

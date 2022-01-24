@@ -307,12 +307,16 @@ export class ReactView<
                         map(([, val]) => val),
                         distinctUntilChanged((x, y) => isEqual(x, y))
                     )
-                    .subscribe((value) => {
-                        const val = mapper ? mapper(value) : value;
-                        this.logValue(field, val);
-                        this.setState((s) =>
-                            extend({ ...s }, { [field]: val })
-                        );
+                    .subscribe({
+                        next: (value) => {
+                            const val = mapper ? mapper(value) : value;
+                            this.logValue(field, val);
+                            this.setState((s) =>
+                                extend({ ...s }, { [field]: val })
+                            );
+                        },
+                        error: (error) => console.error(`${field}:`, error),
+                        complete: () => console.log(`${field}: complete`),
                     })
             );
         }

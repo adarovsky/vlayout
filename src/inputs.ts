@@ -80,21 +80,28 @@ export class Inputs {
                 take(1),
                 timeout(1000),
                 catchError((err) => {
+                    console.error('catched', err);
                     if (err instanceof TimeoutError) {
                         console.error(
                             `inconsistency for input ${name}: no value came in 1s`
                         );
                         return throwError(
-                            new Error(
-                                `inconsistency for input ${name}: no value came in 1s`
-                            )
+                            () =>
+                                new Error(
+                                    `inconsistency for input ${name}: no value came in 1s`
+                                )
                         );
                     } else {
                         return throwError(err);
                     }
-                })
+                }),
+                // tap({
+                //     next: (x) => console.log(name, '1 ->', x),
+                //     error: (error) => console.log(name, '1 error:', error),
+                //     complete: () => console.log(name, '1 completed'),
+                // })
             );
-            const tail = inp.sink.pipe(skip(1));
+            const tail = inp.sink;
             inp.sink = concat(head, tail);
         }
 
