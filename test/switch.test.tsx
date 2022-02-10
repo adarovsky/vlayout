@@ -82,3 +82,31 @@ it('switch should not crash', async () => {
 
     expect(wrapper).toThrowError(/Extra matcher/);
 });
+
+it('switch should compile', async () => {
+    const test1 = new Subject<number>();
+    engine!.registerInput('test1', engine!.numberType(), test1);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     inputs {
+        test1: Number
+     }
+
+     layout {
+         layer {            
+             label {
+                text: switch(test1){
+                        case 1 => "BACKGROUND"
+                        case 2 => "LOGO"
+                        case 3 => "GREEN SCREEN"
+                        case 4 => "TICKER"
+                        case _ => "-"
+                    }
+            }
+         }
+     }`}/>);
+
+    test1.next(2);
+    wrapper.update();
+
+    expect(wrapper.find('.vlayout_label > span').text()).toBe("LOGO");
+});

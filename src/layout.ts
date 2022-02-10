@@ -6,6 +6,7 @@ import {
     LexIdentifier,
     LexNumber,
     LexString,
+    LexSymbol,
     LexToken,
 } from './lexer';
 import {
@@ -161,7 +162,7 @@ export class Layout
 
     private parseBindings(): void {
         if (this.match('bindings')) {
-            if (this.match('{')) {
+            if (this.matchSymbol('{')) {
                 while (this.parseBindingPair()) {}
                 this.matchOrFail('}');
             } else {
@@ -223,7 +224,7 @@ export class Layout
                 }
 
                 r.push(v!.content);
-            } while (this.match(','));
+            } while (this.matchSymbol(','));
 
             this.matchOrFail(')');
 
@@ -261,7 +262,7 @@ export class Layout
                 } else {
                     this.raiseError(`model item identifier expected`);
                 }
-            } while (this.match(','));
+            } while (this.matchSymbol(','));
 
             this.matchOrFail(')');
 
@@ -312,7 +313,7 @@ export class Layout
         let v = this.matchIdentifier();
         if (v) {
             const item: ListDefinitionItem = {};
-            if (this.match(':')) {
+            if (this.matchSymbol(':')) {
                 const typeName = this.matchIdentifier();
                 if (typeName) {
                     const type = this.engine.type(typeName.content);
@@ -324,7 +325,7 @@ export class Layout
                 } else {
                     this.raiseError('type name expected');
                 }
-            } else if (this.match('{')) {
+            } else if (this.matchSymbol('{')) {
                 const inner: ListDefinitionItem = {};
                 let i: ListDefinitionItem | null = null;
                 while (!isEmpty((i = this.parseListItem()))) {
@@ -357,7 +358,7 @@ export class Layout
                     ? keyPath + '.' + name.content
                     : name.content;
 
-            if (this.match('{')) {
+            if (this.matchSymbol('{')) {
                 while (this.parseInput(kp)) {}
                 this.matchOrFail('}');
             } else {
@@ -398,7 +399,7 @@ export class Layout
     private parseProperty(): PropertyDeclaration | null {
         const name = this.matchIdentifier();
         if (name) {
-            if (this.match('{')) {
+            if (this.matchSymbol('{')) {
                 let compound = new CompoundPropertyDeclaration(
                     name.content,
                     name.line,
@@ -455,7 +456,7 @@ export class Layout
                 } else {
                     this.raiseError('function parameter type expected');
                 }
-                if (!this.match(',')) break;
+                if (!this.matchSymbol(',')) break;
             }
             this.matchOrFail(')');
             this.matchOrFail('=>');
@@ -476,7 +477,7 @@ export class Layout
 
     private parseConditional(): Expression | null {
         const cond = this.parseLogicalOr();
-        if (cond && this.match('?')) {
+        if (cond && this.matchSymbol('?')) {
             const left = this.parseExpression();
             if (!left) this.raiseError(`expression expected after ${cond}`);
             this.matchOrFail(':');
@@ -537,9 +538,9 @@ export class Layout
         const left = this.parseAddSub();
         if (!left) return null;
         const token =
-            this.match('>') ||
+            this.matchSymbol('>') ||
             this.match('>=') ||
-            this.match('<') ||
+            this.matchSymbol('<') ||
             this.match('<=');
         if (token) {
             const right = this.parseAddSub();
@@ -570,7 +571,7 @@ export class Layout
         if (!left) return null;
 
         let token: LexToken | null;
-        while ((token = this.match('+') || this.match('-'))) {
+        while ((token = this.matchSymbol('+') || this.matchSymbol('-'))) {
             const right = this.parseMulDiv();
             if (!right)
                 this.raiseError(
@@ -591,7 +592,10 @@ export class Layout
 
         let token: LexToken | null;
         while (
-            (token = this.match('*') || this.match('/') || this.match('%'))
+            (token =
+                this.matchSymbol('*') ||
+                this.matchSymbol('/') ||
+                this.matchSymbol('%'))
         ) {
             const right = this.parseNegate();
             if (!right)
@@ -620,7 +624,7 @@ export class Layout
     }
 
     private parseNegate(): Expression | null {
-        if (this.match('!') || this.match('-')) {
+        if (this.matchSymbol('!') || this.matchSymbol('-')) {
             const _lex = this._lastMatched;
 
             const unit = this.parseToken();
@@ -631,7 +635,7 @@ export class Layout
     }
 
     private parseToken(): Expression | null {
-        if (this.match('(')) {
+        if (this.matchSymbol('(')) {
             const result = this.parseExpression();
             this.matchOrFail(')');
             return result;
@@ -646,7 +650,7 @@ export class Layout
 
         let token: LexToken | null;
         let array = [item];
-        while ((token = this.match('|'))) {
+        while ((token = this.matchSymbol('|'))) {
             item = this.parseSimple();
             if (!item)
                 this.raiseError(
@@ -672,7 +676,7 @@ export class Layout
             }
 
             sources.push(exp!);
-            while (this.match(',')) {
+            while (this.matchSymbol(',')) {
                 exp = this.parseExpression();
                 if (!exp) {
                     this.raiseError('expression expected');
@@ -683,12 +687,12 @@ export class Layout
             this.matchOrFail('{');
             while (this.match('case')) {
                 const caseLex = this._lastMatched!;
-                const hasParen = this.match('(');
+                const hasParen = this.matchSymbol('(');
                 let isFirstWildcard = false;
                 let d: SwitchCompare[] = [];
                 let exp: Expression | null;
 
-                if (this.match('_')) {
+                if (this.matchIdentifier('_')) {
                     exp = new TrueMatcher(
                         this._lastMatched!.line,
                         this._lastMatched!.column
@@ -704,13 +708,13 @@ export class Layout
                 if (!exp) this.raiseError('expression expected');
                 d.push(new SwitchCompare(sources[i++], exp!));
 
-                while (this.match(',')) {
+                while (this.matchSymbol(',')) {
                     if (i >= sources.length) {
                         this.raiseError(
                             `Extra matcher ${exp}: a tuple of exactly ${sources.length} items needed`
                         );
                     }
-                    exp = this.match('_')
+                    exp = this.matchIdentifier('_')
                         ? new TrueMatcher(
                               this._lastMatched!.line,
                               this._lastMatched!.column
@@ -794,7 +798,7 @@ export class Layout
 
     private parseReference(): Expression | null {
         let unit: LexToken | null;
-        if (this.match('.')) {
+        if (this.matchSymbol('.')) {
             const _lex = this._lastMatched!;
 
             unit = this.matchIdentifier();
@@ -806,13 +810,13 @@ export class Layout
         } else if ((unit = this.matchIdentifier())) {
             const l = unit.line;
             const c = unit.column;
-            if (this.match('(')) {
+            if (this.matchSymbol('(')) {
                 // function call
                 let parameters: Array<Expression> = [];
                 let param: Expression | null;
                 while ((param = this.parseExpression())) {
                     parameters.push(param);
-                    if (!this.match(',')) {
+                    if (!this.matchSymbol(',')) {
                         break;
                     }
                 }
@@ -826,7 +830,7 @@ export class Layout
             }
 
             let kp = [unit.content];
-            while (this.match('.')) {
+            while (this.matchSymbol('.')) {
                 unit = this.matchIdentifier();
                 if (!unit) {
                     this.raiseError(
@@ -843,7 +847,7 @@ export class Layout
     }
 
     private parseLayout(): LayoutView | null {
-        this.matchOrFail('layout');
+        this.matchOrFailAny('layout');
         const layout = new LayoutView(this.props.className);
         layout.line = this._lastMatched!.line;
         layout.column = this._lastMatched!.column;
@@ -860,7 +864,7 @@ export class Layout
     }
 
     private parseLayer(): Layer | null {
-        if (this.match('layer')) {
+        if (this.matchIdentifier('layer')) {
             const _lex = this._lastMatched!;
 
             this.matchOrFail('{');
@@ -945,7 +949,7 @@ export class Layout
                     );
                 }
             }
-            if (this.match(':')) {
+            if (this.matchSymbol(':')) {
                 const exp = this.parseExpression();
                 if (exp) {
                     const prop = list.property(name.content);
@@ -975,7 +979,7 @@ export class Layout
         const name = this.matchIdentifier();
         if (name) {
             if (this.parsePredefinedProperty(name, container)) return true;
-            if (this.match('{')) {
+            if (this.matchSymbol('{')) {
                 let view = this.viewForContext(container, name.content);
                 if (view) {
                     container.addManagedView(view!);
@@ -1255,6 +1259,19 @@ export class Layout
         return arr.concat(this.engine.functionsLoose(name, parametersCount));
     }
 
+    private matchSymbol(s: string): LexToken | null {
+        if (
+            this._lexer.current() instanceof LexSymbol &&
+            this._lexer.current().content === s
+        ) {
+            this._lastMatched = this._lexer.current();
+            this._lexer.next();
+            return this._lastMatched;
+        }
+
+        return null;
+    }
+
     private match(s: string): LexToken | null {
         if (this._lexer.current().content === s) {
             this._lastMatched = this._lexer.current();
@@ -1266,6 +1283,17 @@ export class Layout
     }
 
     private matchOrFail(s: string): LexToken {
+        const r = this.matchSymbol(s);
+        if (!r)
+            throw new ParseError(
+                this._lexer.current().line,
+                this._lexer.current().column,
+                `${s} expected, but ${this._lexer.current().content} received`
+            );
+        return r;
+    }
+
+    private matchOrFailAny(s: string): LexToken {
         const r = this.match(s);
         if (!r)
             throw new ParseError(
@@ -1276,9 +1304,15 @@ export class Layout
         return r;
     }
 
-    private matchIdentifier(): LexIdentifier | null {
-        if (this._lexer.current() instanceof LexIdentifier) {
-            this._lastMatched = this._lexer.current();
+    private matchIdentifier(
+        content: string | undefined = undefined
+    ): LexIdentifier | null {
+        const token = this._lexer.current();
+        if (
+            token instanceof LexIdentifier &&
+            (content === undefined || token.content === content)
+        ) {
+            this._lastMatched = token;
             this._lexer.next();
 
             return this._lastMatched;
