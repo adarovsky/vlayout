@@ -177,6 +177,33 @@ describe('lists', () => {
         expect(node.getDOMNode()).toMatchSnapshot();
     });
 
+    it('should make horizontal list non-scrollable', async function() {
+        engine.registerList('MyItems', {
+            user: {
+                name: engine.stringType(),
+            },
+            newUser: {},
+        });
+        engine.registerInput(
+            'items',
+            engine.type('MyItems')!,
+            of([
+                { user: { id: 1, name: 'Alex' } },
+                { user: { id: 2, name: 'Anton' } },
+                { user: { id: 3, name: 'Denis' } },
+                { newUser: { id: 'new' } },
+            ])
+        );
+
+        const wrapper = mount(
+            <Layout engine={engine} content={getContent('horizontalList', 'scrollable: false')} />
+        );
+
+        const node = wrapper.find('.vlayout_horizontalList');
+
+        expect(node.getDOMNode()).toMatchSnapshot();
+    });
+
     it('should reuse items properly', async function() {
         engine.registerList('MyItems', {
             user: {

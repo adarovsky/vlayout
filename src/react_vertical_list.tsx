@@ -10,11 +10,6 @@ import { ReactView, ReactViewProps, ReactViewState } from './react_views';
 import composeRefs from '@seznam/compose-react-refs';
 
 export class ReactVerticalList extends ReactList<ReactListState> {
-    styleProperties(): ViewProperty[] {
-        return super
-            .styleProperties()
-            .concat(this.props.parentView.activePropertiesNamed('scrollable'));
-    }
 
     styleValue(props: ViewProperty[], value: any[]): React.CSSProperties {
         const r = super.styleValue(props, value);

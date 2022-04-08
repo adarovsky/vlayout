@@ -27,7 +27,13 @@ export class ReactHorizontalList extends ReactList<ReactHorizontalListState> {
         if (!r.position) {
             r.position = 'relative';
         }
-        r.overflowX = 'auto';
+        const index = props.findIndex(p => p.name === 'scrollable');
+        if (index < 0 || value[index]) {
+            r.overflowX = 'auto';
+        } else {
+            r.overflowX = 'visible';
+        }
+
         return r;
     }
 

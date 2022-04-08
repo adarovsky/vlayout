@@ -1188,6 +1188,110 @@ exports[`lists should make absolute list scrollable 1`] = `
 </div>
 `;
 
+exports[`lists should make horizontal list non-scrollable 1`] = `
+<div
+  class="vlayout_horizontalList"
+  style="position: absolute; left: 10px; z-index: 1; right: 10px; top: 10px; bottom: 10px; pointer-events: auto; overflow-x: visible;"
+>
+  <div
+    style="position: absolute; display: flex; flex-direction: row; height: 100%; justify-content: unsafe start; align-items: stretch;"
+  >
+    <div
+      class="vlayout_listPrototype_user"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Alex
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+        >
+          <span>
+            Alex
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="vlayout_listPrototype_user"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Anton
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+        >
+          <span>
+            Anton
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="vlayout_listPrototype_user"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          Denis
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+        >
+          <span>
+            Denis
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="vlayout_listPrototype_newUser"
+      style="pointer-events: none; position: relative;"
+    >
+      <div
+        class="vlayout_label"
+        style="position: absolute; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+      >
+        <span>
+          add new
+          <br />
+        </span>
+        <div
+          class="vlayout_label_shadow"
+          style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+        >
+          <span>
+            add new
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lists should reuse items on updates 1`] = `
 <div
   class="vlayout_verticalList"

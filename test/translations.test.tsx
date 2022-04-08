@@ -61,4 +61,50 @@ describe('translations', () => {
             </div>
         `);
     });
+
+    it('should keep original if translation is missing', async function () {
+        const wrapper = mount(
+            <Layout
+                engine={engine!}
+                content={`
+     layout {
+         layer {
+             label {
+                 id: "label1"
+                 center { x: 0.5 y: 0.5 }
+                 
+                 text: @("test label")                 
+             }
+         }
+     }`}
+                translations={{
+                    'another string': 'test translated',
+                }}
+            />
+        );
+
+        const node = wrapper.find('.vlayout_label');
+
+        expect(node.getDOMNode()).toMatchInlineSnapshot(`
+            <div
+              class="vlayout_label"
+              id="label1"
+              style="position: absolute; left: 50%; transform: translateX(-50%) translateY(-50%); z-index: 1; top: 50%; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+            >
+              <span>
+                test label
+                <br />
+              </span>
+              <div
+                class="vlayout_label_shadow"
+                style="position: absolute; white-space: pre; opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-50%); z-index: 1; text-align: start; overflow: hidden; text-overflow: ellipsis;"
+              >
+                <span>
+                  test label
+                  <br />
+                </span>
+              </div>
+            </div>
+        `);
+    });
 });
