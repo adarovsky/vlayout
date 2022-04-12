@@ -62,7 +62,7 @@ import {
     RoundRect,
 } from './primitives';
 import { LinkError } from './errors';
-import { Component } from 'react';
+import { Component, ReactNode } from 'react';
 import { FunctionDeclaration, Functions } from './functions';
 import {
     Dictionary,
@@ -1382,7 +1382,7 @@ export class Layout
         );
     }
 
-    render() {
+    render(): ReactNode {
         return this.state.layout
             ? this.state.layout.getTargetWithRef((x) => this._viewRef.next(x))
             : null;
