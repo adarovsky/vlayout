@@ -18,9 +18,17 @@ class FunctionArgument extends Expression {
     link(scope: Scope, hint: TypeDefinition | null): void {
         this.typeDefinition = scope.engine.type(this.type);
         if (!this.typeDefinition) {
-            throw new Error(`${this.line}:${this.column}: cannot resolve type ${this.type}`);
+            throw new Error(
+                `${this.line}:${this.column}: cannot resolve type ${this.type}`
+            );
         }
     }
+}
+
+enum LinkStatus {
+    Unlinked,
+    Linking,
+    Linked,
 }
 
 export class FunctionDeclaration implements Scope, FunctionImplementationI {
@@ -28,8 +36,9 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
     line: number;
     column: number;
     arguments: FunctionArgument[] = [];
-    expression: Expression|null = null;
+    expression: Expression | null = null;
     returnType: TypeDefinition;
+    linkStatus = LinkStatus.Unlinked;
     constructor(name: LexIdentifier, readonly layout: Layout) {
         this.name = name.content;
         this.line = name.line;
@@ -45,10 +54,16 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
         return this.layout.engine;
     }
 
-    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI {
+    functionFor(
+        name: string,
+        parameters: TypeDefinition[]
+    ): FunctionImplementationI {
         return this.layout.functionFor(name, parameters);
     }
-    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[] {
+    functionsLoose(
+        name: string,
+        parametersCount: number
+    ): FunctionImplementationI[] {
         return this.layout.functionsLoose(name, parametersCount);
     }
 
@@ -56,32 +71,40 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
         const kp = keyPath.split('.');
         if (kp.length !== 1) return this.layout.variableForKeyPath(keyPath);
 
-        return this.arguments.find(x => x.name.content === kp[0]) || this.layout.variableForKeyPath(keyPath);
+        return (
+            this.arguments.find((x) => x.name.content === kp[0]) ||
+            this.layout.variableForKeyPath(keyPath)
+        );
     }
 
     get parameterTypes(): TypeDefinition[] {
         // fall back to number type to silence
-        return this.arguments.map( a => a.typeDefinition!);
+        return this.arguments.map((a) => a.typeDefinition!);
     }
 
     link(scope: Scope, hint: TypeDefinition | null): void {
-        this.arguments.forEach(a => a.link(scope, null));
-        const e = this.expression!.instantiate();
-        e.link(this, hint);
-        this.returnType = e.typeDefinition!;
+        if (this.linkStatus === LinkStatus.Unlinked) {
+            this.linkStatus = LinkStatus.Linking;
+            this.arguments.forEach((a) => a.link(scope, null));
+            const e = this.expression!.instantiate();
+            e.link(this, hint);
+            this.returnType = e.typeDefinition!;
+            this.linkStatus = LinkStatus.Linked;
+        }
     }
 
     sink(parameters: Observable<any>[]): Observable<any> {
         if (parameters.length !== this.arguments.length) {
-            throw new Error(`${this.line}:${this.column}: wrong parameter count: ${this.arguments.length} expected, but got ${parameters.length}`);
+            throw new Error(
+                `${this.line}:${this.column}: wrong parameter count: ${this.arguments.length} expected, but got ${parameters.length}`
+            );
         }
 
         const e = this.expression!.instantiate();
-        this.arguments.forEach((a, index) => a.sink = parameters[index]);
+        this.arguments.forEach((a, index) => (a.sink = parameters[index]));
         e.link(this, this.returnType);
         return e.sink;
     }
-
 
     viewForKey(key: string): View | null {
         return this.layout.viewForKey(key);
@@ -91,16 +114,22 @@ export class FunctionDeclaration implements Scope, FunctionImplementationI {
 export class Functions {
     private readonly functions: FunctionDeclaration[] = [];
 
-    constructor(readonly line: number, readonly column: number) {
-
-    }
+    constructor(
+        readonly layout: Layout,
+        readonly line: number,
+        readonly column: number
+    ) {}
 
     registerFunction(func: FunctionDeclaration) {
         this.functions.push(func);
     }
 
-    functionFor(name: string, parameters: TypeDefinition[]): FunctionImplementationI|null {
+    functionFor(
+        name: string,
+        parameters: TypeDefinition[]
+    ): FunctionImplementationI | null {
         for (let f of this.functions) {
+            f.link(this.layout, null);
             if (f.name === name && isEqual(f.parameterTypes, parameters)) {
                 return f;
             }
@@ -109,11 +138,17 @@ export class Functions {
         return null;
     }
 
-    functionsLoose(name: string, parametersCount: number): FunctionImplementationI[] {
-        return this.functions.filter(f => f.name === name && f.parameterTypes.length === parametersCount);
+    functionsLoose(
+        name: string,
+        parametersCount: number
+    ): FunctionImplementationI[] {
+        return this.functions.filter(
+            (f) =>
+                f.name === name && f.parameterTypes.length === parametersCount
+        );
     }
 
     link(scope: Scope) {
-        this.functions.forEach(f => f.link(scope, null));
+        this.functions.forEach((f) => f.link(scope, null));
     }
 }

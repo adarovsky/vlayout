@@ -430,6 +430,7 @@ export class Layout
     private parseFunctions(): void {
         if (this.match('functions')) {
             this.functions = new Functions(
+                this,
                 this._lastMatched!.line,
                 this._lastMatched!.column
             );

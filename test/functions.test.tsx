@@ -668,3 +668,22 @@ it('builtin function ToCapital should accept null', async () => {
     expect(wrapper.find('.vlayout_label_shadow > span').text()).toBe('placeholder');
 });
 
+it('function order should not affect', async () => {
+    const input = of(null);
+    engine!.registerInput('testInput', engine!.stringType(), input);
+    const wrapper = mount(<Layout engine={engine!} content={`
+     functions {
+         test1(index: Number) => test2(index) + 1
+         test2(index: Number) => index * 3
+     }
+     layout {
+         layer {            
+             label {
+                 center { x : 0.5 y : 0.5 }
+                 text : String(test1(2))
+             }
+         }
+     }`}/>);
+
+    expect(wrapper.find('.vlayout_label_shadow > span').text()).toBe('7');
+});
